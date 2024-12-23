@@ -1,1 +1,7 @@
 Django==5.1.4
+requests==2.32.3
+pygbif==0.6.5
+PyYAML==6.0.2
+pillow==11.0.0
+django-tables2==2.7.1
+python-decouple==3.8

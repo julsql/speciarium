@@ -14,7 +14,6 @@ class SpeciesTable(tables.Table):
     continent = tables.Column(verbose_name="Continent")
     country = tables.Column(verbose_name="Pays")
     region = tables.Column(verbose_name="Région")
-    place = tables.Column(verbose_name="Lieu")
     thumbnail = tables.TemplateColumn(
         template_code='''
             <a href="{{ record.photo }}" target="_blank">
@@ -33,5 +32,4 @@ class SpeciesTable(tables.Table):
             fields = ("latin_name", "genus", "species",
                       "french_name", "kingdom", "class_field",
                       "category", "year", "day",
-                      "continent", "country", "region",
-                      "place", "thumbnail")
+                      "continent", "country", "region", "thumbnail")

@@ -1,6 +1,6 @@
-- add data clean
-- ajouter photos sur affichage
+- accents
 - relire et corriger code
+- group by
 
 - mise en page (CSS)
 - modifier champ

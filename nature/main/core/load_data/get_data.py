@@ -1,10 +1,10 @@
 import os
+import unicodedata
 from datetime import datetime
 
-import httpcore
+import requests
+from pygbif import species
 from PIL import Image
-import taxoniq
-from deep_translator import GoogleTranslator
 import yaml
 from main.core.logger.logger import logger
 from config.settings import MEDIA_ROOT, BASE_DIR, MEDIA_URL
@@ -64,14 +64,20 @@ def get_info(image_path):
     infos["photo"] = photo
 
     try:
-        common_name, kingdom, sp_class, order = get_specie_info(infos["nom latin"])
+        kingdom, sp_class, order = get_species_details(infos["nom latin"])
     except Exception as e:
-        common_name, kingdom, sp_class, order = '', '', '', ''
-        logger.error(str(e))
-    infos["nom français"] = common_name
+        kingdom, sp_class, order = '', '', ''
+        logger.error(e)
     infos["règne"] = kingdom
     infos["classe"] = sp_class
     infos["catégorie"] = order
+
+    try:
+        common_name = get_common_name(infos["nom latin"])
+    except Exception as e:
+        common_name = ''
+        logger.error(e)
+    infos["nom français"] = common_name
 
     try:
         jour, annee = get_date_taken(image_path)
@@ -115,14 +121,17 @@ def extraire_informations(path):
     else:
         raise ValueError(f"{title} ne correspond pas au format attendu Genre espèce (note) identifiant")
 
+def normaliser_chaine(chaine):
+    return unicodedata.normalize('NFC', chaine)
 
 def get_location_from_path(image_path):
     folders = image_path.replace(PHOTO_PATH + "/", '').split(os.sep)
-    if len(folders) >= 2:  # Exemple : pays/région/photo.jpeg
-        pays = folders[0]
-        region = folders[1]
+    logger.error(folders)
+    if len(folders) > 2:  # Exemple : pays/région/photo.jpeg
+        pays = normaliser_chaine(folders[0])
+        region = normaliser_chaine(folders[1])
     elif len(folders) == 2:  # Exemple : pays/photo.jpeg
-        pays = folders[0]
+        pays = normaliser_chaine(folders[0])
         region = ''
     else:
         raise ValueError("Chemin invalide. Vérifiez la structure du chemin.")
@@ -150,24 +159,41 @@ def trouver_continent(pays):
     for continent, pays_par_continent in contenu_fichier.items():
         if pays.lower() in (pays_nom.lower() for pays_nom in pays_par_continent):
             return continent
+    print(pays)
     return ''
 
+def get_common_name(latin_name):
+    url = "https://api.inaturalist.org/v1/taxa"
+    params = {"q": latin_name, "locale": "fr"}
 
-def get_specie_info(scientific_name):
-    t = taxoniq.Taxon(scientific_name=scientific_name)
-    infos = dict([(t.rank.name, t.scientific_name) for t in t.ranked_lineage])
-    try:
-        t.common_name
-    except taxoniq.NoValue:
-        raise ValueError("Espèce {} non détectée".format(scientific_name))
-    else:
-        try:
-            common_name_fr = GoogleTranslator(source='en', target='fr').translate(t.common_name)
-        except httpcore._exceptions.ConnectError:
-            infos['common_name'] = t.common_name
-        else:
-            infos['common_name'] = common_name_fr
-    return infos['common_name'], infos['kingdom'], infos['class'], infos['order']
+    response = requests.get(url, params=params)
+    if response.status_code == 200:
+        data = response.json()
+
+        if data['results']:
+            taxon = data['results'][0]
+            common_name = taxon.get('preferred_common_name', '')
+
+            return common_name
+
+    raise ValueError("Error getting common_name")
+
+def get_species_details(latin_name):
+    sp = species.name_suggest(q=latin_name)
+    sp_class = ''
+    order = ''
+    family= ''
+
+    if len(sp) == 0:
+        raise ValueError(f"Pas d'info pour {latin_name}")
+    if 'classKey' in sp[0]:
+        sp_class = sp[0]['higherClassificationMap'][str(sp[0]['classKey'])]
+    if 'orderKey' in sp[0]:
+        order = sp[0]['higherClassificationMap'][str(sp[0]['orderKey'])]
+    if 'familyKey' in sp[0]:
+        family = sp[0]['higherClassificationMap'][str(sp[0]['familyKey'])]
+    return sp_class, order, family
+
 
 def petite_path(image_path):
     return image_path.replace(PHOTO_PATH, SMALL_PATH)
