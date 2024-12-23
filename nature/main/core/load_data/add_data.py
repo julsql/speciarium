@@ -23,14 +23,13 @@ def add_data(value: list[dict[str, str]]) -> None:
             place=row["lieu"],
             photo=row["photo"],
             thumbnail=row["vignette"],
-            title=row["titre"],
             note=row["note"],
         )
         try:
             species.full_clean()  # Validation avant création
             objects.append(species)
         except ValidationError as e:
-            logger.error(f"Erreur de validation pour {row['nom latin']}: {e.message_dict}")
+            logger.error(f"Erreur de validation pour {row['nom latin']}: {str(e)}")
 
     if objects:
         Species.objects.bulk_create(objects)
