@@ -18,13 +18,17 @@ continents_yaml = os.path.join(BASE_DIR, "main/core/load_data/continents.yml")
 def get_dataset_on_each_image():
     all_image_path = images_in_folder(PHOTO_PATH)
 
+    logger.info(f"Nombre d'images {len(all_image_path)}")
     infos_all_images = []
+    i = 0
     for image_path in all_image_path:
         try:
             infos_all_images.append(get_info(image_path))
         except Exception as e:
             logger.error(e)
 
+        logger.info(f"image {i}")
+        i += 1
     return infos_all_images
 
 
@@ -62,7 +66,7 @@ def get_info(image_path):
     try:
         common_name, kingdom, sp_class, order = get_specie_info(infos["nom latin"])
     except Exception as e:
-        common_name, kingdom, sp_class, order = None, None, None, None
+        common_name, kingdom, sp_class, order = '', '', '', ''
         logger.error(str(e))
     infos["nom français"] = common_name
     infos["règne"] = kingdom
@@ -105,7 +109,7 @@ def extraire_informations(path):
     title = os.path.basename(path).split('.')[0]
     value = title.split(' ')
     if len(value) == 2 or len(value) == 3:
-        return value[0], value[1], None
+        return value[0], value[1], ''
     elif len(value) > 3:
         return value[0], value[1], ' '.join(value[2:-1])
     else:
@@ -113,13 +117,13 @@ def extraire_informations(path):
 
 
 def get_location_from_path(image_path):
-    folders = image_path.replace(PHOTO_PATH, '').split(os.sep)
+    folders = image_path.replace(PHOTO_PATH + "/", '').split(os.sep)
     if len(folders) >= 2:  # Exemple : pays/région/photo.jpeg
         pays = folders[0]
         region = folders[1]
     elif len(folders) == 2:  # Exemple : pays/photo.jpeg
         pays = folders[0]
-        region = None
+        region = ''
     else:
         raise ValueError("Chemin invalide. Vérifiez la structure du chemin.")
     return pays, region, trouver_continent(pays)
@@ -132,7 +136,7 @@ def get_date_taken(image_path):
         date_taken = datetime.strptime(timestamp, "%Y:%m:%d %H:%M:%S")
         return date_taken.strftime("%d/%m/%Y"), date_taken.strftime("%Y")
 
-    return None
+    return '', ''
 
 
 def charger_fichier_yaml(fichier_yaml):
@@ -146,7 +150,7 @@ def trouver_continent(pays):
     for continent, pays_par_continent in contenu_fichier.items():
         if pays.lower() in (pays_nom.lower() for pays_nom in pays_par_continent):
             return continent
-    return None
+    return ''
 
 
 def get_specie_info(scientific_name):
@@ -176,12 +180,12 @@ def create_directories(path):
     if not os.path.exists(path):
         os.makedirs(path)
 
-def resize_image(input_path, output_path, size=30):
+def resize_image(input_path, output_path, size):
     create_directories(os.path.dirname(output_path))
     with Image.open(input_path) as img:
         width_percent = (size / float(img.size[0]))
         height_size = int((float(img.size[1]) * float(width_percent)))
-        new_img = img.resize((height_size, size))
+        new_img = img.resize((size, height_size))
         new_img.save(output_path)
 
 def create_small_image(image_path):
@@ -192,5 +196,5 @@ def create_small_image(image_path):
 
 def create_vignette(image_path):
     output_path = vignette_path(image_path)
-    resize_image(image_path, output_path, 100)
+    resize_image(image_path, output_path, 300)
     return output_path.replace(str(MEDIA_ROOT) + "/", str(MEDIA_URL))

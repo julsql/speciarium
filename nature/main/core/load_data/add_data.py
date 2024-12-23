@@ -20,7 +20,6 @@ def add_data(value: list[dict[str, str]]) -> None:
             continent=row["continent"],
             country=row["pays"],
             region=row["région"],
-            place=row["lieu"],
             photo=row["photo"],
             thumbnail=row["vignette"],
             note=row["note"],
@@ -29,6 +28,7 @@ def add_data(value: list[dict[str, str]]) -> None:
             species.full_clean()  # Validation avant création
             objects.append(species)
         except ValidationError as e:
+            logger.error(row)
             logger.error(f"Erreur de validation pour {row['nom latin']}: {str(e)}")
 
     if objects:
