@@ -1,0 +1,84 @@
+<h1>Recherche avancée de produits</h1>
+<form method="get" class="mb-4">
+    <div class="row">
+        <div class="col-md-4">
+            {{ form.latin_name.label_tag }}
+            {{ form.latin_name }}
+        </div>
+        <div class="col-md-4">
+            {{ form.genus.label_tag }}
+            {{ form.genus }}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            {{ form.species.label_tag }}
+            {{ form.species }}
+        </div>
+        <div class="col-md-4">
+            {{ form.french_name.label_tag }}
+            {{ form.french_name }}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            {{ form.kingdom.label_tag }}
+            {{ form.kingdom }}
+        </div>
+        <div class="col-md-4">
+            {{ form.class_field.label_tag }}
+            {{ form.class_field }}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            {{ form.category.label_tag }}
+            {{ form.category }}
+        </div>
+        <div class="col-md-4">
+            {{ form.year.label_tag }}
+            {{ form.year }}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            {{ form.day.label_tag }}
+            {{ form.day }}
+        </div>
+        <div class="col-md-4">
+            {{ form.class_field.label_tag }}
+            {{ form.class_field }}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            {{ form.kingdom.label_tag }}
+            {{ form.kingdom }}
+        </div>
+        <div class="col-md-4">
+            {{ form.continent.label_tag }}
+            {{ form.continent }}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            {{ form.country.label_tag }}
+            {{ form.country }}
+        </div>
+        <div class="col-md-4">
+            {{ form.region.label_tag }}
+            {{ form.region }}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            {{ form.place.label_tag }}
+            {{ form.place }}
+        </div>
+        <div class="col-md-4">
+            {{ form.title.label_tag }}
+            {{ form.title }}
+        </div>
+    </div>
+    <button type="submit" class="btn btn-primary mt-3">Rechercher</button>
+</form>
