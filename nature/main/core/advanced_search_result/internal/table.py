@@ -6,9 +6,9 @@ class SpeciesTable(tables.Table):
     genus = tables.Column(verbose_name="Genre")
     species = tables.Column(verbose_name="Espèce")
     french_name = tables.Column(verbose_name="Nom français")
-    kingdom = tables.Column(verbose_name="Règne")
     class_field = tables.Column(verbose_name="Classe")
-    category = tables.Column(verbose_name="Catégorie")
+    arder = tables.Column(verbose_name="Ordre")
+    family = tables.Column(verbose_name="Famille")
     year = tables.Column(verbose_name="Année")
     day = tables.Column(verbose_name="Jour")
     continent = tables.Column(verbose_name="Continent")
@@ -30,6 +30,6 @@ class SpeciesTable(tables.Table):
             model = Species
             template_name = "django_tables2/bootstrap.html"
             fields = ("latin_name", "genus", "species",
-                      "french_name", "kingdom", "class_field",
-                      "category", "year", "day",
+                      "french_name", "class_field",
+                      "order", "family", "year", "day",
                       "continent", "country", "region", "thumbnail")

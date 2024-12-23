@@ -49,6 +49,7 @@ def get_info(image_path):
     except ValueError as e:
         logger.error(str(e))
         raise e
+
     infos["nom latin"] = f"{genre} {espece}"
     infos["genre"] = genre
     infos["espèce"] = espece
@@ -64,13 +65,13 @@ def get_info(image_path):
     infos["photo"] = photo
 
     try:
-        kingdom, sp_class, order = get_species_details(infos["nom latin"])
+        sp_class, order, family = get_species_details(infos["nom latin"])
     except Exception as e:
-        kingdom, sp_class, order = '', '', ''
+        sp_class, order, family = '', '', ''
         logger.error(e)
-    infos["règne"] = kingdom
+    infos["famille"] = family
     infos["classe"] = sp_class
-    infos["catégorie"] = order
+    infos["ordre"] = order
 
     try:
         common_name = get_common_name(infos["nom latin"])

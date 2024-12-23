@@ -18,12 +18,12 @@ def advanced_search_result(request, form):
                         queryset = queryset.filter(species__icontains=form.cleaned_data['species'])
                 if form.cleaned_data.get('french_name'):
                         queryset = queryset.filter(french_name__icontains=form.cleaned_data['french_name'])
-                if form.cleaned_data.get('kingdom'):
-                        queryset = queryset.filter(kingdom__icontains=form.cleaned_data['kingdom'])
+                if form.cleaned_data.get('family'):
+                        queryset = queryset.filter(family__icontains=form.cleaned_data['family'])
                 if form.cleaned_data.get('class_field'):
                         queryset = queryset.filter(class_field__icontains=form.cleaned_data['class_field'])
-                if form.cleaned_data.get('category'):
-                        queryset = queryset.filter(category__icontains=form.cleaned_data['category'])
+                if form.cleaned_data.get('order'):
+                        queryset = queryset.filter(order__icontains=form.cleaned_data['order'])
                 if form.cleaned_data.get('year'):
                         queryset = queryset.filter(year__icontains=form.cleaned_data['year'])
                 if form.cleaned_data.get('day'):

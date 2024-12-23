@@ -20,18 +20,18 @@
             {{ form.french_name }}
         </div>
         <div class="col-md-4">
-            {{ form.kingdom.label_tag }}
-            {{ form.kingdom }}
-        </div>
-        <div class="col-md-4">
             {{ form.class_field.label_tag }}
             {{ form.class_field }}
+        </div>
+        <div class="col-md-4">
+            {{ form.order.label_tag }}
+            {{ form.order }}
         </div>
     </div>
     <div class="row">
         <div class="col-md-4">
-            {{ form.category.label_tag }}
-            {{ form.category }}
+            {{ form.family.label_tag }}
+            {{ form.family }}
         </div>
         <div class="col-md-4">
             {{ form.year.label_tag }}
@@ -44,19 +44,9 @@
     </div>
     <div class="row">
         <div class="col-md-4">
-            {{ form.class_field.label_tag }}
-            {{ form.class_field }}
-        </div>
-        <div class="col-md-4">
-            {{ form.kingdom.label_tag }}
-            {{ form.kingdom }}
-        </div>
-        <div class="col-md-4">
             {{ form.continent.label_tag }}
             {{ form.continent }}
         </div>
-    </div>
-    <div class="row">
         <div class="col-md-4">
             {{ form.country.label_tag }}
             {{ form.country }}
@@ -64,16 +54,6 @@
         <div class="col-md-4">
             {{ form.region.label_tag }}
             {{ form.region }}
-        </div>
-        <div class="col-md-4">
-            {{ form.place.label_tag }}
-            {{ form.place }}
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-4">
-            {{ form.title.label_tag }}
-            {{ form.title }}
         </div>
     </div>
     <button type="submit" class="btn btn-primary mt-3">Rechercher</button>
