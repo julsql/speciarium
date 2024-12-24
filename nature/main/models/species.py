@@ -6,7 +6,7 @@ class Species(models.Model):
     species = models.CharField(max_length=255, verbose_name="Espèce")
     french_name = models.CharField(max_length=255, verbose_name="Nom français", blank=True)
     class_field = models.CharField(max_length=255, verbose_name="Classe", blank=True)
-    order = models.CharField(max_length=255, verbose_name="Ordre", blank=True)
+    order_field = models.CharField(max_length=255, verbose_name="Ordre", blank=True)
     family = models.CharField(max_length=255, verbose_name="Famille", blank=True)
     year = models.IntegerField(verbose_name="Année")
     day = models.CharField(max_length=255, verbose_name="Jour")

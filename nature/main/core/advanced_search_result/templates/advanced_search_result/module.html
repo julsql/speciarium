@@ -1,2 +1,23 @@
+<div id="total-species">
+    {% if total_results > 1 %}
+    <p>{{total_results}} espèces trouvées.</p>
+    {% elif total_results == 1 %}
+    <p>{{total_results}} espèce trouvée.</p>
+    {% else %}
+    <p>Aucune espèce trouvée.</p>
+    {% endif %}
+</div>
+
 {% load render_table from django_tables2 %}
 {% render_table table %}
+
+{% block style %}
+<style>
+     .table-container {
+        overflow-x: auto;
+     }
+     #total-species p {
+         margin-bottom: 0;
+     }
+</style>
+{% endblock %}

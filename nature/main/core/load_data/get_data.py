@@ -82,13 +82,13 @@ def get_info(image_path):
     infos["nom français"] = common_name
 
     try:
-        jour, annee = get_date_taken(image_path)
+        date, year = get_date_taken(image_path)
     except Exception as e:
         logger.error(str(e))
         raise e
 
-    infos["jour"] = jour
-    infos["année"] = annee
+    infos["date"] = date
+    infos["année"] = year
 
     return infos
 
@@ -147,8 +147,7 @@ def get_date_taken(image_path):
         timestamp = exif[36867]
         date_taken = datetime.strptime(timestamp, "%Y:%m:%d %H:%M:%S")
         return date_taken.strftime("%d/%m/%Y"), date_taken.strftime("%Y")
-
-    return '', ''
+    raise ValueError(f"Impossible de récupérer la date de l'image {image_path}")
 
 
 def charger_fichier_yaml(fichier_yaml):
