@@ -7,7 +7,7 @@ class SpeciesTable(tables.Table):
     species = tables.Column(verbose_name="Espèce")
     french_name = tables.Column(verbose_name="Nom français")
     class_field = tables.Column(verbose_name="Classe")
-    arder = tables.Column(verbose_name="Ordre")
+    order = tables.Column(verbose_name="Ordre")
     family = tables.Column(verbose_name="Famille")
     year = tables.Column(verbose_name="Année")
     day = tables.Column(verbose_name="Jour")

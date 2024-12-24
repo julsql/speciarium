@@ -21,7 +21,7 @@ from django.conf.urls.static import static
 from main.core.home.internal.home_view import home
 from main.core.errors.internal.errors_view import error_500_view, error_404_view
 
-#handler500 = error_500_view
+handler500 = error_500_view
 handler404 = error_404_view
 
 urlpatterns = [

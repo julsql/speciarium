@@ -50,7 +50,8 @@ def get_info(image_path):
         logger.error(str(e))
         raise e
 
-    infos["nom latin"] = f"{genre} {espece}"
+    latin_name = f"{genre} {espece}"
+    infos["nom latin"] = latin_name
     infos["genre"] = genre
     infos["espèce"] = espece
     infos["note"] = note
@@ -65,7 +66,7 @@ def get_info(image_path):
     infos["photo"] = photo
 
     try:
-        sp_class, order, family = get_species_details(infos["nom latin"])
+        sp_class, order, family = get_species_details(latin_name)
     except Exception as e:
         sp_class, order, family = '', '', ''
         logger.error(e)
@@ -74,7 +75,7 @@ def get_info(image_path):
     infos["ordre"] = order
 
     try:
-        common_name = get_common_name(infos["nom latin"])
+        common_name = get_common_name(latin_name)
     except Exception as e:
         common_name = ''
         logger.error(e)
@@ -114,6 +115,7 @@ def images_in_folder(folder_path, all_image_path=None):
 
 def extraire_informations(path):
     title = os.path.basename(path).split('.')[0]
+    title = title.replace('  ', ' ')
     value = title.split(' ')
     if len(value) == 2 or len(value) == 3:
         return value[0], value[1], ''
@@ -164,6 +166,9 @@ def trouver_continent(pays):
     return ''
 
 def get_common_name(latin_name):
+    if latin_name.split(" ")[1] == "x":
+        latin_name = latin_name.split(" ")[0]
+
     url = "https://api.inaturalist.org/v1/taxa"
     params = {"q": latin_name, "locale": "fr"}
 
@@ -180,6 +185,9 @@ def get_common_name(latin_name):
     raise ValueError("Error getting common_name")
 
 def get_species_details(latin_name):
+    if latin_name.split(" ")[1] == "x":
+        latin_name = latin_name.split(" ")[0]
+
     sp = species.name_suggest(q=latin_name)
     sp_class = ''
     order = ''

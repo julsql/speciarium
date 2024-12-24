@@ -1,5 +1,4 @@
-- accents
-- relire et corriger code
+- corriger images
 - group by
 
 - mise en page (CSS)

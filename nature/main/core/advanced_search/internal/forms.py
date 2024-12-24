@@ -14,6 +14,5 @@ class SpeciesSearchForm(forms.Form):
     continent = forms.CharField(max_length=255, required=False, label="Continent")
     country = forms.CharField(max_length=255, required=False, label="Pays")
     region = forms.CharField(max_length=255, required=False, label="Région")
-    place = forms.CharField(max_length=255, required=False, label="Lieu")
     title = forms.CharField(max_length=255, required=False, label="Titre")
     note = forms.CharField(widget=forms.Textarea, required=False, label="Note")

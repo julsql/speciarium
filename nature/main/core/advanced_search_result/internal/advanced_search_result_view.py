@@ -1,45 +1,35 @@
 from django_tables2 import RequestConfig
-
 from main.core.advanced_search_result.internal.table import SpeciesTable
 from main.models.species import Species
 
-
 def advanced_search_result(request, form):
-
         queryset = Species.objects.all()
 
-        # Filtrer en fonction des critères du formulaire
         if form.is_valid():
-                if form.cleaned_data.get('latin_name'):
-                        queryset = queryset.filter(latin_name__icontains=form.cleaned_data['latin_name'])
-                if form.cleaned_data.get('genus'):
-                        queryset = queryset.filter(genus__icontains=form.cleaned_data['genus'])
-                if form.cleaned_data.get('species'):
-                        queryset = queryset.filter(species__icontains=form.cleaned_data['species'])
-                if form.cleaned_data.get('french_name'):
-                        queryset = queryset.filter(french_name__icontains=form.cleaned_data['french_name'])
-                if form.cleaned_data.get('family'):
-                        queryset = queryset.filter(family__icontains=form.cleaned_data['family'])
-                if form.cleaned_data.get('class_field'):
-                        queryset = queryset.filter(class_field__icontains=form.cleaned_data['class_field'])
-                if form.cleaned_data.get('order'):
-                        queryset = queryset.filter(order__icontains=form.cleaned_data['order'])
-                if form.cleaned_data.get('year'):
-                        queryset = queryset.filter(year__icontains=form.cleaned_data['year'])
-                if form.cleaned_data.get('day'):
-                        queryset = queryset.filter(day__icontains=form.cleaned_data['day'])
-                if form.cleaned_data.get('continent'):
-                        queryset = queryset.filter(continent__icontains=form.cleaned_data['continent'])
-                if form.cleaned_data.get('country'):
-                        queryset = queryset.filter(country__icontains=form.cleaned_data['country'])
-                if form.cleaned_data.get('region'):
-                        queryset = queryset.filter(region__icontains=form.cleaned_data['region'])
-                if form.cleaned_data.get('place'):
-                        queryset = queryset.filter(place__icontains=form.cleaned_data['place'])
-                if form.cleaned_data.get('title'):
-                        queryset = queryset.filter(title__icontains=form.cleaned_data['title'])
-                if form.cleaned_data.get('note'):
-                        queryset = queryset.filter(note__icontains=form.cleaned_data['note'])
+                # Mapping of form field names to model field names
+                filter_mappings = {
+                        'latin_name': 'latin_name__icontains',
+                        'genus': 'genus__icontains',
+                        'species': 'species__icontains',
+                        'french_name': 'french_name__icontains',
+                        'class_field': 'class_field__icontains',
+                        'order': 'order__icontains',
+                        'family': 'family__icontains',
+                        'year': 'year__icontains',
+                        'day': 'day__icontains',
+                        'continent': 'continent__icontains',
+                        'country': 'country__icontains',
+                        'region': 'region__icontains',
+                        'title': 'title__icontains',
+                        'note': 'note__icontains',
+                }
+
+                # Dynamically filter the queryset based on form data
+                for form_field, model_field in filter_mappings.items():
+                        value = form.cleaned_data.get(form_field)
+                        if value:
+                                queryset = queryset.filter(**{model_field: value})
+
         table = SpeciesTable(queryset)
         RequestConfig(request, paginate={"per_page": 10}).configure(table)
         return table
