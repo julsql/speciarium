@@ -1,10 +1,15 @@
 from django.db.models import Min
-
+import unicodedata
 from django_tables2 import RequestConfig
 
 from main.core.advanced_search_result.internal.group_concat import GroupConcat
 from main.core.advanced_search_result.internal.table import SpeciesTable
 from main.models.species import Species
+
+def remove_accents(input_str):
+    nfkd_form = unicodedata.normalize('NFKD', input_str.lower())
+    return ''.join([c for c in nfkd_form if not unicodedata.combining(c)])
+
 
 def advanced_search_result(request, form):
     queryset = Species.objects.all()
@@ -27,7 +32,6 @@ def advanced_search_result(request, form):
             'note': 'note__icontains',
         }
 
-        # Dynamically filter the queryset based on form data
         for form_field, model_field in filter_mappings.items():
             value = form.cleaned_data.get(form_field)
             if value:
@@ -40,23 +44,27 @@ def advanced_search_result(request, form):
     ).annotate(
         min_year=Min('year'),
         year_list=GroupConcat('year', delimiter=','),
-        day_list=GroupConcat('day', delimiter=','),
+        date_list=GroupConcat('day', delimiter=','),
         continent_list=GroupConcat('continent', delimiter=','),
         first_continent=Min('continent'),
         country_list=GroupConcat('country', delimiter=','),
+        first_country=Min('country'),
         region_list=GroupConcat('region', delimiter=','),
+        first_region=Min('region'),
         note_list=GroupConcat('note', delimiter=','),
         photo_list=GroupConcat('photo', delimiter=','),
         thumbnail_list=GroupConcat('thumbnail', delimiter=','),
     )
 
     total_results = queryset.count()
+
     queryset = list(queryset)
 
     for entry in queryset:
+
         images = []
         year_list = entry['year_list'].split(',')
-        day_list = entry['day_list'].split(',')
+        date_list = entry['date_list'].split(',')
         continent_list = entry['continent_list'].split(',')
         country_list = entry['country_list'].split(',')
         region_list = entry['region_list'].split(',')
@@ -65,7 +73,7 @@ def advanced_search_result(request, form):
         thumbnail_list = entry['thumbnail_list'].split(',')
         for i in range(len(year_list)):
             image = {'year': year_list[i],
-                     'day': day_list[i],
+                     'date': date_list[i],
                      'continent': continent_list[i],
                      'country': country_list[i],
                      'region': region_list[i],
@@ -77,10 +85,12 @@ def advanced_search_result(request, form):
         entry['image1'] = images[0]
         entry['image2'] = images[1] if len(images) > 1 else None
         entry['image3'] = images[2] if len(images) > 2 else None
-        if entry['day_list']:
-            entry['day_list'] = set(day_list)
         if entry['continent_list']:
             entry['continent_list'] = set(continent_list)
+        if entry['country_list']:
+            entry['country_list'] = set(country_list)
+        if entry['region_list']:
+            entry['region_list'] = set(region_list)
 
 
     # Table rendering with pagination

@@ -161,7 +161,6 @@ def trouver_continent(pays):
     for continent, pays_par_continent in contenu_fichier.items():
         if pays.lower() in (pays_nom.lower() for pays_nom in pays_par_continent):
             return continent
-    print(pays)
     return ''
 
 def get_common_name(latin_name):
