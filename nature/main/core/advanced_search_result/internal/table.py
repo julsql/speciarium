@@ -14,7 +14,7 @@ def create_thumbnail_column(image_number):
                     ({{{{ record.image{image_number}.region }}}})
                 {{% endif %}}
                 <br>
-                {{{{ record.image{image_number}.note }}}}"
+                {{{{ record.image{image_number}.details }}}}"
                 alt="{{{{ record.latin_name }}}}"
             >
         {{% endif %}}

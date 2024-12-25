@@ -8,28 +8,29 @@ def add_data(value: list[dict[str, str]]) -> None:
     objects = []
     for row in value:
         species = Species(
-            latin_name=row["nom latin"],
-            genus=row["genre"],
-            species=row["espèce"],
-            french_name=row["nom français"],
-            class_field=row["classe"],
-            order_field=row["ordre"],
-            family=row["famille"],
-            year=row["année"],
-            day=row["date"],
+            latin_name=row["latin_name"],
+            genus=row["genus"],
+            species=row["species"],
+            french_name=row["french_name"],
+            kingdom=row["kingdom"],
+            class_field=row["class_field"],
+            order_field=row["order_field"],
+            family=row["family"],
+            year=row["year"],
+            date=row["date"],
             continent=row["continent"],
-            country=row["pays"],
-            region=row["région"],
+            country=row["country"],
+            region=row["region"],
             photo=row["photo"],
-            thumbnail=row["vignette"],
-            note=row["note"],
+            thumbnail=row["thumbnail"],
+            details=row["details"],
         )
         try:
             species.full_clean()  # Validation avant création
             objects.append(species)
         except ValidationError as e:
             logger.error(row)
-            logger.error(f"Erreur de validation pour {row['nom latin']}: {str(e)}")
+            logger.error(f"Erreur de validation pour {row['latin_name']}: {str(e)}")
 
     if objects:
         Species.objects.bulk_create(objects)

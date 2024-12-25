@@ -36,50 +36,51 @@ def get_info(image_path):
     infos = {}
 
     try:
-        pays, region, continent = get_location_from_path(image_path)
+        country, region, continent = get_location_from_path(image_path)
     except ValueError as e:
         logger.error(str(e))
         raise e
-    infos["pays"] = pays
+    infos["country"] = country
     infos["continent"] = continent
-    infos["région"] = region
+    infos["region"] = region
 
     try:
-        genre, espece, note = extraire_informations(image_path)
+        genus, species, details = extraire_informations(image_path)
     except ValueError as e:
         logger.error(str(e))
         raise e
 
-    latin_name = f"{genre} {espece}"
-    infos["nom latin"] = latin_name
-    infos["genre"] = genre
-    infos["espèce"] = espece
-    infos["note"] = note
+    latin_name = f"{genus} {species}"
+    infos["latin_name"] = latin_name
+    infos["genus"] = genus
+    infos["species"] = species
+    infos["details"] = details
 
     try:
-        vignette = create_vignette(image_path)
+        thumbnail = create_thumbnail(image_path)
         photo = create_small_image(image_path)
     except Exception as e:
         logger.error(str(e))
         raise e
-    infos["vignette"] = vignette
+    infos["thumbnail"] = thumbnail
     infos["photo"] = photo
 
     try:
-        sp_class, order, family = get_species_details(latin_name)
+        kingdom, sp_class, order, family = get_species_details(latin_name)
     except Exception as e:
-        sp_class, order, family = '', '', ''
+        kingdom, sp_class, order, family = '', '', '', ''
         logger.error(e)
-    infos["famille"] = family
-    infos["classe"] = sp_class
-    infos["ordre"] = order
+    infos["kingdom"] = kingdom
+    infos["class_field"] = sp_class
+    infos["order_field"] = order
+    infos["family"] = family
 
     try:
         common_name = get_common_name(latin_name)
     except Exception as e:
         common_name = ''
         logger.error(e)
-    infos["nom français"] = common_name
+    infos["french_name"] = common_name
 
     try:
         date, year = get_date_taken(image_path)
@@ -88,7 +89,7 @@ def get_info(image_path):
         raise e
 
     infos["date"] = date
-    infos["année"] = year
+    infos["year"] = year
 
     return infos
 
@@ -122,7 +123,7 @@ def extraire_informations(path):
     elif len(value) > 3:
         return value[0], value[1], ' '.join(value[2:-1])
     else:
-        raise ValueError(f"{title} ne correspond pas au format attendu Genre espèce (note) identifiant")
+        raise ValueError(f"{title} ne correspond pas au format attendu Genre espèce (détails) identifiant")
 
 def normaliser_chaine(chaine):
     return unicodedata.normalize('NFC', chaine)
@@ -187,19 +188,22 @@ def get_species_details(latin_name):
         latin_name = latin_name.split(" ")[0]
 
     sp = species.name_suggest(q=latin_name)
+    kingdom = ''
     sp_class = ''
     order = ''
     family= ''
 
     if len(sp) == 0:
         raise ValueError(f"Pas d'info pour {latin_name}")
+    if 'kingdomKey' in sp[0]:
+        kingdom = sp[0]['higherClassificationMap'][str(sp[0]['kingdomKey'])]
     if 'classKey' in sp[0]:
         sp_class = sp[0]['higherClassificationMap'][str(sp[0]['classKey'])]
     if 'orderKey' in sp[0]:
         order = sp[0]['higherClassificationMap'][str(sp[0]['orderKey'])]
     if 'familyKey' in sp[0]:
         family = sp[0]['higherClassificationMap'][str(sp[0]['familyKey'])]
-    return sp_class, order, family
+    return kingdom, sp_class, order, family
 
 
 def petite_path(image_path):
@@ -227,7 +231,7 @@ def create_small_image(image_path):
     return output_path.replace(str(MEDIA_ROOT) + "/", str(MEDIA_URL))
 
 
-def create_vignette(image_path):
+def create_thumbnail(image_path):
     output_path = vignette_path(image_path)
     resize_image(image_path, output_path, 300)
     return output_path.replace(str(MEDIA_ROOT) + "/", str(MEDIA_URL))
