@@ -6,19 +6,11 @@
             {{ form.latin_name }}
         </div>
         <div class="col-md-4">
-            {{ form.genus.label_tag }}
-            {{ form.genus }}
-        </div>
-        <div class="col-md-4">
-            {{ form.species.label_tag }}
-            {{ form.species }}
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-4">
             {{ form.french_name.label_tag }}
             {{ form.french_name }}
         </div>
+        </div>
+    <div class="row">
         <div class="col-md-4">
             {{ form.class_field.label_tag }}
             {{ form.class_field }}
@@ -27,34 +19,81 @@
             {{ form.order_field.label_tag }}
             {{ form.order_field }}
         </div>
-    </div>
-    <div class="row">
         <div class="col-md-4">
             {{ form.family.label_tag }}
             {{ form.family }}
         </div>
+
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            {{ form.continent.label_tag }}
+            {{ form.continent }}
+            {% if form.continent.errors %}
+            <div class="text-danger">
+                {{ form.continent.errors }}
+            </div>
+            {% endif %}
+        </div>
+        <div class="col-md-4">
+            {{ form.country.label_tag }}
+            {{ form.country }}
+
+            {% if form.country.errors %}
+            <div class="text-danger">
+                {{ form.country.errors }}
+            </div>
+            {% endif %}
+        </div>
+        <div class="col-md-4">
+            {{ form.region.label_tag }}
+            {{ form.region }}
+
+            {% if form.region.errors %}
+            <div class="text-danger">
+                {{ form.region.errors }}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    <div class="row">
         <div class="col-md-4">
             {{ form.year.label_tag }}
             {{ form.year }}
+            {% if form.year.errors %}
+            <div class="text-danger">
+                {{ form.year.errors }}
+            </div>
+            {% endif %}
         </div>
         <div class="col-md-4">
             {{ form.date.label_tag }}
             {{ form.date }}
         </div>
     </div>
-    <div class="row">
-        <div class="col-md-4">
-            {{ form.continent.label_tag }}
-            {{ form.continent }}
-        </div>
-        <div class="col-md-4">
-            {{ form.country.label_tag }}
-            {{ form.country }}
-        </div>
-        <div class="col-md-4">
-            {{ form.region.label_tag }}
-            {{ form.region }}
-        </div>
-    </div>
     <button type="submit" class="btn btn-primary mt-3">Rechercher</button>
 </form>
+
+<datalist id="continent-list">
+    {% for continent in continents %}
+    <option value="{{ continent }}">
+        {% endfor %}
+</datalist>
+
+<datalist id="year-list">
+    {% for year in years %}
+    <option value="{{ year }}">
+        {% endfor %}
+</datalist>
+
+<datalist id="country-list">
+    {% for country in countries %}
+    <option value="{{ country }}">
+        {% endfor %}
+</datalist>
+
+<datalist id="region-list">
+    {% for region in regions %}
+    <option value="{{ region }}">
+        {% endfor %}
+</datalist>

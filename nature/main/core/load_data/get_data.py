@@ -147,7 +147,7 @@ def get_date_taken(image_path):
     if exif and 36867 in exif:
         timestamp = exif[36867]
         date_taken = datetime.strptime(timestamp, "%Y:%m:%d %H:%M:%S")
-        return date_taken.strftime("%d/%m/%Y"), date_taken.strftime("%Y")
+        return date_taken.strftime("%Y-%m-%d"), date_taken.strftime("%Y")
     raise ValueError(f"Impossible de récupérer la date de l'image {image_path}")
 
 

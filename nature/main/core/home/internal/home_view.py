@@ -6,7 +6,15 @@ from main.core.advanced_search_result.internal.advanced_search_result_view impor
 
 
 def home(request: HttpRequest) -> HttpResponse:
-    form = advanced_search(request)
-    table, total_results = advanced_search_result(request, form)
-    value = {'form': form, 'table': table, 'total_results': total_results}
+    form, continents, years, countries, regions = advanced_search(request)
+    value = {'form': form,
+             'continents': continents,
+             'years': years,
+             'countries': countries,
+             'regions': regions}
+
+    if form.is_valid():
+        table, total_results = advanced_search_result(request, form)
+        value.update({'table': table, 'total_results': total_results})
+
     return render(request, 'home/module.html', value)

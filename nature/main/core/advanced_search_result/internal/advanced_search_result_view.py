@@ -1,19 +1,11 @@
 from django.db.models import Min
-import unicodedata
 from django_tables2 import RequestConfig
 
 from main.core.advanced_search_result.internal.group_concat import GroupConcat
 from main.core.advanced_search_result.internal.table import SpeciesTable
 from main.models.species import Species
 
-def remove_accents(input_str):
-    nfkd_form = unicodedata.normalize('NFKD', input_str.lower())
-    return ''.join([c for c in nfkd_form if not unicodedata.combining(c)])
-
 def filter_queryset(queryset, form, filter_mappings):
-    """
-    Apply filters to the queryset based on form data and mappings.
-    """
     for form_field, model_field in filter_mappings.items():
         value = form.cleaned_data.get(form_field)
         if value:
@@ -22,9 +14,6 @@ def filter_queryset(queryset, form, filter_mappings):
 
 
 def annotate_queryset(queryset):
-    """
-    Add grouping and aggregation annotations to the queryset.
-    """
     return queryset.values(
         'latin_name', 'genus', 'species', 'french_name',
         'class_field', 'order_field', 'family'
@@ -45,9 +34,6 @@ def annotate_queryset(queryset):
 
 
 def transform_entry(entry):
-    """
-    Transform each entry into a more structured format.
-    """
     images = []
     year_list = entry['year_list'].split(',')
     date_list = entry['date_list'].split(',')
@@ -85,9 +71,6 @@ def transform_entry(entry):
 
 
 def process_queryset(queryset):
-    """
-    Transform all queryset entries.
-    """
     queryset = list(queryset)
     for entry in queryset:
         transform_entry(entry)
@@ -95,18 +78,12 @@ def process_queryset(queryset):
 
 
 def configure_table(request, queryset):
-    """
-    Render the table with pagination.
-    """
     table = SpeciesTable(queryset)
     RequestConfig(request, paginate={"per_page": 10}).configure(table)
     return table
 
 
 def advanced_search_result(request, form):
-    """
-    Main function to handle advanced search results.
-    """
     queryset = Species.objects.all()
     filter_mappings = {
         'latin_name': 'latin_name__icontains',
@@ -116,11 +93,11 @@ def advanced_search_result(request, form):
         'class_field': 'class_field__icontains',
         'order_field': 'order_field__icontains',
         'family': 'family__icontains',
-        'year': 'year__icontains',
+        'year': 'year',
         'date': 'date__icontains',
-        'continent': 'continent__icontains',
-        'country': 'country__icontains',
-        'region': 'region__icontains',
+        'continent': 'continent',
+        'country': 'country',
+        'region': 'region',
         'details': 'details__icontains',
     }
 

@@ -7,7 +7,7 @@ def create_thumbnail_column(image_number):
             <img src="{{{{ record.image{image_number}.thumbnail }}}}"
                 class="thumbnail"
                 data-full="{{{{ record.image{image_number}.photo }}}}"
-                data-title="{{{{ record.latin_name }}}}"
+                data-title="{{{{ record.french_name }}}} - <i>{{{{ record.latin_name }}}}</i>"
                 data-info="Photo prise le {{{{ record.image{image_number}.date }}}}
                 en {{{{ record.image{image_number}.country }}}}
                 {{% if record.image{image_number}.region %}}
@@ -24,7 +24,6 @@ def create_thumbnail_column(image_number):
         template_code=template,
         verbose_name=f"Photo {image_number}"
     )
-
 
 class SpeciesTable(tables.Table):
     latin_name = tables.Column(verbose_name="Nom latin")
