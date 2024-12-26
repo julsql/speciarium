@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.db.models import Min
 from django_tables2 import RequestConfig
 
@@ -32,6 +34,8 @@ def annotate_queryset(queryset):
         thumbnail_list=GroupConcat('thumbnail', delimiter=','),
     )
 
+def convert_date_format(date):
+    return datetime.strptime(date, '%Y-%m-%d').strftime('%d/%m/%Y')
 
 def transform_entry(entry):
     images = []
@@ -47,7 +51,7 @@ def transform_entry(entry):
     for i in range(len(year_list)):
         images.append({
             'year': year_list[i],
-            'date': date_list[i],
+            'date': convert_date_format(date_list[i]),
             'continent': continent_list[i],
             'country': country_list[i],
             'region': region_list[i],
@@ -81,6 +85,8 @@ def configure_table(request, queryset):
     table = SpeciesTable(queryset)
     RequestConfig(request, paginate={"per_page": 10}).configure(table)
     return table
+
+
 
 
 def advanced_search_result(request, form):

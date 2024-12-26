@@ -20,27 +20,27 @@
         <div id="image-title"></div>
         <img id="popup-img" src="" alt="poisson"/>
         <div id="image-info"></div>
-        <button class="popup_button close" id="close-popup">&times;</button>
-        <button class="popup_button prev" id="prev-image">←</button>
-        <button class="popup_button next" id="next-image">→</button>
+        <button class="popup_button close" id="close-popup">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="white">
+                <path d="M18 6L12 12L6 6L4.59 7.41L10.59 13.41L4.59 19.41L6 21L12 15L18 21L19.41 19.41L13.41 13.41L19.41 7.41L18 6Z" />
+            </svg>
+        </button>
+        <button class="popup_button prev" id="prev-image">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="white">
+                <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
+            </svg>
+        </button>
+        <button class="popup_button next" id="next-image">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="white">
+                <path d="M8.59 16.59L10 18l6-6-6-6-1.41 1.41L13.17 12z"/>
+            </svg>
+        </button>
     </div>
 </div>
 
 {% block style %}
 <link rel="stylesheet" href="{% static 'main/assets/image_popup.css' %}" />
-
-<style>
-     .table-container {
-        overflow-x: auto;
-     }
-     #total-species p {
-         margin-bottom: 0;
-     }
-     .thumbnail {
-         max-height: 100px;
-         max-width: 150px;
-     }
-</style>
+<link rel="stylesheet" href="{% static 'main/assets/table.css' %}" />
 {% endblock %}
 
 {% block javascript %}

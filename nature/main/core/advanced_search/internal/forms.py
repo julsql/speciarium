@@ -4,12 +4,10 @@ from main.models.species import Species
 
 
 class SpeciesSearchForm(forms.Form):
-    latin_name = forms.CharField(max_length=255, required=False, label="Nom latin")
-    genus = forms.CharField(max_length=255, required=False, label="Genre")
-    species = forms.CharField(max_length=255, required=False, label="Espèce")
+    latin_name = forms.CharField(max_length=255, required=False, label="Nom latin", widget=forms.TextInput(attrs={"class": "italic-field"}))
     french_name = forms.CharField(max_length=255, required=False, label="Nom vernaculaire")
-    class_field = forms.CharField(max_length=255, required=False, label="Classe")
-    order_field = forms.CharField(max_length=255, required=False, label="Ordre")
+    class_field = forms.CharField(max_length=255, required=False, label="Classe", widget=forms.TextInput(attrs={"class": "italic-field"}))
+    order_field = forms.CharField(max_length=255, required=False, label="Ordre", widget=forms.TextInput(attrs={"class": "italic-field"}))
     family = forms.CharField(max_length=255, required=False, label="Famille")
     year = forms.IntegerField(required=False, label="Année", widget=forms.TextInput(attrs={'list': 'year-list'}))
     date = forms.DateField(required=False, widget=forms.TextInput(attrs={'type': 'date'}), label="Date")
