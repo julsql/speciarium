@@ -7,14 +7,14 @@
 }
 h1 {
     font-size: 30px;
-    margin-top: 20px;
-    margin-left: 10px;
     color: white;
 }
 
 .mt-5 {
     margin-top: 0!important;
     margin-bottom: 20px;
+    margin-left: 20px;
+    margin-right: 20px;
 }
 
 html, body {
@@ -22,10 +22,36 @@ html, body {
     min-height: 100%;
 }
 body{
-    display: flex;
     justify-content: center;
     background: linear-gradient(#30cfd0, #330867);
 }
+
+header {
+    display: flex;
+    justify-content: space-between;
+    margin: 20px;
+}
+
 .italic-field {
     font-style: italic;
+}
+
+.logout {
+    margin: auto 0;
+}
+
+.logout button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    color: #fff;
+    border-radius: 5px;
+    background-color: rgb(55, 55, 55);
+    transition: all 0.3s linear;
+    cursor: pointer;
+    padding: 10px;
+}
+.logout button svg{
+    margin-right: 8px;
 }

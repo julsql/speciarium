@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from pathlib import Path
 from decouple import config
+from django.utils.translation import gettext_lazy as _
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -30,6 +31,7 @@ ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0', '***REMOVED***', 'nature.j
 # Application definition
 
 INSTALLED_APPS = [
+    'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -57,6 +59,7 @@ TEMPLATES = [
         'DIRS': [
            BASE_DIR / 'main/core/advanced_search/templates',
            BASE_DIR / 'main/core/advanced_search_result/templates',
+           BASE_DIR / 'main/core/login/templates',
            BASE_DIR / 'main/core/home/templates',
            BASE_DIR / 'main/core/errors/templates',
         ],
@@ -116,6 +119,14 @@ USE_I18N = True
 USE_TZ = True
 
 APPEND_SLASH = True
+
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
+)
+
+AUTH_USER_MODEL = 'main.AppUser'
+AUTHENTICATION_FAILURE = _('Veuillez entrer un nom d\'utilisateur et un mot de passe valides. Notez que les deux champs peuvent être sensibles à la casse.')
+LOGOUT_REDIRECT_URL = '/'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/

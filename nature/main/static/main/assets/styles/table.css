@@ -60,7 +60,3 @@ table {
 .table thead a:hover {
     color: lightgray;
 }
-.container {
-    max-width: none;
-    width: 95%;
-}
