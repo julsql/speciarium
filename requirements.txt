@@ -5,3 +5,4 @@ PyYAML==6.0.2
 pillow==11.0.0
 django-tables2==2.7.1
 python-decouple==3.8
+gunicorn==23.0.0

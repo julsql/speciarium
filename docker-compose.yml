@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  django:
+    build:
+      context: .
+    container_name: nature
+    ports:
+      - "8002:8000"
+    volumes:
+      - ./nature/media:/app/nature/media
+    environment:
+      - DEBUG=True
+    working_dir: /app/nature
+    command: gunicorn config.wsgi:application --bind 0.0.0.0:8000
