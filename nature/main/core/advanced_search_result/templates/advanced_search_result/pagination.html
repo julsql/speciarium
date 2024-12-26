@@ -8,7 +8,7 @@
         {% block pagination.previous %}
         <li class="previous">
             <a href="{% querystring table.prefixed_page_field=table.page.previous_page_number %}">
-                {% trans 'Précédent' %}
+                {% trans '<' %}
             </a>
         </li>
         {% endblock pagination.previous %}
@@ -37,7 +37,7 @@
         {% block pagination.next %}
         <li class="next">
             <a href="{% querystring table.prefixed_page_field=table.page.next_page_number %}">
-                {% trans 'Suivant' %}
+                {% trans '>' %}
             </a>
         </li>
         {% endblock pagination.next %}
