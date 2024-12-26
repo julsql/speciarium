@@ -14,7 +14,7 @@ let currentIndex = 0;
 rows.forEach(row => {
     row.addEventListener("click", (event) => {
         if (event.target.tagName === "IMG") {
-            console.log("coucou")
+            disableScroll(false);
             const groupImages = Array.from(row.querySelectorAll("img"));
             currentGroup = groupImages; // Récupérer les URLs des grandes images
             currentIndex = groupImages.indexOf(event.target); // Trouver l'image cliquée
@@ -60,6 +60,7 @@ function showPrevImage() {
 
 // Fonction pour fermer la pop up
 function closePopup() {
+    disableScroll(true);
     popup.style.display = 'none';
     currentGroup = [];
 }
@@ -97,10 +98,19 @@ document.addEventListener('keydown', (e) => {
     }
 });
 
-// Empêcher de scroll dans le tableau en touchant sur les flèches gauche/droite
-document.addEventListener("keydown", (event) => {
+// Désactiver le défilement avec les touches fléchées
+function disableScrollKeys(event) {
     const keysToPrevent = ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "PageUp", "PageDown", "Home", "End"];
     if (keysToPrevent.includes(event.key)) {
-        event.preventDefault(); // Empêche le comportement par défaut
+        event.preventDefault(); // Empêche le défilement par défaut
     }
-});
+}
+
+// Blocage des flêches
+function disableScroll(disable) {
+    if (disable) {
+        document.removeEventListener("keydown", disableScrollKeys);
+    } else {
+        document.addEventListener("keydown", disableScrollKeys);
+    }
+}
