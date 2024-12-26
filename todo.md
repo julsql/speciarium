@@ -1,6 +1,7 @@
-- formulaire avec multiple valeurs
+- formulaire avec multiples valeurs
 - authentication
 - déploiement
+- plusieurs tables : celle des espèces et celle des photos
 
 - vérifier présence espèce et ne pas refetch toutes les données à chaque fois
 - Vérifier ajout dans la base

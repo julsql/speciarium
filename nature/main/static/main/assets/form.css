@@ -1,4 +1,4 @@
-.container form{
+.container .formulaire{
     position: relative;
     margin: 20px auto 0 auto;
     max-width: 1100px;
@@ -7,55 +7,84 @@
     border-radius: 7px;
     padding: 20px;
 }
+
+.row {
+    --bs-gutter-x: 1.5rem;
+    --bs-gutter-y: 0;
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: calc(-1 * var(--bs-gutter-y));
+    margin-right: calc(-.5 * var(--bs-gutter-x));
+    margin-left: calc(-.5 * var(--bs-gutter-x));
+}
+.row > * {
+    padding-left: calc(var(--bs-gutter-x) * .5);
+}
 .mb-4 {
     margin-bottom: 0!important;
 }
-.container form .form{
+
+button, input, optgroup, select, textarea {
+    font-size: inherit;
+}
+
+th {
+    text-align: inherit;
+}
+
+@media (min-width: 768px) {
+.col-md-4 {
+    flex: 0 0 auto;
+    width: 33.33333333%;
+}
+}
+
+.container .formulaire .form{
     position: absolute;
     background-color: #fff;
     transition: 0.3s ease;
 }
-.container form .form.second{
+.container .formulaire .formulaire.second{
     opacity: 0;
     pointer-events: none;
     transform: translateX(100%);
 }
-form.secActive .form.second{
+.formulaire.secActive .formulaire.second{
     opacity: 1;
     pointer-events: auto;
     transform: translateX(0);
 }
-form.secActive .form.first{
+.formulaire.secActive .formulaire.first{
     opacity: 0;
     pointer-events: none;
     transform: translateX(-100%);
 }
-.container form .title{
+.container .formulaire .title{
     display: block;
     font-size: 16px;
     font-weight: 500;
     margin: 6px 0 8px 0;
     color: #333;
 }
-.container form .fields{
+.container .formulaire .fields{
     display: flex;
     align-items: center;
     justify-content: space-between;
     flex-wrap: wrap;
 }
-form .fields input{
+.formulaire .fields input{
     display: flex;
     width: calc(100% / 3 - 15px);
     flex-direction: column;
     margin: 4px 0;
 }
-input label{
+input label {
     font-size: 12px;
     font-weight: 500;
     color: #2e2e2e;
 }
 
-input, select{
+.formulaire input, .formulaire select {
     outline: none;
     font-size: 14px;
     font-weight: 400;
@@ -69,18 +98,18 @@ input, select{
     max-width: 300px;
     margin: 3px 0;
 }
-input :focus,
-input select:focus{
+.formulaire input :focus,
+.formulaire input select:focus{
     box-shadow: 0 3px 6px rgba(0,0,0,0.13);
 }
-input select,
-input[type="date"]{
+.formulaire input select,
+.formulaire input[type="date"]{
     color: #707070;
 }
-input[type="date"]:valid{
+.formulaire input[type="date"]:valid{
     color: #333;
 }
-.container form button, .backBtn{
+.container .formulaire button, .backBtn{
     display: flex;
     align-items: center;
     justify-content: center;
@@ -97,44 +126,72 @@ input[type="date"]:valid{
     transition: all 0.3s linear;
     cursor: pointer;
 }
-.container form .btnText{
+.container .formulaire .btnText{
     font-size: 14px;
     font-weight: 400;
 }
-.container form button:hover{
+.container .formulaire button:hover{
     background-color: rgb(70, 70, 70);
 }
-form button i,
-form .backBtn i{
+.formulaire button i,
+.formulaire .backBtn i{
     margin: 0 6px;
 }
-form .backBtn i{
+.formulaire .backBtn i{
     transform: rotate(180deg);
 }
-form .buttons{
+.formulaire .buttons{
     display: flex;
     align-items: center;
 }
-form .buttons button , .backBtn{
+.formulaire .buttons button , .backBtn{
     margin-right: 14px;
 }
-form p {
+.formulaire p {
     margin-bottom: 0;
 }
 
 @media (max-width: 750px) {
-    .container form{
+    .container .formulaire{
         overflow-y: scroll;
     }
-    .container form::-webkit-scrollbar{
+    .container .formulaire::-webkit-scrollbar{
         display: none;
     }
-    form .fields input{
+    .formulaire .fields input{
         width: calc(100% / 2 - 15px);
     }
 }
 @media (max-width: 300px) {
-    form .fields input{
+    .formulaire .fields input{
         width: 100%;
     }
+}
+
+.input-container {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+    max-width: 300px;
+}
+
+.input-container input[type="date"] {
+    padding-right: 30px; /* Laissez de la place pour la croix */
+    font-size: 14px;
+}
+
+.input-container .clear-btn {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #999;
+    font-size: 16px;
+    display: none;
+    transition: color 0.2s ease-in-out;
+}
+
+.input-container .clear-btn:hover {
+    color: #333;
 }

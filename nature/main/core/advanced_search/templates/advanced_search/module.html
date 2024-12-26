@@ -1,35 +1,54 @@
 {% load static %}
 
-<form method="get" class="mb-4">
+<form method="get" class="mb-4 form">
+    <div class="formulaire">
     <div class="row">
         <div class="col-md-4">
             <p>{{ form.latin_name.label }}</p>
-            {{ form.latin_name }}
+            <div class="input-container">
+                {{ form.latin_name }}
+                <span class="clear-btn">&#x2715;</span>
+            </div>
         </div>
         <div class="col-md-4">
             <p>{{ form.french_name.label }}</p>
-            {{ form.french_name }}
+            <div class="input-container">
+                {{ form.french_name }}
+                <span class="clear-btn">&#x2715;</span>
+            </div>
         </div>
         </div>
     <div class="row">
         <div class="col-md-4">
             <p>{{ form.class_field.label }}</p>
-            {{ form.class_field }}
+            <div class="input-container">
+                {{ form.class_field }}
+                <span class="clear-btn">&#x2715;</span>
+            </div>
         </div>
         <div class="col-md-4">
             <p>{{ form.order_field.label }}</p>
-            {{ form.order_field }}
+            <div class="input-container">
+                {{ form.order_field }}
+                <span class="clear-btn">&#x2715;</span>
+            </div>
         </div>
         <div class="col-md-4">
             <p>{{ form.family.label }}</p>
-            {{ form.family }}
+            <div class="input-container">
+                {{ form.family }}
+                <span class="clear-btn">&#x2715;</span>
+            </div>
         </div>
 
     </div>
     <div class="row">
         <div class="col-md-4">
             <p>{{ form.continent.label }}</p>
-            {{ form.continent }}
+            <div class="input-container">
+                {{ form.continent }}
+                <span class="clear-btn">&#x2715;</span>
+            </div>
             {% if form.continent.errors %}
             <div class="text-danger">
                 {{ form.continent.errors }}
@@ -38,8 +57,10 @@
         </div>
         <div class="col-md-4">
             <p>{{ form.country.label }}</p>
-            {{ form.country }}
-
+            <div class="input-container">
+                {{ form.country }}
+                <span class="clear-btn">&#x2715;</span>
+            </div>
             {% if form.country.errors %}
             <div class="text-danger">
                 {{ form.country.errors }}
@@ -48,8 +69,10 @@
         </div>
         <div class="col-md-4">
             <p>{{ form.region.label }}</p>
-            {{ form.region }}
-
+            <div class="input-container">
+                {{ form.region }}
+                <span class="clear-btn">&#x2715;</span>
+            </div>
             {% if form.region.errors %}
             <div class="text-danger">
                 {{ form.region.errors }}
@@ -60,7 +83,10 @@
     <div class="row">
         <div class="col-md-4">
             <p>{{ form.year.label }}</p>
-            {{ form.year }}
+            <div class="input-container">
+                {{ form.year }}
+                <span class="clear-btn" id="clear-year">&#x2715;</span>
+            </div>
             {% if form.year.errors %}
             <div class="text-danger">
                 {{ form.year.errors }}
@@ -69,10 +95,38 @@
         </div>
         <div class="col-md-4">
             <p>{{ form.date.label }}</p>
-            {{ form.date }}
+            <div class="input-container">
+                {{ form.date }}
+                <span class="clear-btn">&#x2715;</span>
+            </div>
         </div>
     </div>
     <button type="submit" class="btn btn-primary mt-3">Rechercher</button>
+    </div>
+
+
+        <div id="tab-header">
+            <div id="total-species">
+                {% if total_results > 1 %}
+                <p>{{total_results}} espèces trouvées.</p>
+                {% elif total_results == 1 %}
+                <p>{{total_results}} espèce trouvée.</p>
+                {% else %}
+                <p>Aucune espèce trouvée.</p>
+                {% endif %}
+            </div>
+            <div id="pagination-header">
+                {% if total_results > 10 %}
+                <select name="per_page" id="per_page" onchange="this.form.submit()">
+                    <option value="10" {% if request.GET.per_page == '10' %}selected{% endif %}>10</option>
+                    <option value="25" {% if request.GET.per_page == '25' or not request.GET.per_page %}selected{% endif %}>25</option>
+                    <option value="50" {% if request.GET.per_page == '50' %}selected{% endif %}>50</option>
+                    <option value="100" {% if request.GET.per_page == '100' %}selected{% endif %}>100</option>
+                </select>
+                {% include 'advanced_search_result/pagination.html' %}
+                {% endif %}
+            </div>
+        </div>
 </form>
 
 <datalist id="continent-list">
@@ -101,4 +155,10 @@
 
 {% block style %}
 <link rel="stylesheet" href="{% static 'main/assets/form.css' %}" />
+<link rel="stylesheet" href="{% static 'main/assets/pagination.css' %}" />
+<link rel="stylesheet" href="{% static 'main/assets/table-header.css' %}" />
+{% endblock %}
+
+{% block javascript %}
+<script src="{% static 'main/assets/form.js' %}"></script>
 {% endblock %}

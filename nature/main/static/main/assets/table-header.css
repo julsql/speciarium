@@ -1,0 +1,100 @@
+
+#tab-header {
+    display: flex;
+    justify-content: space-between;
+}
+
+#pagination-header {
+    margin: 20px 0;
+    display: flex;
+}
+
+/* Focus visuel */
+select:focus {
+    outline: none; /* Supprimer le contour par défaut */
+}
+
+/* Style pour les options */
+select option {
+    padding: 10px; /* Espacement intérieur pour chaque option */
+    font-size: 16px; /* Taille de la police */
+    color: #333; /* Couleur du texte */
+}
+
+/* Améliorer les performances sur mobile */
+@media (max-width: 768px) {
+    select {
+        font-size: 14px; /* Réduction de la taille de la police */
+        padding: 8px 12px; /* Réduction des marges internes */
+    }
+}
+
+#total-species {
+    margin: auto 0;
+    height: 50px;
+    display: table;
+}
+
+#total-species p {
+    display: table-cell;
+    vertical-align: middle;
+    font-size: 1.3rem;
+    color: white;
+}
+
+/* Style de base pour le select */
+select {
+    display: inline-block;
+    padding: 10px 15px;
+    font-size: 14px;
+    font-weight: bold;
+    color: rgb(55, 55, 55);
+    background-color: #fff;
+    border: 1px solid #dee2e6;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: all 0.2s ease-in-out;
+    appearance: none; /* Supprime l'apparence par défaut du navigateur */
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 5'%3E%3Cpath fill='%23737373' d='M2 0L0 2h4zM2 5L0 3h4z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 10px;
+    cursor: pointer;
+}
+
+/* Style au survol */
+select:hover {
+    color: #fff;
+    background-color: rgb(55, 55, 55);
+    border-color: rgb(55, 55, 55);
+}
+
+select {
+    text-align: center;
+    margin: auto 20px;
+    appearance: none; /* Supprime les flèches natives */
+    -webkit-appearance: none; /* Compatibilité avec WebKit */
+    -moz-appearance: none; /* Compatibilité avec Firefox */
+    background-image: none; /* Supprime l'icône si une image est utilisée */
+    cursor: pointer;
+}
+
+/* Style lors de la sélection (focus) */
+select:focus {
+    outline: none;
+    box-shadow: 0 0 3px rgb(70, 70, 70);
+    border-color: rgb(70, 70, 70);
+}
+
+/* Option individuelle */
+select option {
+    font-weight: normal;
+    color: rgb(55, 55, 55);
+}
+
+/* Style désactivé */
+select:disabled {
+    color: #adb5bd;
+    background-color: #e9ecef;
+    cursor: not-allowed;
+}

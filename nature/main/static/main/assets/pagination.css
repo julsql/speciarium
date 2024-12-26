@@ -1,0 +1,64 @@
+/* Style de base pour la navigation */
+nav[aria-label="Table navigation"] {
+    text-align: center;
+    margin: auto 0;
+}
+
+/* Liste des pages */
+.pagination {
+    display: inline-flex;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    border-radius: 5px;
+    overflow: hidden;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Liens individuels */
+.pagination li {
+    display: inline-block;
+    margin: 0;
+}
+
+.pagination li a, .pagination li span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    padding: 10px 15px;
+    background-color: #fff;
+    border: 1px solid #dee2e6;
+    font-size: 14px;
+    font-weight: bold;
+    transition: all 0.2s ease-in-out;
+    color: rgb(55, 55, 55);
+}
+
+/* Liens actifs */
+.pagination li a:hover {
+    color: #fff;
+    background-color: rgb(55, 55, 55);
+    border-color: rgb(55, 55, 55);
+}
+/* Liens au survol */
+.pagination li.active a {
+    color: #fff;
+    background-color: rgb(70, 70, 70);
+    border-color: rgb(70, 70, 70);
+}
+
+.pagination li .inactive:hover {
+    background-color: white;
+}
+
+/* Bordures arrondies pour la première et la dernière page */
+.pagination li:first-child a {
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+}
+
+.pagination li:last-child a {
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+}

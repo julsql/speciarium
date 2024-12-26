@@ -82,8 +82,16 @@ def process_queryset(queryset):
 
 
 def configure_table(request, queryset):
+    per_page = request.GET.get("per_page", 25)
+    try:
+        # Vérifier si per_page est un entier valide
+        per_page = int(per_page)
+        if per_page <= 0:  # Sécurité pour éviter les valeurs invalides
+            per_page = 25
+    except ValueError:
+        per_page = 25
     table = SpeciesTable(queryset)
-    RequestConfig(request, paginate={"per_page": 10}).configure(table)
+    RequestConfig(request, paginate={"per_page": per_page}).configure(table)
     return table
 
 
