@@ -1,6 +1,19 @@
+#tab-header {
+    display: flex;
+    justify-content: space-between;
+}
+
+#pagination-header {
+    margin: auto 0;
+}
+
+#total-species {
+    margin: auto 0;
+}
+
 #total-species p {
-    margin-top: 10px;
-    margin-bottom: 10px;
+    margin-top: auto;
+    margin-bottom: auto;
     font-size: 1.3rem;
     color: white;
 }

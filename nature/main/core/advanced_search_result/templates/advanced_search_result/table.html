@@ -59,48 +59,5 @@
 {% endblock table-wrapper %}
 
 {% block pagination %}
-{% if table.page and table.paginator.num_pages > 1 %}
-<nav aria-label="Table navigation">
-    <ul class="pagination">
-        {% if table.page.has_previous %}
-        {% block pagination.previous %}
-        <li class="previous">
-            <a href="{% querystring table.prefixed_page_field=table.page.previous_page_number %}">
-                {% trans 'Précédent' %}
-            </a>
-        </li>
-        {% endblock pagination.previous %}
-        {% endif %}
-        {% if table.page.has_previous or table.page.has_next %}
-        {% block pagination.range %}
-        {% for p in table.page|table_page_range:table.paginator %}
-        <li {% if p == table.page.number %}class="active"{% endif %}>
-            {% if p == '...' %}
-            <span>{{ p }}</span>
-            {% elif p >= table.page.number|add:"-2" and p <= table.page.number|add:"2" %}
-            <a href="{% querystring table.prefixed_page_field=p %}">
-                {{ p }}
-            </a>
-            {% elif p == 1 or p == table.paginator.num_pages %}
-            <a href="{% querystring table.prefixed_page_field=p %}">
-                {{ p }}
-            </a>
-            {% endif %}
-        </li>
-        {% endfor %}
-        {% endblock pagination.range %}
-        {% endif %}
-
-        {% if table.page.has_next %}
-        {% block pagination.next %}
-        <li class="next">
-            <a href="{% querystring table.prefixed_page_field=table.page.next_page_number %}">
-                {% trans 'Suivant' %}
-            </a>
-        </li>
-        {% endblock pagination.next %}
-        {% endif %}
-    </ul>
-</nav>
-{% endif %}
+{% include 'advanced_search_result/pagination.html' %}
 {% endblock pagination %}

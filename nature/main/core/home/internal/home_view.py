@@ -13,8 +13,7 @@ def home(request: HttpRequest) -> HttpResponse:
              'countries': countries,
              'regions': regions}
 
-    if form.is_valid():
-        table, total_results = advanced_search_result(request, form)
-        value.update({'table': table, 'total_results': total_results})
+    table, total_results = advanced_search_result(request, form)
+    value.update({'table': table, 'total_results': total_results})
 
     return render(request, 'home/module.html', value)

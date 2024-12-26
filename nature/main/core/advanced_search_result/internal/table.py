@@ -7,14 +7,13 @@ def create_thumbnail_column(image_number):
             <img src="{{{{ record.image{image_number}.thumbnail }}}}"
                 class="thumbnail"
                 data-full="{{{{ record.image{image_number}.photo }}}}"
-                data-title="{{{{ record.french_name }}}} - <i>{{{{ record.latin_name }}}}</i>"
-                data-info="Photo prise le {{{{ record.image{image_number}.date }}}}
-                en {{{{ record.image{image_number}.country }}}}
-                {{% if record.image{image_number}.region %}}
-                    ({{{{ record.image{image_number}.region }}}})
-                {{% endif %}}
-                <br>
-                {{{{ record.image{image_number}.details }}}}"
+                data-title="<h2>{{{{ record.french_name }}}} - <i>{{{{ record.latin_name }}}}</i></h2>"
+                data-info="
+                <p>Photo prise le {{{{ record.image{image_number}.date }}}}
+                en {{{{ record.image{image_number}.country }}}}{{% if record.image{image_number}.region %}}({{{{ record.image{image_number}.region }}}}){{% endif %}}{{% if record.image{image_number}.details %}}. {{{{ record.image{image_number}.details }}}}{{% endif %}}
+                </p>
+                
+                "
                 alt="{{{{ record.latin_name }}}}"
             >
         {{% endif %}}

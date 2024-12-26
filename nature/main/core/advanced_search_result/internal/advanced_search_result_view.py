@@ -87,8 +87,6 @@ def configure_table(request, queryset):
     return table
 
 
-
-
 def advanced_search_result(request, form):
     queryset = Species.objects.all()
     filter_mappings = {
