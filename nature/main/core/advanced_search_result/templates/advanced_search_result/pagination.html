@@ -18,12 +18,8 @@
         {% for p in table.page|table_page_range:table.paginator %}
         <li {% if p == table.page.number %}class="active"{% endif %}>
             {% if p == '...' %}
-            <span>{{ p }}</span>
-            {% elif p >= table.page.number|add:"-2" and p <= table.page.number|add:"2" %}
-            <a href="{% querystring table.prefixed_page_field=p %}">
-                {{ p }}
-            </a>
-            {% elif p == 1 or p == table.paginator.num_pages %}
+            <a href="#">{{ p }}</a>
+            {% else %}
             <a href="{% querystring table.prefixed_page_field=p %}">
                 {{ p }}
             </a>
