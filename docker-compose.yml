@@ -6,7 +6,7 @@ services:
       context: .
     container_name: nature
     ports:
-      - "8002:8000"
+      - "8003:8000"
     volumes:
       - ./nature/media:/app/nature/media
     environment:
