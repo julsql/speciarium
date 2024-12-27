@@ -12,7 +12,7 @@
     <body>
     <header>
 
-    <h1>Recherche avancée d’espèce</h1>
+    <a href="/"><h1>Recherche avancée d’espèce</h1></a>
         {% if user.is_authenticated %}
     <form class="logout" action="{% url 'logout' %}" method="post">
         {% csrf_token %}
