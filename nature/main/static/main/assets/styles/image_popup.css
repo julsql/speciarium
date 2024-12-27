@@ -28,7 +28,6 @@
     background: rgba(0, 0, 0, 0.7);
     color: white;
     max-width: 90%;
-    max-height: 90%;
     border-radius: 7px;
     display: flex;
     flex-direction: column;
@@ -52,18 +51,26 @@
     word-wrap: break-word;
     font-size: 16px;
     max-width: 100%;
+    padding-right: 10px;
+    padding-left: 10px;
 }
 
 #image-info {
     text-align: center;
     word-wrap: break-word;
-    font-size: 14px;
+    font-size: 16px;
     max-width: 100%;
     margin: auto 10px;
+    padding-right: 10px;
+    padding-left: 10px;
 }
 
 h2 {
     font-size: 20px;
+}
+
+h2 i {
+    font-size: 18px;
 }
 
 .popup_button {
@@ -89,15 +96,15 @@ button:hover {
 
 #close-popup {
     top: 27px;
-    right: -60px;
+    right: -40px;
     font-size: 30px;
 }
 
 .prev {
-    left: -60px;
+    left: -40px;
 }
 
 .next {
-    right: -60px;
+    right: -40px;
 }
 

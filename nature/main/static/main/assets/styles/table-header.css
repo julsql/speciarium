@@ -19,6 +19,7 @@ select option {
     padding: 10px; /* Espacement intérieur pour chaque option */
     font-size: 12px; /* Taille de la police */
     color: #333; /* Couleur du texte */
+    text-align: center;
 }
 
 /* Améliorer les performances sur mobile */
@@ -60,6 +61,8 @@ select {
     background-position: right 10px center;
     background-size: 10px;
     cursor: pointer;
+    height: 45px;
+    text-indent: 3px;
 }
 
 /* Style au survol */

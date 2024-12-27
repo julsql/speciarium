@@ -11,6 +11,7 @@ nav[aria-label="Table navigation"] {
     padding: 0;
     margin: 0;
     border-radius: 5px;
+    height: 45px;
     overflow: hidden;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
@@ -33,6 +34,7 @@ nav[aria-label="Table navigation"] {
     font-weight: bold;
     transition: all 0.2s ease-in-out;
     color: rgb(55, 55, 55);
+    height: 100%
 }
 
 /* Liens actifs */

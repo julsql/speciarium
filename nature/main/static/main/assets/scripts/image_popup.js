@@ -25,8 +25,8 @@ rows.forEach(row => {
                 nextImageButton.style.display = "none";
                 prevImageButton.style.display = "none";
             } else {
-                nextImageButton.style.display = "block";
-                prevImageButton.style.display = "block";
+                nextImageButton.style.display = "flex";
+                prevImageButton.style.display = "flex";
             }
         }
     });
