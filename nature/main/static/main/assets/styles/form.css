@@ -61,7 +61,7 @@ th {
 }
 .container .formulaire .title{
     display: block;
-    font-size: 16px;
+    font-size: 12px;
     font-weight: 500;
     margin: 6px 0 8px 0;
     color: #333;
@@ -79,14 +79,14 @@ th {
     margin: 4px 0;
 }
 input label {
-    font-size: 12px;
+    font-size: 10px;
     font-weight: 500;
     color: #2e2e2e;
 }
 
 .formulaire input, .formulaire select {
     outline: none;
-    font-size: 14px;
+    font-size: 12px;
     font-weight: 400;
     color: #333;
     border-radius: 5px;
@@ -127,7 +127,7 @@ input label {
     cursor: pointer;
 }
 .container .formulaire .btnText{
-    font-size: 14px;
+    font-size: 12px;
     font-weight: 400;
 }
 .container .formulaire button:hover{
@@ -177,7 +177,7 @@ input label {
 
 .input-container input[type="date"] {
     padding-right: 30px; /* Laissez de la place pour la croix */
-    font-size: 14px;
+    font-size: 12px;
 }
 
 .input-container .clear-btn {
@@ -187,7 +187,7 @@ input label {
     transform: translateY(-50%);
     cursor: pointer;
     color: #999;
-    font-size: 16px;
+    font-size: 14px;
     display: none;
     transition: color 0.2s ease-in-out;
 }

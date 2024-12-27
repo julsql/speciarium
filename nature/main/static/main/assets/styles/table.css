@@ -32,7 +32,7 @@ table {
 
 .thumbnail {
     max-height: 100px;
-    max-width: 100px;
+    max-width: 80px;
 }
 
 .table-container {

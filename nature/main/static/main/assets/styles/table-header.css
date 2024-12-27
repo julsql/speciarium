@@ -17,14 +17,14 @@ select:focus {
 /* Style pour les options */
 select option {
     padding: 10px; /* Espacement intérieur pour chaque option */
-    font-size: 16px; /* Taille de la police */
+    font-size: 12px; /* Taille de la police */
     color: #333; /* Couleur du texte */
 }
 
 /* Améliorer les performances sur mobile */
 @media (max-width: 768px) {
     select {
-        font-size: 14px; /* Réduction de la taille de la police */
+        font-size: 12px; /* Réduction de la taille de la police */
         padding: 8px 12px; /* Réduction des marges internes */
     }
 }
@@ -37,8 +37,8 @@ select option {
 
 #total-species p {
     display: table-cell;
-    vertical-align: middle;
-    font-size: 1.3rem;
+    vertical-align: bottom;
+    font-size: 16px;
     color: white;
 }
 

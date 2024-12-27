@@ -49,7 +49,7 @@ form.secActive form.first{
 }
 .container form .title{
     display: block;
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 500;
     margin: 6px 0 8px 0;
     color: #333;
@@ -74,7 +74,7 @@ input label {
 
 form input, form select {
     outline: none;
-    font-size: 14px;
+    font-size: 12px;
     font-weight: 400;
     color: #333;
     border-radius: 5px;
@@ -116,7 +116,7 @@ form input[type="date"]:valid{
     cursor: pointer;
 }
 .container form .btnText{
-    font-size: 14px;
+    font-size: 12px;
     font-weight: 400;
 }
 .container form button:hover{

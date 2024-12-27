@@ -50,20 +50,20 @@
     margin-top: 10px;
     text-align: center;
     word-wrap: break-word;
-    font-size: 1rem;
+    font-size: 16px;
     max-width: 100%;
 }
 
 #image-info {
     text-align: center;
     word-wrap: break-word;
-    font-size: 1rem;
+    font-size: 14px;
     max-width: 100%;
     margin: auto 10px;
 }
 
 h2 {
-    font-size: 24px;
+    font-size: 20px;
 }
 
 .popup_button {
