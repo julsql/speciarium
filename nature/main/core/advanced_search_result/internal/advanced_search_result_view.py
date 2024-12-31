@@ -5,7 +5,7 @@ from django_tables2 import RequestConfig
 
 from main.core.advanced_search_result.internal.group_concat import GroupConcat
 from main.core.advanced_search_result.internal.table import SpeciesTable
-from main.models.species import Species
+from main.models.photo import Photos
 
 def filter_queryset(queryset, form, filter_mappings):
     for form_field, model_field in filter_mappings.items():
@@ -17,8 +17,8 @@ def filter_queryset(queryset, form, filter_mappings):
 
 def annotate_queryset(queryset):
     return queryset.values(
-        'latin_name', 'genus', 'species', 'french_name',
-        'class_field', 'order_field', 'family'
+        'specie__latin_name', 'specie__genus', 'specie__species', 'specie__french_name',
+        'specie__class_field', 'specie__order_field', 'specie__family'
     ).annotate(
         min_year=Min('year'),
         year_list=GroupConcat('year', delimiter=','),
@@ -96,15 +96,15 @@ def configure_table(request, queryset):
 
 
 def advanced_search_result(request, form):
-    queryset = Species.objects.all()
+    queryset = Photos.objects.select_related('specie').all()
     filter_mappings = {
-        'latin_name': 'latin_name__icontains',
-        'genus': 'genus__icontains',
-        'species': 'species__icontains',
-        'french_name': 'french_name__icontains',
-        'class_field': 'class_field__icontains',
-        'order_field': 'order_field__icontains',
-        'family': 'family__icontains',
+        'latin_name': 'specie__latin_name__icontains',
+        'genus': 'specie__genus__icontains',
+        'species': 'specie__species__icontains',
+        'french_name': 'specie__french_name__icontains',
+        'class_field': 'specie__class_field__icontains',
+        'order_field': 'specie__order_field__icontains',
+        'family': 'specie__family__icontains',
         'year': 'year',
         'date': 'date__icontains',
         'continent': 'continent',

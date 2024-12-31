@@ -6,6 +6,7 @@ import requests
 from pygbif import species
 from PIL import Image
 import yaml
+
 from main.core.logger.logger import logger
 from config.settings import MEDIA_ROOT, BASE_DIR, MEDIA_URL
 
@@ -15,46 +16,86 @@ SMALL_PATH = os.path.join(MEDIA_ROOT, 'main/images/small')
 continents_yaml = os.path.join(BASE_DIR, "main/core/load_data/continents.yml")
 
 
-def get_dataset_on_each_image():
+def get_dataset_on_each_image() -> list[dict[str, str]]:
     all_image_path = images_in_folder(PHOTO_PATH)
 
     logger.info(f"Nombre d'images {len(all_image_path)}")
-    infos_all_images = []
+    info_photo = []
     i = 0
     for image_path in all_image_path:
         try:
-            infos_all_images.append(get_info(image_path))
+            photo = get_info(image_path)
+            info_photo.append(photo)
         except Exception as e:
             logger.error(e)
 
         logger.info(f"image {i}")
         i += 1
-    return infos_all_images
+    return info_photo
 
+def get_all_species_data(latin_name_list: list[str]) -> list[dict[str, str]]:
+
+    info_species = []
+    i = 0
+    for latin_name in latin_name_list:
+        try:
+            specie = get_species_data(latin_name)
+            info_species.append(specie)
+        except Exception as e:
+            logger.error(e)
+
+        logger.info(f"image {i}")
+        i += 1
+    return info_species
+
+def get_species_data(latin_name: str) -> dict:
+    infos_specie = {}
+
+    [genus, species_name] = latin_name.split(" ")
+
+    infos_specie["latin_name"] = latin_name
+    infos_specie["genus"] = genus
+    infos_specie["species"] = species_name
+
+    try:
+        kingdom, sp_class, order, family = get_species_details(latin_name)
+    except Exception as e:
+        kingdom, sp_class, order, family = '', '', '', ''
+        logger.error(e)
+    infos_specie["kingdom"] = kingdom
+    infos_specie["class_field"] = sp_class
+    infos_specie["order_field"] = order
+    infos_specie["family"] = family
+
+    # try:
+    #     common_name = get_common_name(latin_name)
+    # except Exception as e:
+    #     common_name = ''
+    #      logger.error(e)
+    # infos_specie["french_name"] = common_name
+    infos_specie["french_name"] = ''
+    return infos_specie
 
 def get_info(image_path):
-    infos = {}
+    infos_photo = {}
 
     try:
         country, region, continent = get_location_from_path(image_path)
     except ValueError as e:
         logger.error(str(e))
         raise e
-    infos["country"] = country
-    infos["continent"] = continent
-    infos["region"] = region
+    infos_photo["country"] = country
+    infos_photo["continent"] = continent
+    infos_photo["region"] = region
 
     try:
-        genus, species, details = extraire_informations(image_path)
+        latin, details = extraire_informations(image_path)
     except ValueError as e:
         logger.error(str(e))
         raise e
 
-    latin_name = f"{genus} {species}"
-    infos["latin_name"] = latin_name
-    infos["genus"] = genus
-    infos["species"] = species
-    infos["details"] = details
+    infos_photo["latin_name"] = latin
+    infos_photo["details"] = details
 
     try:
         thumbnail = create_thumbnail(image_path)
@@ -62,25 +103,8 @@ def get_info(image_path):
     except Exception as e:
         logger.error(str(e))
         raise e
-    infos["thumbnail"] = thumbnail
-    infos["photo"] = photo
-
-    try:
-        kingdom, sp_class, order, family = get_species_details(latin_name)
-    except Exception as e:
-        kingdom, sp_class, order, family = '', '', '', ''
-        logger.error(e)
-    infos["kingdom"] = kingdom
-    infos["class_field"] = sp_class
-    infos["order_field"] = order
-    infos["family"] = family
-
-    try:
-        common_name = get_common_name(latin_name)
-    except Exception as e:
-        common_name = ''
-        logger.error(e)
-    infos["french_name"] = common_name
+    infos_photo["thumbnail"] = thumbnail
+    infos_photo["photo"] = photo
 
     try:
         date, year = get_date_taken(image_path)
@@ -88,10 +112,10 @@ def get_info(image_path):
         logger.error(str(e))
         raise e
 
-    infos["date"] = date
-    infos["year"] = year
+    infos_photo["date"] = date
+    infos_photo["year"] = year
 
-    return infos
+    return infos_photo
 
 
 def is_image(image_path):
@@ -118,10 +142,11 @@ def extraire_informations(path):
     title = os.path.basename(path).split('.')[0]
     title = title.replace('  ', ' ')
     value = title.split(' ')
+    latin = f"{value[0]} {value[1]}"
     if len(value) == 2 or len(value) == 3:
-        return value[0], value[1], ''
+        return latin, ''
     elif len(value) > 3:
-        return value[0], value[1], ' '.join(value[2:-1])
+        return latin, ' '.join(value[2:-1])
     else:
         raise ValueError(f"{title} ne correspond pas au format attendu Genre espèce (détails) identifiant")
 

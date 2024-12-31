@@ -2,13 +2,16 @@
 
 from django.db import migrations
 
-from main.core.load_data.add_data import add_data
-from main.core.load_data.get_data import get_dataset_on_each_image
+from main.core.load_data.add_data import add_species, add_photos
+from main.core.load_data.get_data import get_dataset_on_each_image, get_all_species_data
 
 
 def insert_initial_data(apps, schema_editor) -> None:
-    info = get_dataset_on_each_image()
-    add_data(info)
+    info_photo = get_dataset_on_each_image()
+    latin_name_list = list({value['latin_name'] for value in info_photo})
+    info_species = get_all_species_data(latin_name_list)
+    add_species(info_species)
+    add_photos(info_photo)
 
 
 class Migration(migrations.Migration):

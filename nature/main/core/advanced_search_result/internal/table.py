@@ -27,11 +27,11 @@ def create_thumbnail_column(image_number):
 italic = {"style": "font-style: italic;"}
 
 class SpeciesTable(tables.Table):
-    latin_name = tables.Column(verbose_name="Nom latin", attrs={"td": italic})
-    french_name = tables.Column(verbose_name="Nom vernaculaire")
-    class_field = tables.Column(verbose_name="Classe", attrs={"td": italic})
-    order_field = tables.Column(verbose_name="Ordre", attrs={"td": italic})
-    family = tables.Column(verbose_name="Famille", attrs={"td": italic})
+    specie__latin_name = tables.Column(verbose_name="Nom latin", attrs={"td": italic})
+    specie__french_name = tables.Column(verbose_name="Nom vernaculaire")
+    specie__class_field = tables.Column(verbose_name="Classe", attrs={"td": italic})
+    specie__order_field = tables.Column(verbose_name="Ordre", attrs={"td": italic})
+    specie__family = tables.Column(verbose_name="Famille", attrs={"td": italic})
     min_year = tables.Column(verbose_name="Année")
     first_continent = tables.Column(visible=False)
     continent_list = tables.TemplateColumn(
@@ -72,7 +72,7 @@ class SpeciesTable(tables.Table):
     class Meta:
             model = Species
             template_name = "advanced_search_result/table.html"
-            fields = ("latin_name", "french_name", "class_field",
-                      "order_field", "family", "min_year",
+            fields = ("specie__latin_name", "specie__french_name", "specie__class_field",
+                      "specie__order_field", "specie__family", "min_year",
                       "continent_list", "country_list", "region_list",
                       "thumbnail1", "thumbnail2", "thumbnail3")

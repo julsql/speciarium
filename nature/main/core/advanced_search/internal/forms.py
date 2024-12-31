@@ -1,6 +1,6 @@
 from django import forms
 
-from main.models.species import Species
+from main.models.photo import Photos
 
 
 class SpeciesSearchForm(forms.Form):
@@ -17,10 +17,10 @@ class SpeciesSearchForm(forms.Form):
     title = forms.CharField(max_length=255, required=False, label="Titre")
     details = forms.CharField(widget=forms.Textarea, required=False, label="Détails")
 
-    continents = Species.objects.values_list('continent', flat=True).distinct().order_by('continent')
-    years = Species.objects.values_list('year', flat=True).distinct().order_by('year')
-    countries = Species.objects.values_list('country', flat=True).distinct().order_by('country')
-    regions = Species.objects.values_list('region', flat=True).distinct().order_by('region')
+    continents = Photos.objects.values_list('continent', flat=True).distinct().order_by('continent')
+    years = Photos.objects.values_list('year', flat=True).distinct().order_by('year')
+    countries = Photos.objects.values_list('country', flat=True).distinct().order_by('country')
+    regions = Photos.objects.values_list('region', flat=True).distinct().order_by('region')
 
     def clean_continent(self):
         data = self.cleaned_data.get('continent')
