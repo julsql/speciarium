@@ -2,106 +2,107 @@
 
 <form method="get" class="mb-4 form">
     <div class="formulaire">
-    <div class="row">
-        <div class="col-md-4">
-            <p>{{ form.latin_name.label }}</p>
-            <div class="input-container">
-                {{ form.latin_name }}
-                <span class="clear-btn">&#x2715;</span>
+        <span class="clear-all" id="clear-all">Tout vider &#x2715;</span>
+        <div class="row">
+            <div class="col-md-4">
+                <p>{{ form.latin_name.label }}</p>
+                <div class="input-container">
+                    {{ form.latin_name }}
+                    <span class="clear-btn">&#x2715;</span>
+                </div>
             </div>
-        </div>
-        <div class="col-md-4">
-            <p>{{ form.french_name.label }}</p>
-            <div class="input-container">
-                {{ form.french_name }}
-                <span class="clear-btn">&#x2715;</span>
+            <div class="col-md-4">
+                <p>{{ form.french_name.label }}</p>
+                <div class="input-container">
+                    {{ form.french_name }}
+                    <span class="clear-btn">&#x2715;</span>
+                </div>
             </div>
-        </div>
-        </div>
-    <div class="row">
-        <div class="col-md-4">
-            <p>{{ form.class_field.label }}</p>
-            <div class="input-container">
-                {{ form.class_field }}
-                <span class="clear-btn">&#x2715;</span>
             </div>
-        </div>
-        <div class="col-md-4">
-            <p>{{ form.order_field.label }}</p>
-            <div class="input-container">
-                {{ form.order_field }}
-                <span class="clear-btn">&#x2715;</span>
+        <div class="row">
+            <div class="col-md-4">
+                <p>{{ form.class_field.label }}</p>
+                <div class="input-container">
+                    {{ form.class_field }}
+                    <span class="clear-btn">&#x2715;</span>
+                </div>
             </div>
-        </div>
-        <div class="col-md-4">
-            <p>{{ form.family.label }}</p>
-            <div class="input-container">
-                {{ form.family }}
-                <span class="clear-btn">&#x2715;</span>
+            <div class="col-md-4">
+                <p>{{ form.order_field.label }}</p>
+                <div class="input-container">
+                    {{ form.order_field }}
+                    <span class="clear-btn">&#x2715;</span>
+                </div>
             </div>
-        </div>
+            <div class="col-md-4">
+                <p>{{ form.family.label }}</p>
+                <div class="input-container">
+                    {{ form.family }}
+                    <span class="clear-btn">&#x2715;</span>
+                </div>
+            </div>
 
-    </div>
-    <div class="row">
-        <div class="col-md-4">
-            <p>{{ form.continent.label }}</p>
-            <div class="input-container">
-                {{ form.continent }}
-                <span class="clear-btn">&#x2715;</span>
-            </div>
-            {% if form.continent.errors %}
-            <div class="text-danger">
-                {{ form.continent.errors }}
-            </div>
-            {% endif %}
         </div>
-        <div class="col-md-4">
-            <p>{{ form.country.label }}</p>
-            <div class="input-container">
-                {{ form.country }}
-                <span class="clear-btn">&#x2715;</span>
+        <div class="row">
+            <div class="col-md-4">
+                <p>{{ form.continent.label }}</p>
+                <div class="input-container">
+                    {{ form.continent }}
+                    <span class="clear-btn">&#x2715;</span>
+                </div>
+                {% if form.continent.errors %}
+                <div class="text-danger">
+                    {{ form.continent.errors }}
+                </div>
+                {% endif %}
             </div>
-            {% if form.country.errors %}
-            <div class="text-danger">
-                {{ form.country.errors }}
+            <div class="col-md-4">
+                <p>{{ form.country.label }}</p>
+                <div class="input-container">
+                    {{ form.country }}
+                    <span class="clear-btn">&#x2715;</span>
+                </div>
+                {% if form.country.errors %}
+                <div class="text-danger">
+                    {{ form.country.errors }}
+                </div>
+                {% endif %}
             </div>
-            {% endif %}
-        </div>
-        <div class="col-md-4">
-            <p>{{ form.region.label }}</p>
-            <div class="input-container">
-                {{ form.region }}
-                <span class="clear-btn">&#x2715;</span>
-            </div>
-            {% if form.region.errors %}
-            <div class="text-danger">
-                {{ form.region.errors }}
-            </div>
-            {% endif %}
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-4">
-            <p>{{ form.year.label }}</p>
-            <div class="input-container">
-                {{ form.year }}
-                <span class="clear-btn" id="clear-year">&#x2715;</span>
-            </div>
-            {% if form.year.errors %}
-            <div class="text-danger">
-                {{ form.year.errors }}
-            </div>
-            {% endif %}
-        </div>
-        <div class="col-md-4">
-            <p>{{ form.date.label }}</p>
-            <div class="input-container">
-                {{ form.date }}
-                <span class="clear-btn" id="clear-date">&#x2715;</span>
+            <div class="col-md-4">
+                <p>{{ form.region.label }}</p>
+                <div class="input-container">
+                    {{ form.region }}
+                    <span class="clear-btn">&#x2715;</span>
+                </div>
+                {% if form.region.errors %}
+                <div class="text-danger">
+                    {{ form.region.errors }}
+                </div>
+                {% endif %}
             </div>
         </div>
-    </div>
-    <button type="submit" class="btn btn-primary mt-3">Rechercher</button>
+        <div class="row">
+            <div class="col-md-4">
+                <p>{{ form.year.label }}</p>
+                <div class="input-container">
+                    {{ form.year }}
+                    <span class="clear-btn" id="clear-year">&#x2715;</span>
+                </div>
+                {% if form.year.errors %}
+                <div class="text-danger">
+                    {{ form.year.errors }}
+                </div>
+                {% endif %}
+            </div>
+            <div class="col-md-4">
+                <p>{{ form.date.label }}</p>
+                <div class="input-container">
+                    {{ form.date }}
+                    <span class="clear-btn" id="clear-date">&#x2715;</span>
+                </div>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary mt-3">Rechercher</button>
     </div>
 
 

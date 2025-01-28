@@ -204,3 +204,16 @@ input label {
 .input-container .clear-btn:hover {
     color: #333;
 }
+
+.clear-all {
+    position: absolute;
+    right: 20px;
+    cursor: pointer;
+    color: #999;
+    font-size: 14px;
+    transition: color 0.2s ease-in-out;
+}
+
+.clear-all:hover {
+    color: #333;
+}

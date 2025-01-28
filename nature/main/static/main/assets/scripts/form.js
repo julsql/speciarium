@@ -17,6 +17,14 @@ function clearInput(input, clearBtn) {
 }
 
 window.onload = function () {
+    const clearBtnAll = document.getElementById('clear-all');
+    clearBtnAll.addEventListener('click', () => {
+        inputs.forEach((input, index) => {
+            const clearBtn = clearBtns[index];
+            clearInput(input, clearBtn);
+        });
+    });
+
     inputs.forEach((input, index) => {
         const clearBtn = clearBtns[index];
         toggleClearBtn(input, clearBtn);
