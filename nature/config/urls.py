@@ -20,9 +20,12 @@ from django.contrib.auth import views as auth_views
 
 from django.conf import settings
 from django.conf.urls.static import static
+
+from main.core.get_hash.internal.get_hash_view import get_hash
 from main.core.home.internal.home_view import home
 from main.core.errors.internal.errors_view import error_500_view, error_404_view
 from main.core.login.internal.login_view import login_view
+from main.core.upload_images.internal.upload_images import upload_images
 
 handler500 = error_500_view
 handler404 = error_404_view
@@ -33,6 +36,8 @@ urlpatterns = [
     path('accounts/logout/', auth_views.LogoutView.as_view(), name='logout'),
     path('accounts/', include('django.contrib.auth.urls')),
     path('', home, name='home'),
+    path('upload-images/', upload_images, name='upload'),
+    path('hash/', get_hash, name='hash'),
 ]
 
 if settings.DEBUG:

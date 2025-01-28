@@ -15,7 +15,6 @@ def insert_initial_data(apps, schema_editor) -> None:
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ('main', '0001_initial'),
     ]

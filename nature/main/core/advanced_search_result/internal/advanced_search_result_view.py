@@ -35,12 +35,15 @@ def annotate_queryset(queryset):
     )
 
 def convert_date_format(date):
-    return datetime.strptime(date, '%Y-%m-%d').strftime('%d/%m/%Y')
+    try:
+        return datetime.strptime(date, '%Y-%m-%d').strftime('%d/%m/%Y')
+    except ValueError:
+        return ''
 
 def transform_entry(entry):
     images = []
-    year_list = entry['year_list'].split(',')
-    date_list = entry['date_list'].split(',')
+    year_list = entry['year_list'].split(',') if entry['year_list'] else []
+    date_list = entry['date_list'].split(',') if entry['date_list'] else []
     continent_list = entry['continent_list'].split(',')
     country_list = entry['country_list'].split(',')
     region_list = entry['region_list'].split(',')
@@ -48,7 +51,13 @@ def transform_entry(entry):
     details_list = entry['details_list'].split(',')
     thumbnail_list = entry['thumbnail_list'].split(',')
 
-    for i in range(len(year_list)):
+    n = len(photo_list)
+    if len(year_list) < n:
+        year_list += [''] * (n - len(year_list))
+    if len(date_list) < n:
+        date_list += [''] * (n - len(date_list))
+
+    for i in range(n):
         images.append({
             'year': year_list[i],
             'date': convert_date_format(date_list[i]),

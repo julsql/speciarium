@@ -29,7 +29,14 @@ class AppLogger(logging.Logger):
     def critical(self, msg, *args, **kwargs) -> None:
         self._log_with_isbn(logging.CRITICAL, msg, args, **kwargs)
 
+class NoDebugTagFilter(logging.Filter):
+    def filter(self, record):
+        # Exclure les logs contenant "tag:"
+        return "tag:" not in record.getMessage()
+
+
 logging.setLoggerClass(AppLogger)
+logging.getLogger("app_logger").addFilter(NoDebugTagFilter())
 logger = logging.getLogger("app_logger")
 
 os.makedirs(os.path.dirname(LOGS_FILE), exist_ok=True)

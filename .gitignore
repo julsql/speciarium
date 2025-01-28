@@ -1,6 +1,7 @@
 nature/media/
 nature/database
 **/.env
+nature/originales/
 
 # ide
 .idea/

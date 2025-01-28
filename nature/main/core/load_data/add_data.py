@@ -45,7 +45,8 @@ def add_photos(info_photo: list[dict[str, str]]) -> None:
             photo=row["photo"],
             thumbnail=row["thumbnail"],
             details=row["details"],
-            specie=specie
+            specie=specie,
+            hash=row["hash"],
         )
         try:
             photo.full_clean()

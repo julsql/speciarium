@@ -62,6 +62,7 @@ TEMPLATES = [
            BASE_DIR / 'main/core/login/templates',
            BASE_DIR / 'main/core/home/templates',
            BASE_DIR / 'main/core/errors/templates',
+           BASE_DIR / 'main/core/upload_images/templates',
         ],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -146,3 +147,16 @@ MEDIA_ROOT = BASE_DIR / "media/"
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Taille maximale de fichier en Mo (ici 200 Mo)
+DATA_UPLOAD_MAX_MEMORY_SIZE = 209715200 # default 2621440 (i.e. 2.5 MB)
+
+# Taille maximale d'un fichier de formulaire multipart (ici 200 Mo)
+FILE_UPLOAD_MAX_MEMORY_SIZE = 209715200 # default 2621440 (i.e. 2.5 MB)
+
+DATA_UPLOAD_MAX_NUMBER_FILES = 1000 # default 100 files
+
+CSRF_USE_SESSIONS = False  # Le cookie CSRF doit être envoyé séparément, pas stocké dans la session
+CSRF_COOKIE_NAME = 'csrftoken'  # Nom du cookie (par défaut : 'csrftoken')
+CSRF_COOKIE_HTTPONLY = False    # Le cookie doit être accessible par le client (Postman)
+CSRF_COOKIE_SECURE = False      # Mettez `True` uniquement si vous utilisez HTTPS

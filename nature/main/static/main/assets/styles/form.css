@@ -8,6 +8,15 @@
     padding: 20px;
 }
 
+.errorlist {
+    list-style-type: none;
+}
+
+.errorlist li {
+    font-size: 12px;
+    font-style: italic;
+}
+
 .row {
     --bs-gutter-x: 1.5rem;
     --bs-gutter-y: 0;
@@ -131,7 +140,7 @@ input label {
     font-weight: 400;
 }
 .container .formulaire button:hover{
-    background-color: rgb(70, 70, 70);
+    background-color: black;
 }
 .formulaire button i,
 .formulaire .backBtn i{

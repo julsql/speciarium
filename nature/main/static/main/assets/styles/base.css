@@ -36,15 +36,50 @@ header {
     margin: 20px;
 }
 
+.actions {
+    display: flex;
+    height: 45px;
+}
+
 .italic-field {
     font-style: italic;
 }
 
-.logout {
-    margin: auto 0;
+#folderInput {
+    display: none;
 }
 
-.logout button {
+.upload-button:hover {
+    background-color: black;
+}
+
+.upload-button svg {
+    width: 24px;
+    height: 24px;
+}
+
+.upload-button {
+    margin-right: 10px;
+    width: 45px;
+}
+
+.upload-info {
+    display: flex;
+}
+
+.upload-info p {
+    margin: auto 10px auto auto ;
+    max-width: 200px;
+    text-align: end;
+}
+
+.loading {
+    height: 25px;
+    margin: auto 10px auto auto ;
+    display: none;
+}
+
+.logout button, .upload-button {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -55,6 +90,7 @@ header {
     transition: all 0.3s linear;
     cursor: pointer;
     padding: 10px;
+    height: 45px;
 }
 .logout button svg{
     margin-right: 8px;

@@ -16,24 +16,24 @@ function clearInput(input, clearBtn) {
     toggleClearBtn(input, clearBtn); // Met à jour la visibilité de la croix après effacement
 }
 
-// Ajouter les événements sur tous les champs
-inputs.forEach((input, index) => {
-    const clearBtn = clearBtns[index];
-    toggleClearBtn(input, clearBtn);
-    input.addEventListener('input', () => toggleClearBtn(input, clearBtn));
-    clearBtn.addEventListener('click', () => clearInput(input, clearBtn));
-});
-
-
-const inputDate = document.getElementById('id_date');
-const clearBtnDate = document.getElementById('clear-date');
 window.onload = function () {
-    console.log(inputDate.value)
+    inputs.forEach((input, index) => {
+        const clearBtn = clearBtns[index];
+        toggleClearBtn(input, clearBtn);
+        input.addEventListener('input', () => toggleClearBtn(input, clearBtn));
+        clearBtn.addEventListener('click', () => clearInput(input, clearBtn));
+    });
+
+    const inputDate = document.getElementById('id_date');
+    const clearBtnDate = document.getElementById('clear-date');
+    inputDate.addEventListener('input', () => {
+        clearBtnDate.style.display = 'inline-block';
+    });
+    if (clearBtnDate) {
+        clearBtnDate.addEventListener('click', () => {
+            inputDate.value = '';
+            clearBtnDate.style.display = 'none';
+        });
+    }
 }
-inputDate.addEventListener('input', () => {
-    clearBtnDate.style.display = 'inline-block';
-});
-clearBtnDate.addEventListener('click', () => {
-    inputDate.value = '';
-    clearBtnDate.style.display = 'none';
-});
+
