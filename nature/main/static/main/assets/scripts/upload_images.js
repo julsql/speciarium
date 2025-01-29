@@ -79,7 +79,7 @@ document.getElementById("folderInput")
             if (csrfToken) {
                 headers.append("X-CSRFToken", csrfToken);
             }
-            const response = await fetch("http://localhost:8000/upload-images/", {
+            const response = await fetch(`${API_BASE_URL}/upload-images/`, {
                 method: "POST",
                 headers: headers,
                 body: formData,
@@ -114,7 +114,7 @@ function getCsrfToken() {
 }
 
 async function getKeys() {
-    const response = await fetch("http://localhost:8000/hash/", {
+    const response = await fetch(`${API_BASE_URL}/hash/`, {
         method: "GET",
     });
 
