@@ -1,4 +1,6 @@
-import { API_URL } from "./config.js";
+const API_BASE_URL = window.location.hostname === "localhost"
+    ? "http://localhost:8000"
+    : "https://especes.julsql.fr";
 
 function getTimestamp(file) {
     return new Promise((resolve, reject) => {
@@ -81,7 +83,7 @@ document.getElementById("folderInput")
             if (csrfToken) {
                 headers.append("X-CSRFToken", csrfToken);
             }
-            const response = await fetch(`${API_URL}/upload-images/`, {
+            const response = await fetch(`${API_BASE_URL}/upload-images/`, {
                 method: "POST",
                 headers: headers,
                 body: formData,
@@ -116,7 +118,7 @@ function getCsrfToken() {
 }
 
 async function getKeys() {
-    const response = await fetch(`${API_URL}/hash/`, {
+    const response = await fetch(`${API_BASE_URL}/hash/`, {
         method: "GET",
     });
 
