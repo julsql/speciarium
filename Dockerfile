@@ -10,13 +10,13 @@ WORKDIR /app
 COPY . /app/
 
 RUN mkdir /root/.etetoolkit && \
-    mv -rf /app/etetoolkit/* /root/.etetoolkit/ && \
+    mv /app/etetoolkit/* /root/.etetoolkit/ && \
     pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt && \
     mkdir -p /app/nature/database /app/nature/media && \
     chmod -R 755 /app/nature/media && \
     chown -R www-data:www-data /app/nature/media/ && \
-    python3 nature/manage.py migrate && \
+    python3 nature/manage.py migrate
 
 EXPOSE 8000
 

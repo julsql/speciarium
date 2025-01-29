@@ -2,6 +2,7 @@ nature/media/
 nature/database
 **/.env
 nature/originales/
+etetoolkit/
 
 # ide
 .idea/
