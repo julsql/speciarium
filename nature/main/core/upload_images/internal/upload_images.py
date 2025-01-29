@@ -5,7 +5,7 @@ import tempfile
 
 from django.http import JsonResponse
 
-from config.settings import MEDIA_URL, MEDIA_ROOT
+from config.settings import MEDIA_ROOT
 from main.core.load_data.add_data import add_species, add_photos
 from main.core.load_data.get_data import get_info, get_all_species_data
 from main.core.logger.logger import logger
