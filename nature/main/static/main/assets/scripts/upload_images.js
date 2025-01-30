@@ -47,45 +47,43 @@ document.getElementById("folderInput")
 
         for (const file of files) {
             try {
-            const ext = file.name.split('.').pop().toLowerCase();
+                const ext = file.name.split('.').pop().toLowerCase();
+                if (file.name[0] !== "." && ["jpg", "jpeg", "png", "gif", "bmp", "webp"].includes(ext)) {
+                    const cleanedPath = file.webkitRelativePath.split('/').slice(1).join('/');
+                    const hash = await calculateHash(file);
+                    const key = `${cleanedPath}:${hash}`;
+                    localKeys.push(key);
 
-            if (["jpg", "jpeg", "png", "gif", "bmp", "webp"].includes(ext)) {
-                const cleanedPath = file.webkitRelativePath.split('/').slice(1).join('/');
-                const hash = await calculateHash(file);
-                const key = `${cleanedPath}:${hash}`;
-                localKeys.push(key);
-
-                if (!remoteKeys.includes(key)) {
-                    // l'image n'existe pas dans la base de données
-                    console.log(key);
-                    const resizedFile = await resizeImage(file, 500, 500);
-                    hasFilesToUpload = true;
-                    formData.append('images', resizedFile);
-                    const timestamp = await getTimestamp(file)
-                    metadata.push({
-                        filepath: cleanedPath,
-                        hash: hash,
-                        datetime: timestamp,
-                    })
+                    if (!remoteKeys.includes(key)) {
+                        // l'image n'existe pas dans la base de données
+                        console.log(key);
+                        const resizedFile = await resizeImage(file, 500, 500);
+                        hasFilesToUpload = true;
+                        formData.append('images', resizedFile);
+                        const timestamp = await getTimestamp(file)
+                        metadata.push({
+                            filepath: cleanedPath,
+                            hash: hash,
+                            datetime: timestamp,
+                        })
+                    }
                 }
-            }
             } catch (e) {
-                alert(`Problème avec l'image : ${file.name}`);
+                alert(`Problème avec l'image : ${file.webkitRelativePath}`);
             }
         }
-        upload = upload && window.confirm(`Envoyer ${metadata.length} photo ?`);
 
-        if (upload) {
-            formData.append("metadata", JSON.stringify(metadata));
+        formData.append("metadata", JSON.stringify(metadata));
+        const imageToDelete = getImageToDelete(remoteKeys, localKeys);
+        formData.append("imageToDelete", JSON.stringify(imageToDelete));
 
-            const imageToDelete = getImageToDelete(remoteKeys, localKeys);
-            formData.append("imageToDelete", JSON.stringify(imageToDelete));
-
-            if (imageToDelete.length === 0 && !hasFilesToUpload) {
-                info.textContent = "Aucune image n'a changé";
-                info.style.display = "block";
-                loading.style.display = "none";
-            } else {
+        if (imageToDelete.length === 0 && !hasFilesToUpload) {
+            info.textContent = "Aucune image n'a changé";
+            info.style.display = "block";
+            loading.style.display = "none";
+        } else {
+            upload = upload && window.confirm(`Envoyer ${metadata.length} photos et supprimer ${imageToDelete.length} photos ?`);
+            if (upload) {
                 const csrfToken = getCsrfToken();
                 const headers = new Headers();
 
@@ -104,7 +102,6 @@ document.getElementById("folderInput")
                     info.textContent = "Images ajoutées";
                 } else {
                     info.textContent = "Erreur lors de l'envoi des images";
-                    // alert("Failed to upload images.");
                 }
             }
             info.style.display = "block";
