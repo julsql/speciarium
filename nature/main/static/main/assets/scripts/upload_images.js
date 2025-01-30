@@ -25,6 +25,10 @@ function getTimestamp(file) {
     });
 }
 
+function normaliserUnicode(texte) {
+    return texte.normalize("NFC"); // Convertit toutes les variations en une forme unique
+}
+
 document.getElementById("folderInput")
     .addEventListener("change", async (event) => {
 
@@ -35,7 +39,6 @@ document.getElementById("folderInput")
 
         // récupération des clefs uniques
         const remoteKeys = await getKeys();
-
         const files = event.target.files;
 
         const formData = new FormData();
@@ -49,7 +52,8 @@ document.getElementById("folderInput")
             try {
                 const ext = file.name.split('.').pop().toLowerCase();
                 if (file.name[0] !== "." && ["jpg", "jpeg", "png", "gif", "bmp", "webp"].includes(ext)) {
-                    const cleanedPath = file.webkitRelativePath.split('/').slice(1).join('/');
+                    let cleanedPath = file.webkitRelativePath.split('/').slice(1).join('/');
+                    cleanedPath = normaliserUnicode(cleanedPath);
                     const hash = await calculateHash(file);
                     const key = `${cleanedPath}:${hash}`;
                     localKeys.push(key);

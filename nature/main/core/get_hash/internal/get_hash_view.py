@@ -1,3 +1,5 @@
+import unicodedata
+
 from django.http import HttpResponseBadRequest, HttpRequest, JsonResponse
 
 from config.settings import MEDIA_URL
@@ -14,5 +16,8 @@ def get_hash(request: HttpRequest):
         return JsonResponse({"keys": result})
     return HttpResponseBadRequest("Requête GET demandée")
 
+def normaliser_unicode(texte):
+    return unicodedata.normalize('NFC', texte)
+
 def get_title_from_path(path: str):
-    return path.replace(SMALL_PATH, "")
+    return normaliser_unicode(path.replace(SMALL_PATH, ""))
