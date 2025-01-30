@@ -4,6 +4,8 @@ nature/database
 nature/originales/
 etetoolkit/
 
+nature/main/migrations/0003_create_users.py
+
 # ide
 .idea/
 .vscode/

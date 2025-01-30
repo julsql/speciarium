@@ -48,7 +48,7 @@ def get_dataset_from_images_path(images_path, path_to_remove) -> list[dict[str, 
 
 
 def get_all_species_data(latin_name_list: list[str]) -> list[dict[str, str]]:
-    species_already_added = [specie['latin_name'] for specie in Species.objects.all().values()]
+    species_already_added = Species.objects.values_list('latin_name')
     info_species = []
     i = 0
     for latin_name in latin_name_list:

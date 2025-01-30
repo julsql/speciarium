@@ -92,12 +92,7 @@ def save_image(file, filepath):
 def add_photos_in_base(filepaths):
     info_photo = get_dataset_from_images_path(filepaths, TEMP_PATH)
     latin_name_list = list({value['latin_name'] for value in info_photo})
-    already_add_species = Species.objects.values_list('latin_name')
-    species_to_add = []
-    for latin_name in latin_name_list:
-        if latin_name not in already_add_species:
-            species_to_add.append(latin_name)
-    info_species = get_all_species_data(species_to_add)
+    info_species = get_all_species_data(latin_name_list)
     add_species(info_species)
     add_photos(info_photo)
 
