@@ -43,7 +43,10 @@ document.getElementById("folderInput")
         let hasFilesToUpload = false;
         const metadata = [];
 
+        let upload = true;
+
         for (const file of files) {
+            try {
             const ext = file.name.split('.').pop().toLowerCase();
 
             if (["jpg", "jpeg", "png", "gif", "bmp", "webp"].includes(ext)) {
@@ -66,40 +69,47 @@ document.getElementById("folderInput")
                     })
                 }
             }
-        }
-        formData.append("metadata", JSON.stringify(metadata));
-
-        const imageToDelete = getImageToDelete(remoteKeys, localKeys);
-        formData.append("imageToDelete", JSON.stringify(imageToDelete));
-
-        if (imageToDelete.length === 0 && !hasFilesToUpload) {
-            info.textContent = "Aucune image n'a changé";
-            info.style.display = "block";
-            loading.style.display = "none";
-        } else {
-            const csrfToken = getCsrfToken();
-            const headers = new Headers();
-
-            if (csrfToken) {
-                headers.append("X-CSRFToken", csrfToken);
+            } catch (e) {
+                alert(`Problème avec l'image : ${file.name}`);
             }
-            const response = await fetch(`${API_BASE_URL}/upload-images/`, {
-                method: "POST",
-                headers: headers,
-                body: formData,
-            });
+        }
+        upload = upload && window.confirm(`Envoyer ${metadata.length} photo ?`);
 
-            if (response.ok) {
-                const result = await response.json();
-                console.log(result)
-                info.textContent = "Images ajoutées";
+        if (upload) {
+            formData.append("metadata", JSON.stringify(metadata));
+
+            const imageToDelete = getImageToDelete(remoteKeys, localKeys);
+            formData.append("imageToDelete", JSON.stringify(imageToDelete));
+
+            if (imageToDelete.length === 0 && !hasFilesToUpload) {
+                info.textContent = "Aucune image n'a changé";
+                info.style.display = "block";
+                loading.style.display = "none";
             } else {
-                info.textContent = "Erreur lors de l'envoi des images";
-                // alert("Failed to upload images.");
+                const csrfToken = getCsrfToken();
+                const headers = new Headers();
+
+                if (csrfToken) {
+                    headers.append("X-CSRFToken", csrfToken);
+                }
+                const response = await fetch(`${API_BASE_URL}/upload-images/`, {
+                    method: "POST",
+                    headers: headers,
+                    body: formData,
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    console.log(result)
+                    info.textContent = "Images ajoutées";
+                } else {
+                    info.textContent = "Erreur lors de l'envoi des images";
+                    // alert("Failed to upload images.");
+                }
             }
             info.style.display = "block";
-            loading.style.display = "none";
         }
+        loading.style.display = "none";
     });
 
 function getImageToDelete(remoteKeys, localKeys) {
@@ -156,7 +166,7 @@ async function resizeImage(file, maxWidth, maxHeight) {
             const canvas = document.createElement('canvas');
             const ctx = canvas.getContext('2d');
 
-            let { width, height } = img;
+            let {width, height} = img;
 
             // Calculer les nouvelles dimensions tout en respectant les proportions
             if (width > height) {
@@ -181,7 +191,7 @@ async function resizeImage(file, maxWidth, maxHeight) {
             // Convertir le canvas en un fichier Blob
             canvas.toBlob(
                 (blob) => {
-                    resolve(new File([blob], file.name, { type: file.type }));
+                    resolve(new File([blob], file.name, {type: file.type}));
                 },
                 file.type,
                 0.9 // Qualité (0.9 pour 90%)
