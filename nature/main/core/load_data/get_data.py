@@ -17,7 +17,6 @@ from main.models.species import Species
 ## Initialisation lib ete3, décommenter ces lignes
 ## import ssl
 ## ssl._create_default_https_context = ssl._create_unverified_context
-## from ete3 import NCBITaxa
 ## ncbi = NCBITaxa()
 ## ncbi.update_taxonomy_database()
 

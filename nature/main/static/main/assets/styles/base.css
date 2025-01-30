@@ -63,10 +63,6 @@ header {
     width: 45px;
 }
 
-.upload-button {
-    display: none !important;
-}
-
 .upload-info {
     display: flex;
 }
