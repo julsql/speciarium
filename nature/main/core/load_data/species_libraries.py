@@ -36,6 +36,25 @@ def get_common_name(latin_name):
     raise ValueError("Error getting common_name")
 
 def get_species_details_1(latin_name):
+    sp = species.name_suggest(q=latin_name)
+    kingdom = ''
+    sp_class = ''
+    order = ''
+    family= ''
+
+    if len(sp) > 0:
+        if 'kingdomKey' in sp[0]:
+            kingdom = sp[0]['higherClassificationMap'][str(sp[0]['kingdomKey'])]
+        if 'classKey' in sp[0]:
+            sp_class = sp[0]['higherClassificationMap'][str(sp[0]['classKey'])]
+        if 'orderKey' in sp[0]:
+            order = sp[0]['higherClassificationMap'][str(sp[0]['orderKey'])]
+        if 'familyKey' in sp[0]:
+            family = sp[0]['higherClassificationMap'][str(sp[0]['familyKey'])]
+    return sp_class, order, family, kingdom
+
+
+def get_species_details_2(latin_name):
     sp_class = ''
     order = ''
     family= ''
@@ -63,24 +82,6 @@ def get_species_details_1(latin_name):
 
     return sp_class, order, family, kingdom
 
-def get_species_details_2(latin_name):
-    sp = species.name_suggest(q=latin_name)
-    kingdom = ''
-    sp_class = ''
-    order = ''
-    family= ''
-
-    if len(sp) > 0:
-        if 'kingdomKey' in sp[0]:
-            kingdom = sp[0]['higherClassificationMap'][str(sp[0]['kingdomKey'])]
-        if 'classKey' in sp[0]:
-            sp_class = sp[0]['higherClassificationMap'][str(sp[0]['classKey'])]
-        if 'orderKey' in sp[0]:
-            order = sp[0]['higherClassificationMap'][str(sp[0]['orderKey'])]
-        if 'familyKey' in sp[0]:
-            family = sp[0]['higherClassificationMap'][str(sp[0]['familyKey'])]
-    return sp_class, order, family, kingdom
-
 def merge_tuple(tuple1, tuple2):
     return tuple(
         b if b else a
@@ -95,6 +96,8 @@ def get_species_details(latin_name):
         # des valeurs manquent
         result2 = get_species_details_2(latin_name)
         result = merge_tuple(result, result2)
+    if result[-1] == "Metazoa":
+        result = (*result[:-1], "Animalia")
 
     return result
 
