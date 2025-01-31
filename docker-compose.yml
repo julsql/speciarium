@@ -10,7 +10,7 @@ services:
     volumes:
       - ./nature/media:/app/nature/media
       - ./nature/database:/app/nature/database
-      - ./etetoolkit:/app/etetoolkit
+      - ./etetoolkit:/root/.etetoolkit/
     environment:
       - DEBUG=False
     working_dir: /app/nature

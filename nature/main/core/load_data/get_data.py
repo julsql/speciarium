@@ -186,7 +186,7 @@ def normaliser_chaine(chaine):
 
 def get_location_from_path(image_path, rm_path):
     folders = image_path.replace(rm_path + "/", '').split(os.sep)
-    logger.error(folders)
+    logger.info(folders)
     if len(folders) > 2:  # Exemple : pays/région/photo.jpeg
         pays = normaliser_chaine(folders[0])
         region = normaliser_chaine(folders[1])
