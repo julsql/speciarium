@@ -41,10 +41,6 @@ folderInput.addEventListener("change", async (event) => {
 
         // récupération des clefs uniques
         const remoteKeys = await getKeys();
-        const remoteFile = []
-        remoteKeys.forEach((e) => {remoteFile.push(e.split(':')[0])})
-        const remoteHash = []
-        remoteKeys.forEach((e) => {remoteHash.push(e.split(':')[1])})
 
         const files = event.target.files;
 
@@ -65,7 +61,7 @@ folderInput.addEventListener("change", async (event) => {
                     const key = `${cleanedPath}:${hash}`;
                     localKeys.push(key);
 
-                    if (!remoteHash.includes(hash)) {
+                    if (!remoteKeys.includes(key)) {
                         // l'image n'existe pas dans la base de données
                         console.log(key);
                         const resizedFile = await resizeImage(file, 500, 500);
