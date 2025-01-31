@@ -9,6 +9,8 @@ services:
       - "8003:8000"
     volumes:
       - ./nature/media:/app/nature/media
+      - ./nature/database:/app/nature/database
+      - ./etetoolkit:/app/etetoolkit
     environment:
       - DEBUG=False
     working_dir: /app/nature

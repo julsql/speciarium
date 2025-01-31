@@ -142,8 +142,8 @@ folderInput.addEventListener("change", async (event) => {
                     console.log(response)
                     info.textContent = "Erreur lors de l'envoi des images";
                 }
+                info.style.display = "block";
             }
-            info.style.display = "block";
         }
         loading.style.display = "none";
     });
