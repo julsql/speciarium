@@ -24,24 +24,16 @@ class SpeciesSearchForm(forms.Form):
 
     def clean_continent(self):
         data = self.cleaned_data.get('continent')
-        if data and data not in self.continents:
-            raise forms.ValidationError("Veuillez sélectionner un continent valide.")
         return data
 
     def clean_year(self):
         data = self.cleaned_data.get('year')
-        if data and data not in self.years:
-            raise forms.ValidationError("Veuillez sélectionner une année valide.")
         return data
 
     def clean_country(self):
         data = self.cleaned_data.get('country')
-        if data and data not in self.countries:
-            raise forms.ValidationError("Veuillez sélectionner un pays valide.")
         return data
 
     def clean_region(self):
         data = self.cleaned_data.get('region')
-        if data and data not in self.regions:
-            raise forms.ValidationError("Veuillez sélectionner une région valide.")
         return data
