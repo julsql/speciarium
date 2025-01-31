@@ -51,7 +51,7 @@ def get_species_details_1(latin_name):
             order = sp[0]['higherClassificationMap'][str(sp[0]['orderKey'])]
         if 'familyKey' in sp[0]:
             family = sp[0]['higherClassificationMap'][str(sp[0]['familyKey'])]
-    return sp_class, order, family, kingdom
+    return kingdom, sp_class, order, family
 
 
 def get_species_details_2(latin_name):
@@ -80,7 +80,7 @@ def get_species_details_2(latin_name):
         if "order" in taxonomy:
             order = taxonomy['order']
 
-    return sp_class, order, family, kingdom
+    return kingdom, sp_class, order, family
 
 def merge_tuple(tuple1, tuple2):
     return tuple(
@@ -96,8 +96,8 @@ def get_species_details(latin_name):
         # des valeurs manquent
         result2 = get_species_details_2(latin_name)
         result = merge_tuple(result, result2)
-    if result[-1] == "Metazoa":
-        result = (*result[:-1], "Animalia")
+    if result[0] == "Metazoa":
+        result = ("Animalia", *result[1:])
 
     return result
 
