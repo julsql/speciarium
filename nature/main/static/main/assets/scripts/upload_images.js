@@ -28,10 +28,36 @@ function getTimestamp(file) {
 function normaliserUnicode(texte) {
     return texte.normalize("NFC"); // Convertit toutes les variations en une forme unique
 }
+
+async function getFormDataSize(formData) {
+    const entries = Array.from(formData.entries());
+    const boundary = "----WebKitFormBoundary" + Math.random().toString(16);
+
+    let body = "";
+
+    for (const [key, value] of entries) {
+        body += `--${boundary}\r\n`;
+        if (value instanceof File) {
+            body += `Content-Disposition: form-data; name="${key}"; filename="${value.name}"\r\n`;
+            body += `Content-Type: ${value.type || "application/octet-stream"}\r\n\r\n`;
+            body += await value.arrayBuffer().then(buf => new Uint8Array(buf)).then(bytes => new TextDecoder().decode(bytes));
+        } else {
+            body += `Content-Disposition: form-data; name="${key}"\r\n\r\n`;
+            body += value;
+        }
+        body += "\r\n";
+    }
+
+    body += `--${boundary}--\r\n`;
+
+    return new Blob([body]).size;
+}
+
 const folderInput = document.getElementById("folderInput");
 folderInput.addEventListener("click", () => {
     folderInput.value = ""; // Réinitialise avant la sélection
 });
+
 folderInput.addEventListener("change", async (event) => {
 
         const info = document.getElementById("upload-info");
@@ -83,6 +109,9 @@ folderInput.addEventListener("change", async (event) => {
         const imageToDelete = getImageToDelete(remoteKeys, localKeys);
         formData.append("imageToDelete", JSON.stringify(imageToDelete));
 
+        const size = await getFormDataSize(formData);
+        console.log(`Taille des données à envoyer : ${size} bytes`);
+
         if (imageToDelete.length === 0 && !hasFilesToUpload) {
             info.textContent = "Aucune image n'a changé";
             info.style.display = "block";
@@ -96,6 +125,7 @@ folderInput.addEventListener("change", async (event) => {
                 if (csrfToken) {
                     headers.append("X-CSRFToken", csrfToken);
                 }
+
                 const response = await fetch(`${API_BASE_URL}/upload-images/`, {
                     method: "POST",
                     headers: headers,
@@ -106,6 +136,8 @@ folderInput.addEventListener("change", async (event) => {
                     const result = await response.json();
                     console.log(result)
                     info.textContent = "Images ajoutées";
+                } else if (response.status === 413) {
+                    info.textContent = "Quantité de données trop lourde";
                 } else {
                     console.log(response)
                     info.textContent = "Erreur lors de l'envoi des images";
