@@ -107,6 +107,7 @@ folderInput.addEventListener("change", async (event) => {
                     console.log(result)
                     info.textContent = "Images ajoutées";
                 } else {
+                    console.log(response)
                     info.textContent = "Erreur lors de l'envoi des images";
                 }
             }

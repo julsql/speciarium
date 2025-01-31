@@ -105,9 +105,9 @@ def get_dataset_from_images_path(images_path, path_to_remove) -> list[dict[str, 
     info_photo = []
     i = 0
     for images_data in images_path:
-        (image_path, datetime, hash) = images_data
+        (image_path, datetime, image_hash) = images_data
         try:
-            photo = get_info(image_path, path_to_remove, datetime, hash)
+            photo = get_info(image_path, path_to_remove, datetime, image_hash)
             info_photo.append(photo)
         except Exception as e:
             logger.error(e)

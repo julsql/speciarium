@@ -98,7 +98,7 @@ def get_species_data(latin_name: str) -> dict:
     return infos_specie
 
 
-def get_info(image_path, rm_path, timestamp = None, hash = None) -> dict[str, str | None | Any]:
+def get_info(image_path, rm_path, timestamp = None, image_hash = None) -> dict[str, str | None | Any]:
     image_path = normaliser_unicode(image_path)
     infos_photo = {}
 
@@ -121,7 +121,7 @@ def get_info(image_path, rm_path, timestamp = None, hash = None) -> dict[str, st
     infos_photo["details"] = details
 
     try:
-        image_hash = get_hash(image_path, hash)
+        image_hash = get_hash(image_path, image_hash)
         thumbnail = create_thumbnail(image_path, rm_path)
         photo = create_small_image(image_path, rm_path)
     except Exception as e:
@@ -356,9 +356,9 @@ def create_thumbnail(image_path, rm_path):
     return output_path.replace(str(MEDIA_ROOT) + "/", str(MEDIA_URL))
 
 
-def get_hash(image_path, hash):
-    if hash:
-        return hash
+def get_hash(image_path, image_hash):
+    if image_hash:
+        return image_hash
     with open(image_path, 'rb') as image_file:
         sha256 = hashlib.sha256()
         for chunk in iter(lambda: image_file.read(4096), b""):
