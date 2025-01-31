@@ -22,6 +22,21 @@ class SpeciesSearchForm(forms.Form):
     countries = Photos.objects.values_list('country', flat=True).distinct().order_by('country')
     regions = Photos.objects.values_list('region', flat=True).distinct().order_by('region')
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        # Récupération dynamique des valeurs
+        self.fields['continent'].widget.attrs['list'] = 'continent-list'
+        self.fields['year'].widget.attrs['list'] = 'year-list'
+        self.fields['country'].widget.attrs['list'] = 'country-list'
+        self.fields['region'].widget.attrs['list'] = 'region-list'
+
+        self.continents = Photos.objects.values_list('continent', flat=True).distinct().order_by('continent')
+        self.years = Photos.objects.values_list('year', flat=True).distinct().order_by('year')
+        self.countries = Photos.objects.values_list('country', flat=True).distinct().order_by('country')
+        self.regions = Photos.objects.values_list('region', flat=True).distinct().order_by('region')
+
+
     def clean_continent(self):
         data = self.cleaned_data.get('continent')
         return data
