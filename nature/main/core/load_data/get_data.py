@@ -51,7 +51,7 @@ def get_dataset_from_images_path(images_path, path_to_remove) -> list[dict[str, 
 
 
 def get_all_species_data(latin_name_list: list[str]) -> list[dict[str, str]]:
-    species_already_added = Species.objects.values_list('latin_name')
+    species_already_added = list(Species.objects.values_list('latin_name'))
     info_species = []
     i = 0
     for latin_name in latin_name_list:
@@ -97,7 +97,9 @@ def get_species_data(latin_name: str) -> dict:
     infos_specie["french_name"] = common_name
     return infos_specie
 
-def get_info(image_path, rm_path, timestamp = None) -> dict[str, str | None | Any]:
+
+def get_info(image_path, rm_path, timestamp = None, hash = None) -> dict[str, str | None | Any]:
+    image_path = normaliser_unicode(image_path)
     infos_photo = {}
 
     try:
@@ -119,7 +121,7 @@ def get_info(image_path, rm_path, timestamp = None) -> dict[str, str | None | An
     infos_photo["details"] = details
 
     try:
-        image_hash = get_hash(image_path)
+        image_hash = get_hash(image_path, hash)
         thumbnail = create_thumbnail(image_path, rm_path)
         photo = create_small_image(image_path, rm_path)
     except Exception as e:
@@ -139,7 +141,8 @@ def get_info(image_path, rm_path, timestamp = None) -> dict[str, str | None | An
     infos_photo["year"] = year
 
     for key, value in infos_photo.items():
-        infos_photo[key] = normaliser_unicode(value)
+        if type(value) is str:
+            infos_photo[key] = normaliser_unicode(value)
 
     return infos_photo
 
@@ -176,8 +179,10 @@ def extraire_informations(path):
     else:
         raise ValueError(f"{title} ne correspond pas au format attendu Genre espèce (détails) identifiant")
 
+
 def normaliser_chaine(chaine):
     return unicodedata.normalize('NFC', chaine)
+
 
 def get_location_from_path(image_path, rm_path):
     folders = image_path.replace(rm_path + "/", '').split(os.sep)
@@ -200,6 +205,8 @@ def get_date_taken(image_path, timestamp):
             timestamp = exif[36867]
         else:
             raise ValueError(f"Impossible de récupérer la date de l'image {image_path}")
+    if timestamp == "":
+        raise ValueError("Date de l'image vide (non transmis)")
 
     date_taken = datetime.strptime(timestamp, "%Y:%m:%d %H:%M:%S")
     return date_taken.strftime("%Y-%m-%d"), date_taken.strftime("%Y")
@@ -217,6 +224,7 @@ def trouver_continent(pays):
         if pays.lower() in (pays_nom.lower() for pays_nom in pays_par_continent):
             return continent
     return ''
+
 
 def get_common_name(latin_name):
     url = "https://api.inaturalist.org/v1/taxa"
@@ -263,6 +271,7 @@ def get_species_details_1(latin_name):
             family = sp[0]['higherClassificationMap'][str(sp[0]['familyKey'])]
     return sp_class, order, family, kingdom
 
+
 def get_species_details_2(latin_name):
     sp_class = ''
     order = ''
@@ -291,11 +300,13 @@ def get_species_details_2(latin_name):
 
     return sp_class, order, family, kingdom
 
+
 def merge_tuple(tuple1, tuple2):
     return tuple(
         b if b else a
         for a, b in zip(tuple1, tuple2)
     )
+
 
 def get_species_details(latin_name):
     if " " in latin_name and latin_name.split(" ")[1] == "x":
@@ -310,8 +321,10 @@ def get_species_details(latin_name):
 
     return result
 
+
 def petite_path(image_path, rm_path):
     return image_path.replace(rm_path, SMALL_PATH)
+
 
 def vignette_path(image_path, rm_path):
     return image_path.replace(rm_path, VIGNETTE_PATH)
@@ -321,6 +334,7 @@ def create_directories(path):
     if not os.path.exists(path):
         os.makedirs(path)
 
+
 def resize_image(input_path, output_path, size):
     create_directories(os.path.dirname(output_path))
     with Image.open(input_path) as img:
@@ -328,6 +342,7 @@ def resize_image(input_path, output_path, size):
         height_size = int((float(img.size[1]) * float(width_percent)))
         new_img = img.resize((size, height_size))
         new_img.save(output_path)
+
 
 def create_small_image(image_path, rm_path):
     output_path = petite_path(image_path, rm_path)
@@ -340,7 +355,10 @@ def create_thumbnail(image_path, rm_path):
     resize_image(image_path, output_path, 300)
     return output_path.replace(str(MEDIA_ROOT) + "/", str(MEDIA_URL))
 
-def get_hash(image_path):
+
+def get_hash(image_path, hash):
+    if hash:
+        return hash
     with open(image_path, 'rb') as image_file:
         sha256 = hashlib.sha256()
         for chunk in iter(lambda: image_file.read(4096), b""):

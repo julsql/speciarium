@@ -28,9 +28,11 @@ function getTimestamp(file) {
 function normaliserUnicode(texte) {
     return texte.normalize("NFC"); // Convertit toutes les variations en une forme unique
 }
-
-document.getElementById("folderInput")
-    .addEventListener("change", async (event) => {
+const folderInput = document.getElementById("folderInput");
+folderInput.addEventListener("click", () => {
+    folderInput.value = ""; // Réinitialise avant la sélection
+});
+folderInput.addEventListener("change", async (event) => {
 
         const info = document.getElementById("upload-info");
         const loading = document.getElementById("loading");
@@ -39,6 +41,11 @@ document.getElementById("folderInput")
 
         // récupération des clefs uniques
         const remoteKeys = await getKeys();
+        const remoteFile = []
+        remoteKeys.forEach((e) => {remoteFile.push(e.split(':')[0])})
+        const remoteHash = []
+        remoteKeys.forEach((e) => {remoteHash.push(e.split(':')[1])})
+
         const files = event.target.files;
 
         const formData = new FormData();
@@ -58,7 +65,7 @@ document.getElementById("folderInput")
                     const key = `${cleanedPath}:${hash}`;
                     localKeys.push(key);
 
-                    if (!remoteKeys.includes(key)) {
+                    if (!remoteHash.includes(hash)) {
                         // l'image n'existe pas dans la base de données
                         console.log(key);
                         const resizedFile = await resizeImage(file, 500, 500);
@@ -76,7 +83,6 @@ document.getElementById("folderInput")
                 alert(`Problème avec l'image : ${file.webkitRelativePath}`);
             }
         }
-
         formData.append("metadata", JSON.stringify(metadata));
         const imageToDelete = getImageToDelete(remoteKeys, localKeys);
         formData.append("imageToDelete", JSON.stringify(imageToDelete));

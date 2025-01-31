@@ -26,13 +26,16 @@ def upload_images(request):
         filepaths = []
         for image, meta in zip(images, metadata):
             # Ajouter le hash aux résultats
+            datetime = ""
+            if 'datetime' in meta:
+                datetime = meta['datetime']
             results.append({
                 "file_name": image.name,
                 "old_hash": meta['hash'],
                 "path": meta['filepath'],
-                "datetime": meta['datetime'],
+                "datetime": datetime,
             })
-            filepaths.append((save_images(image, meta['filepath']), meta['datetime']))
+            filepaths.append((save_images(image, meta['filepath']), datetime, meta['hash']))
         delete_images(image_to_delete)
         add_photos_in_base(filepaths)
 
@@ -102,9 +105,9 @@ def get_dataset_from_images_path(images_path, path_to_remove) -> list[dict[str, 
     info_photo = []
     i = 0
     for images_data in images_path:
-        (image_path, datetime) = images_data
+        (image_path, datetime, hash) = images_data
         try:
-            photo = get_info(image_path, path_to_remove, datetime)
+            photo = get_info(image_path, path_to_remove, datetime, hash)
             info_photo.append(photo)
         except Exception as e:
             logger.error(e)
