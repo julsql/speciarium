@@ -1,5 +1,5 @@
 import requests
-from pygbif import species
+from pygbif import species as py_species
 from ete3 import NCBITaxa
 
 ## Initialisation ete3, décommenter ces lignes
@@ -36,7 +36,7 @@ def get_common_name(latin_name):
     raise ValueError("Error getting common_name")
 
 def get_species_details_1(latin_name):
-    sp = species.name_suggest(q=latin_name)
+    sp = py_species.name_suggest(q=latin_name)
     kingdom = ''
     sp_class = ''
     order = ''

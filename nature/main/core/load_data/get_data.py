@@ -5,7 +5,7 @@ from datetime import datetime
 from typing import Any
 
 import requests
-from pygbif import species
+from pygbif import species as py_species
 from ete3 import NCBITaxa
 from PIL import Image
 import yaml
@@ -254,7 +254,8 @@ def get_common_name(latin_name):
 
 
 def get_species_details_1(latin_name):
-    sp = species.name_suggest(q=latin_name)
+    logger.info(f"data for species {latin_name}")
+    sp = py_species.name_suggest(q=latin_name)
     kingdom = ''
     sp_class = ''
     order = ''
