@@ -14,42 +14,56 @@ from main.models.species import Species
 
 VIGNETTE_PATH = os.path.join(MEDIA_ROOT, 'main/images/vignettes')
 SMALL_PATH = os.path.join(MEDIA_ROOT, 'main/images/small')
-TEMP_PATH = tempfile.mkdtemp()
 
 def upload_images(request):
     if request.method == "POST":
-        images = request.FILES.getlist("images")  # Récupère toutes les images
+        images = []
+        if "images" in request.FILES:
+            images = request.FILES.getlist("images")
         image_to_delete = json.loads(request.POST.get("imageToDelete"))
         metadata = json.loads(request.POST.get("metadata"))
 
         results = []
         filepaths = []
-        for image, meta in zip(images, metadata):
-            # Ajouter le hash aux résultats
-            datetime = ""
-            if 'datetime' in meta:
-                datetime = meta['datetime']
-            results.append({
-                "file_name": image.name,
-                "old_hash": meta['hash'],
-                "path": meta['filepath'],
-                "datetime": datetime,
-            })
-            filepaths.append((save_images(image, meta['filepath']), datetime, meta['hash']))
-        delete_images(image_to_delete)
-        add_photos_in_base(filepaths)
 
-        shutil.rmtree(TEMP_PATH)
+        if len(metadata) > 0:
+            temp_path = tempfile.mkdtemp()
+            for image, meta in zip(images, metadata):
+                # Ajouter le hash aux résultats
+                datetime = ""
+                if 'datetime' in meta:
+                    datetime = meta['datetime']
+                results.append({
+                    "file_name": image.name,
+                    "old_hash": meta['hash'],
+                    "path": meta['filepath'],
+                    "datetime": datetime,
+                })
+                filepaths.append((save_images(image, meta['filepath'], temp_path), datetime, meta['hash']))
+            add_photos_in_base(filepaths, temp_path)
+            if os.path.exists(temp_path):
+                shutil.rmtree(temp_path)
+
+        delete_images(image_to_delete)
 
         return JsonResponse({"images": results, "imageToDelete": image_to_delete})
 
     return JsonResponse({"error": "Invalid request"}, status=400)
 
 
+def get_latin_name(image_path):
+    return " ".join(os.path.splitext(os.path.basename(image_path))[0].split(" ")[:2])
+
+
 def delete_images(images_to_delete):
     for image_key in images_to_delete:
         image_path, image_hash = image_key.split(":")
+        latin_name = get_latin_name(image_path)
+
         Photos.objects.filter(hash=image_hash).delete()
+        specie_id = Species.objects.filter(latin_name=latin_name).values_list('id', flat=True).first()
+        if specie_id and not Photos.objects.filter(specie_id=specie_id).exists():
+                Species.objects.filter(id=specie_id).delete()
 
         image_small = os.path.join(SMALL_PATH, image_path)
         image_vignette = os.path.join(VIGNETTE_PATH, image_path)
@@ -71,8 +85,8 @@ def delete_file_with_permission_check(file_path):
         logger.error(f"Erreur : {e}")
 
 
-def save_images(image, filepath):
-    image_small = os.path.join(TEMP_PATH, filepath)
+def save_images(image, filepath, temp_path):
+    image_small = os.path.join(temp_path, filepath)
     save_image(image, image_small)
     return image_small
 
@@ -92,8 +106,8 @@ def save_image(file, filepath):
             destination.write(chunk)
 
 
-def add_photos_in_base(filepaths):
-    info_photo = get_dataset_from_images_path(filepaths, TEMP_PATH)
+def add_photos_in_base(filepaths, temp_path):
+    info_photo = get_dataset_from_images_path(filepaths, temp_path)
     latin_name_list = list({value['latin_name'] for value in info_photo})
     info_species = get_all_species_data(latin_name_list)
     add_species(info_species)
