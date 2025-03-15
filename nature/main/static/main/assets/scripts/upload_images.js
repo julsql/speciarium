@@ -1,7 +1,3 @@
-const API_BASE_URL = window.location.hostname === "localhost"
-    ? "http://localhost:8000"
-    : "https://especes.julsql.fr";
-
 function getTimestamp(file) {
     return new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -60,93 +56,116 @@ folderInput.addEventListener("click", () => {
 
 folderInput.addEventListener("change", async (event) => {
 
-        const info = document.getElementById("upload-info");
-        const loading = document.getElementById("loading");
-        loading.style.display = "block";
-        info.style.display = "none";
+    const info = document.getElementById("upload-info");
+    const loading = document.getElementById("loading");
+    loading.style.display = "block";
+    info.style.display = "none";
 
-        // récupération des clefs uniques
-        const remoteKeys = await getKeys();
+    // récupération des clefs uniques
+    const remoteKeys = await getKeys();
 
-        const files = event.target.files;
+    const files = event.target.files;
 
-        const formData = new FormData();
-        const localKeys = [];
-        let hasFilesToUpload = false;
-        const metadata = [];
+    const formData = new FormData();
+    const localKeys = [];
+    let hasFilesToUpload = false;
+    const metadata = [];
 
-        let upload = true;
+    let upload = true;
+    const species = new Set()
 
-        for (const file of files) {
-            try {
-                const ext = file.name.split('.').pop().toLowerCase();
-                if (file.name[0] !== "." && ["jpg", "jpeg", "png", "gif", "bmp", "webp"].includes(ext)) {
-                    let cleanedPath = file.webkitRelativePath.split('/').slice(1).join('/');
-                    cleanedPath = normaliserUnicode(cleanedPath);
-                    const hash = await calculateHash(file);
-                    const key = `${cleanedPath}:${hash}`;
-                    localKeys.push(key);
+    for (const file of files) {
+        try {
+            const ext = file.name.split('.').pop().toLowerCase();
+            if (file.name[0] !== "." && ["jpg", "jpeg", "png", "gif", "bmp", "webp"].includes(ext)) {
+                const filePath = normaliserUnicode(file.webkitRelativePath).split('/');
+                const cleanedPath = filePath.slice(1).join('/');
+                const hash = await calculateHash(file);
+                const key = `${cleanedPath}:${hash}`;
+                localKeys.push(key);
 
-                    if (!remoteKeys.includes(key)) {
-                        // l'image n'existe pas dans la base de données
-                        console.log(key);
-                        const resizedFile = await resizeImage(file, 500, 500);
-                        hasFilesToUpload = true;
-                        formData.append('images', resizedFile);
-                        const timestamp = await getTimestamp(file)
-                        metadata.push({
-                            filepath: cleanedPath,
-                            hash: hash,
-                            datetime: timestamp,
-                        })
-                    }
+                if (!remoteKeys.includes(key)) {
+                    species.add(filePath[filePath.length - 1])
+                    // l'image n'existe pas dans la base de données
+                    console.log(key);
+                    const resizedFile = await resizeImage(file, 500, 500);
+                    hasFilesToUpload = true;
+                    formData.append('images', resizedFile);
+                    const timestamp = await getTimestamp(file)
+                    metadata.push({
+                        filepath: cleanedPath,
+                        hash: hash,
+                        datetime: timestamp,
+                    })
                 }
-            } catch (e) {
-                alert(`Problème avec l'image : ${file.webkitRelativePath}`);
             }
+        } catch (e) {
+            alert(`Problème avec l'image : ${file.webkitRelativePath}`);
         }
-        formData.append("metadata", JSON.stringify(metadata));
-        const imageToDelete = getImageToDelete(remoteKeys, localKeys);
-        formData.append("imageToDelete", JSON.stringify(imageToDelete));
+    }
+    formData.append("metadata", JSON.stringify(metadata));
+    const imageToDelete = getImageToDelete(remoteKeys, localKeys);
+    formData.append("imageToDelete", JSON.stringify(imageToDelete));
 
-        const size = await getFormDataSize(formData);
-        console.log(`Taille des données à envoyer : ${size} bytes`);
+    const size = await getFormDataSize(formData);
+    console.log(`Taille des données à envoyer : ${size} bytes`);
 
-        if (imageToDelete.length === 0 && !hasFilesToUpload) {
-            info.textContent = "Aucune image n'a changé";
-            info.style.display = "block";
-            loading.style.display = "none";
-        } else {
-            upload = upload && window.confirm(`Envoyer ${metadata.length} photos et supprimer ${imageToDelete.length} photos ?`);
-            if (upload) {
-                const csrfToken = getCsrfToken();
-                const headers = new Headers();
-
-                if (csrfToken) {
-                    headers.append("X-CSRFToken", csrfToken);
-                }
-
-                const response = await fetch(`${API_BASE_URL}/upload-images/`, {
-                    method: "POST",
-                    headers: headers,
-                    body: formData,
-                });
-
-                if (response.ok) {
-                    const result = await response.json();
-                    console.log(result)
-                    info.textContent = "Images ajoutées";
-                } else if (response.status === 413) {
-                    info.textContent = "Quantité de données trop lourde";
-                } else {
-                    console.log(response)
-                    info.textContent = "Erreur lors de l'envoi des images";
-                }
-                info.style.display = "block";
-            }
-        }
+    if (imageToDelete.length === 0 && !hasFilesToUpload) {
+        info.textContent = "Aucune image n'a changé";
+        info.style.display = "block";
         loading.style.display = "none";
-    });
+    } else {
+        upload = upload && window.confirm(`Envoyer ${metadata.length} photos et supprimer ${imageToDelete.length} photos ?`);
+        if (upload) {
+            const csrfToken = getCsrfToken();
+            const headers = new Headers();
+
+            if (csrfToken) {
+                headers.append("X-CSRFToken", csrfToken);
+            }
+            const socket = new WebSocket(
+                `ws://${window.location.host}/ws/progress/`
+            );
+
+            socket.onmessage = function (event) {
+                const data = JSON.parse(event.data);
+                console.log(data)
+                if (data.progress === "done") {
+                    socket.close();
+                } else {
+                    loading.style.display = "none";
+                    info.style.display = "block";
+                    info.textContent = `${data.progress}/${species.size}`;
+                }
+            };
+
+            socket.onerror = function (event) {
+                info.textContent = "Erreur lors de l'envoi des images";
+            };
+
+            socket.onclose = function (event) {
+                info.textContent = `Images ajoutées`;
+            };
+
+            const response = await fetch(`http://${window.location.host}/upload-images/`, {
+                method: "POST",
+                headers: headers,
+                body: formData,
+            });
+
+            if (response.ok) {
+            } else if (response.status === 413) {
+                loading.style.display = "none";
+                info.textContent = "Quantité de données trop lourde";
+            } else {
+                console.log(response)
+                loading.style.display = "none";
+                info.textContent = "Erreur lors de l'envoi des images";
+            }
+        }
+    }
+    //loading.style.display = "none";
+});
 
 function getImageToDelete(remoteKeys, localKeys) {
     const imageToDelete = [];
@@ -164,7 +183,7 @@ function getCsrfToken() {
 }
 
 async function getKeys() {
-    const response = await fetch(`${API_BASE_URL}/hash/`, {
+    const response = await fetch(`http://${window.location.host}/hash/`, {
         method: "GET",
     });
 

@@ -14,4 +14,10 @@ services:
     environment:
       - DEBUG=False
     working_dir: /app/nature
-    command: gunicorn config.wsgi:application --bind 0.0.0.0:8000
+    command: daphne config.asgi:application --bind 0.0.0.0:8000
+
+  redis:
+    image: redis:latest
+    container_name: redis
+    ports:
+      - "6379:6379"

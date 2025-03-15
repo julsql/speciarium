@@ -9,7 +9,7 @@ from main.core.load_data.get_data import get_dataset_on_each_image, get_all_spec
 def insert_initial_data(apps, schema_editor) -> None:
     info_photo = get_dataset_on_each_image()
     latin_name_list = list({value['latin_name'] for value in info_photo})
-    info_species = get_all_species_data(latin_name_list)
+    info_species = get_all_species_data(latin_name_list, False)
     add_species(info_species)
     add_photos(info_photo)
 

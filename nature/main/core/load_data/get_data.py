@@ -14,6 +14,9 @@ from main.core.logger.logger import logger
 from config.settings import MEDIA_ROOT, BASE_DIR, MEDIA_URL
 from main.models.species import Species
 
+from channels.layers import get_channel_layer
+from asgiref.sync import sync_to_async
+
 ## Initialisation lib ete3, décommenter ces lignes
 ## import ssl
 ## ssl._create_default_https_context = ssl._create_unverified_context
@@ -24,6 +27,16 @@ PHOTO_PATH = os.path.join(BASE_DIR, 'originales')
 VIGNETTE_PATH = os.path.join(MEDIA_ROOT, 'main/images/vignettes')
 SMALL_PATH = os.path.join(MEDIA_ROOT, 'main/images/small')
 continents_yaml = os.path.join(BASE_DIR, "main/core/load_data/continents.yml")
+
+async def send_progress(progress):
+    channel_layer = get_channel_layer()
+    await channel_layer.group_send(
+        "progress_group",
+        {
+            "type": "progress_update",
+            "message": progress
+        }
+    )
 
 def normaliser_unicode(texte):
     return unicodedata.normalize('NFC', texte)
@@ -50,8 +63,10 @@ def get_dataset_from_images_path(images_path, path_to_remove) -> list[dict[str, 
     return info_photo
 
 
-def get_all_species_data(latin_name_list: list[str]) -> list[dict[str, str]]:
-    species_already_added = list(Species.objects.values_list('latin_name'))
+async def get_all_species_data(latin_name_list: list[str], from_request: bool) -> list[dict[str, str]]:
+    species_already_added = await sync_to_async(list, thread_sensitive=True)(
+        Species.objects.values_list('latin_name', flat=True)
+    )
     info_species = []
     i = 0
     for latin_name in latin_name_list:
@@ -62,6 +77,8 @@ def get_all_species_data(latin_name_list: list[str]) -> list[dict[str, str]]:
                 species_already_added.append(specie['latin_name'])
             except Exception as e:
                 logger.error(e)
+        if from_request:
+            await send_progress(i+1)
         print(f"espèce {i} : {latin_name}")
         logger.info(f"espèce {i} : {latin_name}")
         i += 1

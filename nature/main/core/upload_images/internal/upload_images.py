@@ -4,6 +4,7 @@ import shutil
 import tempfile
 
 from django.http import JsonResponse
+from matplotlib.image import thumbnail
 
 from config.settings import MEDIA_ROOT
 from main.core.load_data.add_data import add_species, add_photos
@@ -11,45 +12,62 @@ from main.core.load_data.get_data import get_info, get_all_species_data
 from main.core.logger.logger import logger
 from main.models.photo import Photos
 from main.models.species import Species
+from asgiref.sync import async_to_sync
+from asgiref.sync import sync_to_async
+from channels.layers import get_channel_layer
 
 VIGNETTE_PATH = os.path.join(MEDIA_ROOT, 'main/images/vignettes')
 SMALL_PATH = os.path.join(MEDIA_ROOT, 'main/images/small')
 
+
 def upload_images(request):
     if request.method == "POST":
-        images = []
-        if "images" in request.FILES:
-            images = request.FILES.getlist("images")
-        image_to_delete = json.loads(request.POST.get("imageToDelete"))
-        metadata = json.loads(request.POST.get("metadata"))
-
-        results = []
-        filepaths = []
-
-        if len(metadata) > 0:
-            temp_path = tempfile.mkdtemp()
-            for image, meta in zip(images, metadata):
-                # Ajouter le hash aux résultats
-                datetime = ""
-                if 'datetime' in meta:
-                    datetime = meta['datetime']
-                results.append({
-                    "file_name": image.name,
-                    "old_hash": meta['hash'],
-                    "path": meta['filepath'],
-                    "datetime": datetime,
-                })
-                filepaths.append((save_images(image, meta['filepath'], temp_path), datetime, meta['hash']))
-            add_photos_in_base(filepaths, temp_path)
-            if os.path.exists(temp_path):
-                shutil.rmtree(temp_path)
-
-        delete_images(image_to_delete)
-
-        return JsonResponse({"images": results, "imageToDelete": image_to_delete})
+        async_to_sync(process_images)(request)
+        return JsonResponse({"message": "Traitement en cours"}, status=202)
 
     return JsonResponse({"error": "Invalid request"}, status=400)
 
+
+async def process_images(request):
+    images = []
+    if "images" in request.FILES:
+        images = request.FILES.getlist("images")
+    image_to_delete = json.loads(request.POST.get("imageToDelete"))
+    metadata = json.loads(request.POST.get("metadata"))
+    results = []
+    filepaths = []
+    from_request = True
+    if len(metadata) > 0:
+        temp_path = tempfile.mkdtemp()
+        for image, meta in zip(images, metadata):
+            # Ajouter le hash aux résultats
+            datetime = ""
+            if 'datetime' in meta:
+                datetime = meta['datetime']
+            results.append({
+                "file_name": image.name,
+                "old_hash": meta['hash'],
+                "path": meta['filepath'],
+                "datetime": datetime,
+            })
+            filepaths.append((save_images(image, meta['filepath'], temp_path), datetime, meta['hash']))
+        await add_photos_in_base(filepaths, temp_path, from_request)
+        if os.path.exists(temp_path):
+            shutil.rmtree(temp_path)
+    await sync_to_async(delete_images)(image_to_delete)
+
+    await send_progress("done")
+    return image_to_delete, results
+
+async def send_progress(progress):
+    channel_layer = get_channel_layer()
+    await channel_layer.group_send(
+        "progress_group",
+        {
+            "type": "progress_done",
+            "message": progress
+        }
+    )
 
 def get_latin_name(image_path):
     return " ".join(os.path.splitext(os.path.basename(image_path))[0].split(" ")[:2])
@@ -60,8 +78,7 @@ def delete_images(images_to_delete):
         try:
             image_path, image_hash = image_key.split(":")
             latin_name = get_latin_name(image_path)
-
-            Photos.objects.filter(hash=image_hash).delete()
+            Photos.objects.filter(hash=image_hash, thumbnail=f"/media/main/images/vignettes/{image_path}").delete()
             specie_id = Species.objects.filter(latin_name=latin_name).values_list('id', flat=True).first()
             if specie_id and not Photos.objects.filter(specie_id=specie_id).exists():
                     Species.objects.filter(id=specie_id).delete()
@@ -110,12 +127,12 @@ def save_image(file, filepath):
             destination.write(chunk)
 
 
-def add_photos_in_base(filepaths, temp_path):
+async def add_photos_in_base(filepaths, temp_path, from_request):
     info_photo = get_dataset_from_images_path(filepaths, temp_path)
     latin_name_list = list({value['latin_name'] for value in info_photo})
-    info_species = get_all_species_data(latin_name_list)
-    add_species(info_species)
-    add_photos(info_photo)
+    info_species = await get_all_species_data(latin_name_list, from_request)
+    await sync_to_async(add_species, thread_sensitive=True)(info_species)
+    await sync_to_async(add_photos, thread_sensitive=True)(info_photo)
 
 
 def get_dataset_from_images_path(images_path, path_to_remove) -> list[dict[str, str]]:
