@@ -13,4 +13,5 @@ services:
       - ./etetoolkit:/root/.etetoolkit/
     environment:
       - DEBUG=True
+      - DJANGO_ENV=development
     command: python nature/manage.py runserver 0.0.0.0:8000
