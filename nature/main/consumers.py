@@ -1,5 +1,5 @@
-import json
 from channels.generic.websocket import AsyncWebsocketConsumer
+import json
 
 class ProgressConsumer(AsyncWebsocketConsumer):
     async def connect(self):
@@ -11,3 +11,7 @@ class ProgressConsumer(AsyncWebsocketConsumer):
 
     async def progress_update(self, event):
         await self.send(text_data=json.dumps({"progress": event["message"]}))
+
+    async def close_connection(self):
+        # Appel de la méthode de fermeture WebSocket
+        await self.close()

@@ -15,18 +15,17 @@ Including another URLconf
     2. Add a URL to urlpatterns: path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path, include, re_path
+from django.urls import path, include
 from django.contrib.auth import views as auth_views
 
 from django.conf import settings
 from django.conf.urls.static import static
 
-from main.consumers import ProgressConsumer
-from main.core.get_hash.internal.get_hash_view import get_hash
-from main.core.home.internal.home_view import home
-from main.core.errors.internal.errors_view import error_500_view, error_404_view
-from main.core.login.internal.login_view import login_view
-from main.core.upload_images.internal.upload_images import upload_images
+from main.core.backend.get_hash.internal.get_hash_view import get_hash
+from main.core.backend.load_data.upload_images.internal.upload_images_endpoint import upload_images
+from main.core.frontend.home.internal.home_view import home
+from main.core.frontend.errors.internal.errors_view import error_500_view, error_404_view
+from main.core.frontend.login.internal.login_view import login_view
 
 handler500 = error_500_view
 handler404 = error_404_view

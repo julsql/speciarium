@@ -1,0 +1,31 @@
+{% load static %}
+
+<div class="upload-info">
+    <div id="progress-bar-container">
+        <div id="progress-bar"></div>
+    </div>
+
+<img id="loading" class="loading" src="{% static 'main/images/loading.gif' %}" alt="loading"/>
+<p id="upload-info"></p>
+</div>
+
+
+
+<!-- Champ input masqué -->
+<input type="file" id="folderInput" webkitdirectory multiple />
+
+<!-- Bouton visible -->
+<label for="folderInput" class="upload-button">
+    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed">
+        <path d="M440-320v-326L336-542l-56-58 200-200 200 200-56 58-104-104v326h-80ZM240-160q-33 0-56.5-23.5T160-240v-120h80v120h480v-120h80v120q0 33-23.5 56.5T720-160H240Z"/>
+    </svg>
+</label>
+
+{% block javascript %}
+<script src="{% static 'main/assets/scripts/exif-reader.min.js' %}"></script>
+<script src="{% static 'main/assets/scripts/upload_images.js' %}"></script>
+{% endblock %}
+
+{% block style %}
+<link rel="stylesheet" href="{% static 'main/assets/styles/upload_images.css' %}" />
+{% endblock %}
