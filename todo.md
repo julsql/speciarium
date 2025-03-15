@@ -1,9 +1,13 @@
-- modification des espèces dans l'appli
+- Position géographique
 
+- modification des espèces dans l'appli
 - formulaire avec multiples valeurs
 - amélioration pour petit écran
 
 ## Ajout d'image sur le site
+
+Corriger erreurs
+Ajouter dans les metadata les coordonnées géographiques
 
 Étapes :
 - [X] backend enregistrement des hash des images (les mêmes entre le front et le back)

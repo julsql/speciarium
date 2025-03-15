@@ -62,8 +62,8 @@ def get_all_species_data(latin_name_list: list[str]) -> list[dict[str, str]]:
                 species_already_added.append(specie['latin_name'])
             except Exception as e:
                 logger.error(e)
-
-        logger.info(f"image {i}")
+        print(f"espèce {i} : {latin_name}")
+        logger.info(f"espèce {i} : {latin_name}")
         i += 1
     return info_species
 
