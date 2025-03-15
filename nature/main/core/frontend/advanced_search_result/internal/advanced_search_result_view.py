@@ -115,7 +115,6 @@ def advanced_search_result(request, form):
         'order_field': 'specie__order_field__icontains',
         'family': 'specie__family__icontains',
         'year': 'year',
-        'date': 'date__icontains',
         'continent': 'continent',
         'country': 'country',
         'region': 'region',
@@ -123,7 +122,18 @@ def advanced_search_result(request, form):
     }
 
     if form.is_valid():
+        data = form.cleaned_data
         queryset = filter_queryset(queryset, form, filter_mappings)
+
+        start_date = data.get("start_date")
+        end_date = data.get("end_date")
+
+        if start_date and end_date:
+            queryset = queryset.filter(date__range=[start_date, end_date])
+        elif start_date:
+            queryset = queryset.filter(date__gte=start_date)
+        elif end_date:
+            queryset = queryset.filter(date__lte=end_date)
 
     queryset = annotate_queryset(queryset)
     total_results = queryset.count()

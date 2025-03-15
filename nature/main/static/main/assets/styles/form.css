@@ -185,8 +185,14 @@ input label {
 }
 
 .input-container input[type="date"] {
-    padding-right: 30px; /* Laissez de la place pour la croix */
+    padding-right: 30px;
     font-size: 12px;
+}
+
+.date {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
 }
 
 .input-container .clear-btn {

@@ -5,7 +5,7 @@ from main.models.species import Species
 
 class Photos(models.Model):
     year = models.IntegerField(verbose_name="Année", blank=True, null=True)
-    date = models.CharField(max_length=255, verbose_name="Date", blank=True)
+    date = models.DateField(verbose_name="Date", null=True)
     continent = models.CharField(max_length=255, verbose_name="Continent", blank=True)
     country = models.CharField(max_length=255, verbose_name="Pays")
     region = models.CharField(max_length=255, verbose_name="Région", blank=True)

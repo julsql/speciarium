@@ -94,10 +94,16 @@
                 {% endif %}
             </div>
             <div class="col-md-4">
-                <p>{{ form.date.label }}</p>
-                <div class="input-container">
-                    {{ form.date }}
-                    <span class="clear-btn" id="clear-date">&#x2715;</span>
+                <p>{{ form.start_date.label }}</p>
+                <div class="input-container date">
+                    <div class="input-container">
+                        {{ form.start_date }}
+                        <span class="clear-btn" id="clear-start-date">&#x2715;</span>
+                    </div>
+                    <div class="input-container">
+                        {{ form.end_date }}
+                        <span class="clear-btn" id="clear-end-date">&#x2715;</span>
+                    </div>
                 </div>
             </div>
         </div>

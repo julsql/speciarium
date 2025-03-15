@@ -1,7 +1,13 @@
 const inputs = document.querySelectorAll('.input-container input');
 const clearBtns = document.querySelectorAll('.input-container .clear-btn');
-const inputDate = document.getElementById('id_date');
-const clearBtnDate = document.getElementById('clear-date');
+
+const inputDateStart = document.getElementById('id_start_date');
+const inputDateEnd = document.getElementById('id_end_date');
+const clearBtnDateStart = document.getElementById('clear-start-date');
+const clearBtnDateEnd = document.getElementById('clear-end-date');
+
+const inputDates = [inputDateStart, inputDateEnd];
+const clearBtnDates = [clearBtnDateStart, clearBtnDateEnd];
 
 // Fonction pour afficher ou cacher la croix
 function toggleClearBtn(input, clearBtn) {
@@ -25,7 +31,9 @@ window.onload = function () {
             const clearBtn = clearBtns[index];
             clearInput(input, clearBtn);
         });
-        inputDate.value = '';
+        inputDates.forEach((input) => {
+            input.value = "";
+        })
     });
 
     inputs.forEach((input, index) => {
@@ -35,14 +43,16 @@ window.onload = function () {
         clearBtn.addEventListener('click', () => clearInput(input, clearBtn));
     });
 
-    inputDate.addEventListener('input', () => {
-        clearBtnDate.style.display = 'inline-block';
-    });
-    if (clearBtnDate) {
-        clearBtnDate.addEventListener('click', () => {
-            inputDate.value = '';
-            clearBtnDate.style.display = 'none';
+    inputDates.forEach((input, index) => {
+        const clearBtnDate = clearBtnDates[index];
+        input.addEventListener('input', () => {
+            clearBtnDate.style.display = 'block';
         });
-    }
+        if (clearBtnDate) {
+            clearBtnDate.addEventListener('click', () => {
+                input.value = '';
+                clearBtnDate.style.display = 'none';
+            });
+        }
+    })
 }
-

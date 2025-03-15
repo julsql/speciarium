@@ -53,7 +53,10 @@ def get_info(image_path, rm_path, timestamp=None, image_hash=None) -> dict[str, 
         date, year = get_date_taken(image_path, timestamp)
     except Exception as e:
         logger.error(str(e))
-        date, year = '', None
+        date, year = None, None
+
+    if date == "":
+        date = None
 
     infos_photo["date"] = date
     infos_photo["year"] = year
