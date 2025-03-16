@@ -1,6 +1,6 @@
+import asyncio
 import json
 
-from asgiref.sync import async_to_sync
 from asgiref.sync import sync_to_async
 from channels.layers import get_channel_layer
 from django.http import JsonResponse
@@ -14,7 +14,7 @@ from main.core.backend.load_data.upload_images.internal.get_one_value import get
 
 def upload_images(request):
     if request.method == "POST":
-        async_to_sync(process_images)(request)
+        asyncio.create_task(process_images(request))
         return JsonResponse({"message": "Traitement en cours"}, status=202)
 
     return JsonResponse({"error": "Invalid request"}, status=400)

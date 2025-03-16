@@ -236,6 +236,7 @@ folderInput.addEventListener("change", async (event) => {
             });
 
             if (response.ok) {
+                console.log("response ok")
             } else if (response.status === 413) {
                 loading.style.display = "none";
                 info.textContent = "Quantité de données trop lourde";
@@ -243,6 +244,9 @@ folderInput.addEventListener("change", async (event) => {
                 console.log(response)
                 loading.style.display = "none";
                 info.textContent = "Erreur lors de l'envoi des images";
+                info.style.width = "auto";
+                progressBar.style.width = '0';
+                progressBarContainer.style.display = "none";
             }
         }
     }
