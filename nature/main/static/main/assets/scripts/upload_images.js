@@ -246,13 +246,13 @@ function getCsrfToken() {
 }
 
 function getHttpRequest() {
-    window.location.hostname === "localhost"
+    return window.location.hostname === "localhost"
         ? "http://localhost:8000"
         : "https://especes.julsql.fr";
 }
 
 async function getKeys() {
-    const response = await fetch(`${getHttpRequest()}/hash/`, {
+    const response = await fetch(`hash/`, {
         method: "GET",
     });
 
