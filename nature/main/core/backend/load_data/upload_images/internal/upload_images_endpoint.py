@@ -31,16 +31,19 @@ async def send_progress(progress):
     )
 
 async def process_images(request):
+    await send_progress("Début du processing")
     images = []
     if "images" in request.FILES:
         images = request.FILES.getlist("images")
     image_to_delete = json.loads(request.POST.get("imageToDelete"))
     metadata = json.loads(request.POST.get("metadata"))
     results = []
+    await send_progress("début du traitement")
     if len(metadata) > 0:
         for index, (image, meta) in enumerate(zip(images, metadata)):
             await treatment_image(image, meta, index)
 
+    await send_progress("début de la suppression")
     await sync_to_async(delete_images)(image_to_delete)
 
     await send_progress("DONE")

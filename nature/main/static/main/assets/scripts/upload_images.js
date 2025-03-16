@@ -132,8 +132,8 @@ folderInput.addEventListener("change", async (event) => {
                         hasFilesToUpload = true;
                         formData.append('images', resizedFile);
                         const timestamp = await getTimestamp(file)
-                        console.log(timestamp)
                         const coordinates = await getCoordinates(file);
+                        console.log(coordinates);
                         metadata.push({
                             filepath: cleanedPath,
                             hash: hash,
@@ -187,13 +187,19 @@ folderInput.addEventListener("change", async (event) => {
                 console.log("Connexion WebSocket ouverte");
             };
 
+            function isNumberInteger(str) {
+                const num = Number(str);
+                return Number.isInteger(num);
+            }
+
             socket.onmessage = function (event) {
                 const data = JSON.parse(event.data);
+                console.log(data.progress)
                 if (data.progress === "DONE") {
                     if (socket.readyState === WebSocket.OPEN) {
                         socket.close();
                     }
-                } else {
+                } else if (isNumberInteger(data.progress)) {
                     loading.style.display = "none";
                     info.style.display = "block";
                     info.style.width = "70px";
