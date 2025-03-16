@@ -16,7 +16,7 @@ SMALL_PATH = os.path.join(MEDIA_ROOT, 'main/images/small')
 PHOTO_PATH = os.path.join(BASE_DIR, 'originales')
 
 
-def get_info(image_path, rm_path, timestamp=None, image_hash=None) -> dict[str, str | None | Any]:
+def get_info(image_path, rm_path, timestamp=None, latitude=None, longitude=None, image_hash=None) -> dict[str, str | None | Any]:
     image_path = normaliser_unicode(image_path)
     infos_photo = {}
 
@@ -60,6 +60,15 @@ def get_info(image_path, rm_path, timestamp=None, image_hash=None) -> dict[str, 
 
     infos_photo["date"] = date
     infos_photo["year"] = year
+
+    try:
+        latitude, longitude = get_place_taken(image_path, latitude, longitude)
+    except Exception as e:
+        logger.error(str(e))
+        latitude, longitude = None, None
+
+    infos_photo["latitude"] = latitude
+    infos_photo["longitude"] = longitude
 
     for key, value in infos_photo.items():
         if type(value) is str:
@@ -164,3 +173,44 @@ def get_date_taken(image_path, timestamp):
 
     date_taken = datetime.strptime(timestamp, "%Y:%m:%d %H:%M:%S")
     return date_taken.strftime("%Y-%m-%d"), date_taken.strftime("%Y")
+
+def get_place_taken(image_path, latitude, longitude):
+    error_no_coordinates = "Aucune coordonnée trouvée"
+    if (latitude, longitude) == (None, None):
+        img = Image.open(image_path)
+
+        exif_data = img._getexif()
+        if exif_data is None:
+            raise ValueError(error_no_coordinates)
+
+        gps_info = exif_data.get(34853)
+        if gps_info is None:
+            raise ValueError(error_no_coordinates)
+
+        lat = gps_info.get(2)
+        lon = gps_info.get(4)
+
+        if lat and lon:
+            latitude = convert_to_decimal(lat, gps_info.get(1))
+            longitude = convert_to_decimal(lon, gps_info.get(3))
+
+            return latitude, longitude
+        else:
+            raise ValueError(error_no_coordinates)
+    if (latitude, longitude) == ("", ""):
+        raise ValueError("Coordonnées de l'image vide (non transmis)")
+
+    return latitude, longitude
+
+def convert_to_decimal(coord, ref):
+    degrees = float(coord[0])
+    minutes = float(coord[1])
+    seconds = float(coord[2])
+
+    decimal_coord = degrees + (minutes / 60.0) + (seconds / 3600.0)
+
+    # Appliquer le signe basé sur la référence (N/S/E/W)
+    if ref in ['S', 'W']:
+        decimal_coord = -decimal_coord
+
+    return decimal_coord

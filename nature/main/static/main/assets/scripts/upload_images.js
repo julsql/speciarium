@@ -22,17 +22,19 @@ function getTimestamp(file) {
 }
 
 function getCoordinates(file) {
-    return EXIF.getData(file, function () {
-        const lat = EXIF.getTag(this, 'GPSLatitude');
-        const lon = EXIF.getTag(this, 'GPSLongitude');
-        if (lat && lon) {
-            // Convertir la latitude et la longitude en format décimal si nécessaire
-            const latitude = convertToDecimal(lat, EXIF.getTag(this, 'GPSLatitudeRef'));
-            const longitude = convertToDecimal(lon, EXIF.getTag(this, 'GPSLongitudeRef'));
-            return {latitude: latitude, longitude: longitude};
-        }
-        return {latitude: "", longitude: ""};
-    })
+    return new Promise((resolve, reject) => {
+        EXIF.getData(file, function () {
+            const lat = EXIF.getTag(this, 'GPSLatitude');
+            const lon = EXIF.getTag(this, 'GPSLongitude');
+            if (lat && lon) {
+                const latitude = convertToDecimal(lat, EXIF.getTag(this, 'GPSLatitudeRef'));
+                const longitude = convertToDecimal(lon, EXIF.getTag(this, 'GPSLongitudeRef'));
+                resolve({ latitude, longitude });
+            } else {
+                resolve({ latitude: null, longitude: null }); // Si pas de coordonnées GPS
+            }
+        });
+    });
 }
 
 function convertToDecimal(gpsData, ref) {
@@ -40,7 +42,6 @@ function convertToDecimal(gpsData, ref) {
     const minutes = gpsData[1];
     const seconds = gpsData[2];
     const decimal = degrees + (minutes / 60) + (seconds / 3600);
-
     // Appliquer le signe correct en fonction de la référence
     return ref === 'S' || ref === 'W' ? -decimal : decimal;
 }
@@ -80,11 +81,9 @@ folderInput.addEventListener("click", () => {
 
 
 function getWsRequest() {
-    console.log(window.location.host)
-    console.log(window.location.hostname)
-    return window.location.hostname === "localhost"
-        ? "ws://localhost:8000"
-        : "wss://especes.julsql.fr";
+    return window.location.hostname === "especes.julsql.fr"
+        ? "wss://especes.julsql.fr"
+        : "ws://localhost:8000";
 }
 
 folderInput.addEventListener("change", async (event) => {
@@ -132,13 +131,14 @@ folderInput.addEventListener("change", async (event) => {
                         hasFilesToUpload = true;
                         formData.append('images', resizedFile);
                         const timestamp = await getTimestamp(file)
-                        //const {latitude, longitude} = await getCoordinates(file)
+                        console.log(timestamp)
+                        const coordinates = await getCoordinates(file);
                         metadata.push({
                             filepath: cleanedPath,
                             hash: hash,
                             datetime: timestamp,
-                            //latitude: latitude,
-                            //longitude: longitude,
+                            latitude: coordinates.latitude,
+                            longitude: coordinates.longitude,
                         })
                     }
                 }
@@ -148,7 +148,6 @@ folderInput.addEventListener("change", async (event) => {
             }
         }
     }
-    console.log(metadata.length);
     formData.append("metadata", JSON.stringify(metadata));
     const imageToDelete = getImageToDelete(remoteKeys, localKeys);
     formData.append("imageToDelete", JSON.stringify(imageToDelete));

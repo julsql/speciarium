@@ -34,6 +34,8 @@ def add_photo(info_photo: dict[str, str]) -> None:
         photo = Photos(
             year=info_photo["year"],
             date=info_photo["date"],
+            longitude=info_photo["longitude"],
+            latitude=info_photo["latitude"],
             continent=info_photo["continent"],
             country=info_photo["country"],
             region=info_photo["region"],

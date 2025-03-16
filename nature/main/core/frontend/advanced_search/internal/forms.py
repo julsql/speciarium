@@ -10,7 +10,7 @@ class SpeciesSearchForm(forms.Form):
     order_field = forms.CharField(max_length=255, required=False, label="Ordre", widget=forms.TextInput(attrs={"class": "italic-field"}))
     family = forms.CharField(max_length=255, required=False, label="Famille")
     year = forms.IntegerField(required=False, label="Année", widget=forms.TextInput(attrs={'list': 'year-list'}))
-    start_date = forms.DateField(required=False, label='Date de la photo', widget=forms.DateInput(attrs={"type": "date"}))
+    start_date = forms.DateField(required=False, label='Date de la prise de vue', widget=forms.DateInput(attrs={"type": "date"}))
     end_date = forms.DateField(required=False, widget=forms.DateInput(attrs={"type": "date"}))
     continent = forms.CharField(max_length=255, required=False, label="Continent", widget=forms.TextInput(attrs={'list': 'continent-list'}))
     country = forms.CharField(max_length=255, required=False, label="Pays", widget=forms.TextInput(attrs={'list': 'country-list'}))

@@ -11,7 +11,9 @@ def get_photo_value(metadata):
         datetime = metadata['datetime']
     image_hash = metadata.get('hash')
     path = metadata.get('filepath')
-    return get_info(path, "", datetime, image_hash)
+    latitude = metadata.get('latitude')
+    longitude = metadata.get('longitude')
+    return get_info(path, "", datetime, latitude, longitude, image_hash)
 
 async def get_specie_data(latin_name: str) -> dict[str, str] | None:
     species_already_added = await sync_to_async(list, thread_sensitive=True)(
