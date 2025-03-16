@@ -134,6 +134,7 @@ folderInput.addEventListener("change", async (event) => {
                         const timestamp = await getTimestamp(file)
                         const coordinates = await getCoordinates(file);
                         console.log(coordinates);
+                        console.log(hash);
                         metadata.push({
                             filepath: cleanedPath,
                             hash: hash,
@@ -167,10 +168,12 @@ folderInput.addEventListener("change", async (event) => {
         info.style.display = "block";
         loading.style.display = "none";
     } else {
+        const photo_plur = metadata.length>1 ? "photos" : "photo"
+        const photo_delete_plur = imageToDelete.length>1 ? "photos" : "photo"
         if (metadata.length >= MAX_UPLOAD_IMAGES) {
-            upload = upload && window.confirm(`Envoyer ${metadata.length} photos et supprimer ${imageToDelete.length} photos ? (Attention, ${MAX_UPLOAD_IMAGES} est le maximum de photos à envoyer en une fois)`);
+            upload = upload && window.confirm(`Envoyer ${metadata.length} photos et supprimer ${imageToDelete.length} ${photo_delete_plur} ? (Attention, ${MAX_UPLOAD_IMAGES} est le maximum de photos à envoyer en une fois)`);
         } else {
-            upload = upload && window.confirm(`Envoyer ${metadata.length} photos et supprimer ${imageToDelete.length} photos ?`);
+            upload = upload && window.confirm(`Envoyer ${metadata.length} ${photo_plur} et supprimer ${imageToDelete.length} ${photo_delete_plur} ?`);
         }
         if (upload) {
             const csrfToken = getCsrfToken();
