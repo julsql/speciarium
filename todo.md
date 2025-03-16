@@ -1,5 +1,5 @@
 - Position géographique
-
+- clean dependencies
 - modification des espèces dans l'appli
 - formulaire avec multiples valeurs
 - amélioration pour petit écran
@@ -16,7 +16,7 @@ Ajouter dans les metadata les coordonnées géographiques
 - [X] frontend récupération des hash des images
 - [X] frontend analyse des fichiers pour les envoyer au back avec les hash des images à supprimer
 - [X] backend à partir des images et des hash, supprimer les hash et upload les images
-- [ ] bonus : websocket pour indiquer où en est le téléchargement
+- [X] bonus : websocket pour indiquer où en est le téléchargement
 
 Points bloquants :
 - [X] mêmes hash entre javascript et python (sha256)

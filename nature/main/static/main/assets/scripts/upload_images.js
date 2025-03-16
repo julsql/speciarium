@@ -21,6 +21,30 @@ function getTimestamp(file) {
     });
 }
 
+function getCoordinates(file) {
+    return EXIF.getData(file, function () {
+        const lat = EXIF.getTag(this, 'GPSLatitude');
+        const lon = EXIF.getTag(this, 'GPSLongitude');
+        if (lat && lon) {
+            // Convertir la latitude et la longitude en format décimal si nécessaire
+            const latitude = convertToDecimal(lat, EXIF.getTag(this, 'GPSLatitudeRef'));
+            const longitude = convertToDecimal(lon, EXIF.getTag(this, 'GPSLongitudeRef'));
+            return {latitude: latitude, longitude: longitude};
+        }
+        return {latitude: "", longitude: ""};
+    })
+}
+
+function convertToDecimal(gpsData, ref) {
+    const degrees = gpsData[0];
+    const minutes = gpsData[1];
+    const seconds = gpsData[2];
+    const decimal = degrees + (minutes / 60) + (seconds / 3600);
+
+    // Appliquer le signe correct en fonction de la référence
+    return ref === 'S' || ref === 'W' ? -decimal : decimal;
+}
+
 function normaliserUnicode(texte) {
     return texte.normalize("NFC"); // Convertit toutes les variations en une forme unique
 }
@@ -99,10 +123,13 @@ folderInput.addEventListener("change", async (event) => {
                         hasFilesToUpload = true;
                         formData.append('images', resizedFile);
                         const timestamp = await getTimestamp(file)
+                        const {latitude, longitude} = await getCoordinates(file)
                         metadata.push({
                             filepath: cleanedPath,
                             hash: hash,
                             datetime: timestamp,
+                            latitude: latitude,
+                            longitude: longitude,
                         })
                     }
                 }
@@ -218,8 +245,14 @@ function getCsrfToken() {
     return csrfCookie ? csrfCookie.split('=')[1] : null;
 }
 
+function getHttpRequest() {
+    window.location.hostname === "localhost"
+        ? "http://localhost:8000"
+        : "https://especes.julsql.fr";
+}
+
 async function getKeys() {
-    const response = await fetch(`http://${window.location.host}/hash/`, {
+    const response = await fetch(`${getHttpRequest()}/hash/`, {
         method: "GET",
     });
 
