@@ -1,4 +1,3 @@
-- clean dependencies
 - modification des espèces dans l'appli
 - formulaire avec multiples valeurs
 - amélioration pour petit écran
