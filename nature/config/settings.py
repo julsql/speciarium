@@ -59,12 +59,12 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
-           BASE_DIR / 'main/core/frontend/advanced_search/templates',
-           BASE_DIR / 'main/core/frontend/advanced_search_result/templates',
-           BASE_DIR / 'main/core/frontend/login/templates',
-           BASE_DIR / 'main/core/frontend/home/templates',
-           BASE_DIR / 'main/core/frontend/errors/templates',
-           BASE_DIR / 'main/core/frontend/upload_images/templates',
+            BASE_DIR / 'main/core/frontend/advanced_search/templates',
+            BASE_DIR / 'main/core/frontend/advanced_search_result/templates',
+            BASE_DIR / 'main/core/frontend/login/templates',
+            BASE_DIR / 'main/core/frontend/home/templates',
+            BASE_DIR / 'main/core/frontend/errors/templates',
+            BASE_DIR / 'main/core/frontend/upload_images/templates',
         ],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -147,7 +147,8 @@ AUTHENTICATION_BACKENDS = (
 )
 
 AUTH_USER_MODEL = 'main.AppUser'
-AUTHENTICATION_FAILURE = _('Veuillez entrer un nom d\'utilisateur et un mot de passe valides. Notez que les deux champs peuvent être sensibles à la casse.')
+AUTHENTICATION_FAILURE = _(
+    'Veuillez entrer un nom d\'utilisateur et un mot de passe valides. Notez que les deux champs peuvent être sensibles à la casse.')
 LOGOUT_REDIRECT_URL = '/'
 
 # Static files (CSS, JavaScript, Images)
@@ -167,14 +168,14 @@ MEDIA_ROOT = BASE_DIR / "media/"
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Taille maximale de fichier en Mo (ici 200 Mo)
-DATA_UPLOAD_MAX_MEMORY_SIZE = 209715200 # default 2621440 (i.e. 2.5 MB)
+DATA_UPLOAD_MAX_MEMORY_SIZE = 209715200  # default 2621440 (i.e. 2.5 MB)
 
 # Taille maximale d'un fichier de formulaire multipart (ici 200 Mo)
-FILE_UPLOAD_MAX_MEMORY_SIZE = 209715200 # default 2621440 (i.e. 2.5 MB)
+FILE_UPLOAD_MAX_MEMORY_SIZE = 209715200  # default 2621440 (i.e. 2.5 MB)
 
-DATA_UPLOAD_MAX_NUMBER_FILES = 1000 # default 100 files
+DATA_UPLOAD_MAX_NUMBER_FILES = 1000  # default 100 files
 
 CSRF_USE_SESSIONS = False  # Le cookie CSRF doit être envoyé séparément, pas stocké dans la session
 CSRF_COOKIE_NAME = 'csrftoken'  # Nom du cookie (par défaut : 'csrftoken')
-CSRF_COOKIE_HTTPONLY = False    # Le cookie doit être accessible par le client (Postman)
-CSRF_COOKIE_SECURE = False      # Mettez `True` uniquement si vous utilisez HTTPS
+CSRF_COOKIE_HTTPONLY = False  # Le cookie doit être accessible par le client (Postman)
+CSRF_COOKIE_SECURE = False  # Mettez `True` uniquement si vous utilisez HTTPS

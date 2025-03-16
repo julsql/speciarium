@@ -133,8 +133,6 @@ folderInput.addEventListener("change", async (event) => {
                         formData.append('images', resizedFile);
                         const timestamp = await getTimestamp(file)
                         const coordinates = await getCoordinates(file);
-                        console.log(coordinates);
-                        console.log(hash);
                         metadata.push({
                             filepath: cleanedPath,
                             hash: hash,
@@ -198,7 +196,7 @@ folderInput.addEventListener("change", async (event) => {
             socket.onmessage = function (event) {
                 const data = JSON.parse(event.data);
                 console.log(data.progress)
-                if (data.progress === "DONE") {
+                if (data.progress === "Done") {
                     if (socket.readyState === WebSocket.OPEN) {
                         socket.close();
                     }
@@ -236,7 +234,7 @@ folderInput.addEventListener("change", async (event) => {
             });
 
             if (response.ok) {
-                console.log("response ok")
+                console.log("Response ok")
             } else if (response.status === 413) {
                 loading.style.display = "none";
                 info.textContent = "Quantité de données trop lourde";

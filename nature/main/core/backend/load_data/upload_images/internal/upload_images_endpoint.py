@@ -1,20 +1,19 @@
-import asyncio
 import json
 
-from asgiref.sync import sync_to_async
+from asgiref.sync import sync_to_async, async_to_sync
 from channels.layers import get_channel_layer
 from django.http import JsonResponse
 
-from main.core.backend.logger.logger import logger
 from main.core.backend.load_data.upload_images.internal.add_one_value import add_specie, add_photo
 from main.core.backend.load_data.upload_images.internal.create_image import create_images
 from main.core.backend.load_data.upload_images.internal.delete_images import delete_images
 from main.core.backend.load_data.upload_images.internal.get_one_value import get_specie_data, get_photo_value
+from main.core.backend.logger.logger import logger
 
 
 def upload_images(request):
     if request.method == "POST":
-        asyncio.create_task(process_images(request))
+        async_to_sync(process_images)(request)
         return JsonResponse({"message": "Traitement en cours"}, status=202)
 
     return JsonResponse({"error": "Invalid request"}, status=400)
@@ -30,18 +29,18 @@ async def send_progress(progress):
         }
     )
 
+
 async def process_images(request):
-    await send_progress("Début du processing")
     images = []
     if "images" in request.FILES:
         images = request.FILES.getlist("images")
     image_to_delete = json.loads(request.POST.get("imageToDelete"))
-    await send_progress("début de la suppression")
+    await send_progress("Début de la suppression des images")
     await sync_to_async(delete_images)(image_to_delete)
 
     metadata = json.loads(request.POST.get("metadata"))
     results = []
-    await send_progress("début du traitement")
+    await send_progress("Début du traitement des images")
     if len(metadata) > 0:
         for index, (image, meta) in enumerate(zip(images, metadata)):
             try:
@@ -50,7 +49,7 @@ async def process_images(request):
                 logger.error(e)
                 await send_progress(str(e))
 
-    await send_progress("DONE")
+    await send_progress("Done")
     return image_to_delete, results
 
 
