@@ -98,6 +98,7 @@ folderInput.addEventListener("change", async (event) => {
     progressBarContainer.style.display = "none";
 
     // récupération des clefs uniques
+    await cleanDatabase();
     const remoteKeys = await getKeys();
 
     const files = event.target.files;
@@ -268,6 +269,17 @@ async function getKeys() {
             console.error("La clé 'keys' est manquante ou invalide dans la réponse :", result);
             return [];
         }
+    } else {
+        alert("Failed to upload images.");
+    }
+}
+
+async function cleanDatabase() {
+    const response = await fetch(`clean/`, {
+        method: "GET",
+    });
+
+    if (response.ok) {
     } else {
         alert("Failed to upload images.");
     }

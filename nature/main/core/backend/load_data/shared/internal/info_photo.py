@@ -11,9 +11,12 @@ from config.settings import MEDIA_ROOT, BASE_DIR, MEDIA_URL
 from main.core.backend.logger.logger import logger
 
 continents_yaml = os.path.join(BASE_DIR, "main/core/backend/load_data/shared/continents.yml")
-VIGNETTE_PATH = os.path.join(MEDIA_ROOT, 'main/images/vignettes')
-SMALL_PATH = os.path.join(MEDIA_ROOT, 'main/images/small')
-PHOTO_PATH = os.path.join(BASE_DIR, 'originales')
+VIGNETTE_PATH = 'main/images/vignettes'
+VIGNETTE_ROOT = os.path.join(MEDIA_ROOT, VIGNETTE_PATH)
+SMALL_PATH = 'main/images/small'
+SMALL_ROOT = os.path.join(MEDIA_ROOT, SMALL_PATH)
+PHOTO_PATH = 'originales'
+PHOTO_ROOT = os.path.join(BASE_DIR, PHOTO_PATH)
 
 
 def get_info(image_path, rm_path, timestamp=None, latitude=None, longitude=None, image_hash=None) -> dict[str, str | None | Any]:
@@ -154,11 +157,11 @@ def get_small_image_path(image_path, rm_path):
 
 
 def petite_path(image_path, rm_path):
-    return replace_root(image_path, rm_path, SMALL_PATH)
+    return replace_root(image_path, rm_path, SMALL_ROOT)
 
 
 def vignette_path(image_path, rm_path):
-    return replace_root(image_path, rm_path, VIGNETTE_PATH)
+    return replace_root(image_path, rm_path, VIGNETTE_ROOT)
 
 
 def get_date_taken(image_path, timestamp):
@@ -214,3 +217,36 @@ def convert_to_decimal(coord, ref):
         decimal_coord = -decimal_coord
 
     return decimal_coord
+
+
+def images_in_folder(folder_path, all_image_path=None):
+    if all_image_path is None:
+        all_image_path = []
+    for item in os.listdir(folder_path):
+        item_path = os.path.join(folder_path, item)
+
+        if os.path.isdir(item_path):
+            images_in_folder(item_path, all_image_path)
+        else:
+            if is_image(item_path):
+                all_image_path.append(normaliser_unicode(item_path))
+
+    return all_image_path
+
+
+def is_image(image_path):
+    extension_photo = ('.png', '.jpg', '.jpeg', '.tiff', '.bmp', '.gif')
+    return image_path.lower().endswith(extension_photo)
+
+def delete_file_with_permission_check(file_path):
+    try:
+        if os.path.exists(file_path):
+            if os.access(file_path, os.W_OK):
+                os.remove(file_path)
+                logger.info(f"Le fichier {file_path} a été supprimé avec succès.")
+            else:
+                logger.warning(f"Permissions insuffisantes pour supprimer le fichier {file_path}.")
+        else:
+            logger.warning(f"Le fichier {file_path} n'existe pas.")
+    except Exception as e:
+        logger.error(f"Erreur : {e}")

@@ -22,6 +22,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 from main.core.backend.get_hash.internal.get_hash_view import get_hash
+from main.core.backend.load_data.clean.internal.clean_database_view import clean_database
 from main.core.backend.load_data.upload_images.internal.upload_images_endpoint import upload_images
 from main.core.frontend.home.internal.home_view import home
 from main.core.frontend.errors.internal.errors_view import error_500_view, error_404_view
@@ -38,6 +39,7 @@ urlpatterns = [
     path('', home, name='home'),
     path('upload-images/', upload_images, name='upload'),
     path('hash/', get_hash, name='hash'),
+    path('clean/', clean_database, name='hash'),
 ]
 
 if settings.DEBUG:

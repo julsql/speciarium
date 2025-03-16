@@ -15,9 +15,6 @@ from channels.auth import AuthMiddlewareStack
 
 from main.routing import websocket_urlpatterns
 
-# Add the project base directory to the Python path
-sys.path.append('/home/debian/websites/bd_website/config')
-
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
 
 application = ProtocolTypeRouter({
