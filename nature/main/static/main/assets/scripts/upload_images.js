@@ -123,17 +123,18 @@ folderInput.addEventListener("change", async (event) => {
                         hasFilesToUpload = true;
                         formData.append('images', resizedFile);
                         const timestamp = await getTimestamp(file)
-                        const {latitude, longitude} = await getCoordinates(file)
+                        //const {latitude, longitude} = await getCoordinates(file)
                         metadata.push({
                             filepath: cleanedPath,
                             hash: hash,
                             datetime: timestamp,
-                            latitude: latitude,
-                            longitude: longitude,
+                            //latitude: latitude,
+                            //longitude: longitude,
                         })
                     }
                 }
             } catch (e) {
+                console.log(e);
                 alert(`Problème avec l'image : ${file.webkitRelativePath}`);
             }
         }
@@ -210,7 +211,7 @@ folderInput.addEventListener("change", async (event) => {
                 info.style.width = "auto";
             };
 
-            const response = await fetch(`http://${window.location.host}/upload-images/`, {
+            const response = await fetch(`upload-images/`, {
                 method: "POST",
                 headers: headers,
                 body: formData,
@@ -243,12 +244,6 @@ function getImageToDelete(remoteKeys, localKeys) {
 function getCsrfToken() {
     const csrfCookie = document.cookie.split(';').find(cookie => cookie.trim().startsWith('csrftoken='));
     return csrfCookie ? csrfCookie.split('=')[1] : null;
-}
-
-function getHttpRequest() {
-    return window.location.hostname === "localhost"
-        ? "http://localhost:8000"
-        : "https://especes.julsql.fr";
 }
 
 async function getKeys() {
