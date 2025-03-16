@@ -44,7 +44,11 @@ async def process_images(request):
     await send_progress("début du traitement")
     if len(metadata) > 0:
         for index, (image, meta) in enumerate(zip(images, metadata)):
-            await treatment_image(image, meta, index)
+            try:
+                await treatment_image(image, meta, index)
+            except Exception as e:
+                logger.error(e)
+                await send_progress(str(e))
 
     await send_progress("DONE")
     return image_to_delete, results
