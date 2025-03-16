@@ -78,6 +78,15 @@ folderInput.addEventListener("click", () => {
     folderInput.value = ""; // Réinitialise avant la sélection
 });
 
+
+function getWsRequest() {
+    console.log(window.location.host)
+    console.log(window.location.hostname)
+    return window.location.hostname === "localhost"
+        ? "ws://localhost:8000"
+        : "wss://especes.julsql.fr";
+}
+
 folderInput.addEventListener("change", async (event) => {
 
     const info = document.getElementById("upload-info");
@@ -171,7 +180,7 @@ folderInput.addEventListener("change", async (event) => {
                 headers.append("X-CSRFToken", csrfToken);
             }
             const socket = new WebSocket(
-                `ws://${window.location.host}/ws/progress/`
+                `${getWsRequest()}/ws/progress/`
             );
 
             socket.onopen = function () {
