@@ -33,8 +33,6 @@ def get_all_species_data(latin_name_list: list[str]) -> list[dict[str, str]]:
     return info_species
 
 
-
-
 def get_dataset_from_images_path(images_path, path_to_remove) -> list[dict[str, str]]:
     logger.info(f"Nombre d'images {len(images_path)}")
     info_photo = []

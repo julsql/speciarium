@@ -19,7 +19,8 @@ PHOTO_PATH = 'originales'
 PHOTO_ROOT = os.path.join(BASE_DIR, PHOTO_PATH)
 
 
-def get_info(image_path, rm_path, timestamp=None, latitude=None, longitude=None, image_hash=None) -> dict[str, str | None | Any]:
+def get_info(image_path, rm_path, timestamp=None, latitude=None, longitude=None, image_hash=None) -> dict[
+    str, str | None | Any]:
     image_path = normaliser_unicode(image_path)
     infos_photo = {}
 
@@ -177,6 +178,7 @@ def get_date_taken(image_path, timestamp):
     date_taken = datetime.strptime(timestamp, "%Y:%m:%d %H:%M:%S")
     return date_taken.strftime("%Y-%m-%d"), date_taken.strftime("%Y")
 
+
 def get_place_taken(image_path, latitude, longitude):
     error_no_coordinates = "Aucune coordonnée trouvée"
     if (latitude, longitude) == (None, None):
@@ -204,6 +206,7 @@ def get_place_taken(image_path, latitude, longitude):
         raise ValueError("Coordonnées de l'image vide (non transmis)")
 
     return latitude, longitude
+
 
 def convert_to_decimal(coord, ref):
     degrees = float(coord[0])
@@ -237,6 +240,7 @@ def images_in_folder(folder_path, all_image_path=None):
 def is_image(image_path):
     extension_photo = ('.png', '.jpg', '.jpeg', '.tiff', '.bmp', '.gif')
     return image_path.lower().endswith(extension_photo)
+
 
 def delete_file_with_permission_check(file_path):
     try:
