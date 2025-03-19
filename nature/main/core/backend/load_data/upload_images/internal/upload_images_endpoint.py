@@ -20,14 +20,17 @@ def upload_images(request):
 
 
 async def send_progress(progress):
-    channel_layer = get_channel_layer()
-    await channel_layer.group_send(
-        "progress_group",
-        {
-            "type": "progress_update",
-            "message": progress
-        }
-    )
+    try:
+        channel_layer = get_channel_layer()
+        await channel_layer.group_send(
+            "progress_group",
+            {
+                "type": "progress_update",
+                "message": progress
+            }
+        )
+    except Exception as e:
+        logger.error(e)
 
 
 async def process_images(request):
