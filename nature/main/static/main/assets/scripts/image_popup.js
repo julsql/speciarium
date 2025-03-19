@@ -15,13 +15,18 @@ rows.forEach(row => {
     row.addEventListener("click", (event) => {
         if (event.target.tagName === "IMG") {
             disableScroll(false);
-            const groupImages = Array.from(row.querySelectorAll("img"));
-            currentGroup = groupImages; // Récupérer les URLs des grandes images
-            currentIndex = groupImages.indexOf(event.target); // Trouver l'image cliquée
+            const allImagesData = row.querySelector(".all-images")?.dataset.images;
+            if (allImagesData) {
+                currentGroup = JSON.parse(allImagesData); // Convertir JSON en array d'objets
+            } else {
+                currentGroup = [];
+            }
+            const clickedSrc = event.target.dataset.full;
+            currentIndex = currentGroup.findIndex(img => img.full === clickedSrc);
             showImage();
             popup.style.display = "flex";
 
-            if (groupImages.length < 2) {
+            if (currentGroup.length < 2) {
                 nextImageButton.style.display = "none";
                 prevImageButton.style.display = "none";
             } else {
@@ -40,9 +45,10 @@ closePopupButton.addEventListener('click', () => {
 // Afficher l'image dans la pop-up
 function showImage() {
     if (currentGroup.length > 0) {
-        popupImg.src = currentGroup.map(img => img.dataset.full)[currentIndex];
-        imageInfo.innerHTML = currentGroup.map(img => img.dataset.info)[currentIndex];
-        imageTitle.innerHTML = currentGroup.map(img => img.dataset.title)[currentIndex];
+        const img = currentGroup[currentIndex]
+        popupImg.src = img.full;
+        imageInfo.innerHTML = img.info;
+        imageTitle.innerHTML = img.title;
     }
 }
 

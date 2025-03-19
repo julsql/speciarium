@@ -3,14 +3,14 @@ from main.models.species import Species
 
 def create_thumbnail_column(image_number):
     template = f'''
-        {{% if record.image{image_number} %}}
-            <img src="{{{{ record.image{image_number}.thumbnail }}}}"
+        {{% if record.all_photos.{image_number} %}}
+            <img src="{{{{ record.all_photos.{image_number}.thumbnail }}}}"
                 class="thumbnail"
-                data-full="{{{{ record.image{image_number}.photo }}}}"
+                data-full="{{{{ record.all_photos.{image_number}.photo }}}}"
                 data-title="<h2>{{% if record.specie__french_name %}}{{{{ record.specie__french_name }}}} - {{% endif %}}<i>{{{{ record.specie__latin_name }}}}</i></h2>"
                 data-info="
-                <p>Photo prise le {{{{ record.image{image_number}.date }}}}
-                en {{{{ record.image{image_number}.country }}}}{{% if record.image{image_number}.region %}}({{{{ record.image{image_number}.region }}}}){{% endif %}}{{% if record.image{image_number}.details %}}. {{{{ record.image{image_number}.details }}}}{{% endif %}}
+                <p>Photo prise le {{{{ record.all_photos.{image_number}.date }}}}
+                en {{{{ record.all_photos.{image_number}.country }}}}{{% if record.all_photos.{image_number}.region %}}({{{{ record.all_photos.{image_number}.region }}}}){{% endif %}}{{% if record.all_photos.{image_number}.details %}}. {{{{ record.all_photos.{image_number}.details }}}}{{% endif %}}
                 </p>
                 
                 "
@@ -21,7 +21,7 @@ def create_thumbnail_column(image_number):
     return tables.TemplateColumn(
         orderable=False,
         template_code=template,
-        verbose_name=f"Photo {image_number}"
+        verbose_name=f"Photo {image_number+1}"
     )
 
 italic = {"style": "font-style: italic;"}
@@ -64,10 +64,22 @@ class SpeciesTable(tables.Table):
         order_by="first_region"
     )
 
-    thumbnail1 = create_thumbnail_column(1)
-    thumbnail2 = create_thumbnail_column(2)
-    thumbnail3 = create_thumbnail_column(3)
+    thumbnail1 = create_thumbnail_column(0)
+    thumbnail2 = create_thumbnail_column(1)
+    thumbnail3 = create_thumbnail_column(2)
 
+    all_images = tables.TemplateColumn(
+        template_code="""
+            <span class="all-images" data-images='[
+                {% for image in record.all_photos %}
+                    {"full": "{{ image.photo }}", "thumbnail": "{{ image.thumbnail }}", "title": "<i>{{ record.specie__latin_name }}</i>", "info": "Photo prise le {{ image.date }} en {{ image.country }}{% if image.region %} ({{ image.region }}){% endif %}{% if image.details %}. {{ image.details }}{% endif %}"}
+                    {% if not forloop.last %},{% endif %}
+                {% endfor %}
+            ]' hidden></span>
+            """,
+        verbose_name="",
+        orderable=False
+    )
 
     class Meta:
             model = Species

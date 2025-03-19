@@ -69,9 +69,7 @@ def transform_entry(entry):
             'thumbnail': thumbnail_list[i]
         })
 
-    entry['image1'] = images[0]
-    entry['image2'] = images[1] if len(images) > 1 else None
-    entry['image3'] = images[2] if len(images) > 2 else None
+    entry['all_photos'] = images
 
     # Convert lists to sets for distinct values
     if entry['continent_list']:
