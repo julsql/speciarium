@@ -2,6 +2,7 @@ const miniMapContainer = document.getElementById("mini-map");
 let miniMap;
 
 function showMiniMap(lat, lon) {
+    miniMapContainer.classList.remove("expanded");
     if (lat && lon && !isNaN(lat) && !isNaN(lon)) {
         miniMapContainer.style.display = "block";
 
@@ -17,7 +18,6 @@ function showMiniMap(lat, lon) {
             }).addTo(miniMap);
 
             L.marker([lat, lon]).addTo(miniMap);
-            console.log(miniMap)
         } else {
             miniMap.setView([lat, lon], 10);
 
@@ -35,6 +35,7 @@ function showMiniMap(lat, lon) {
 }
 
 function closeMiniMap() {
+    miniMapContainer.classList.remove("expanded");
     miniMapContainer.style.display = "none";
     if (miniMap) {
         miniMap.eachLayer((layer) => {
