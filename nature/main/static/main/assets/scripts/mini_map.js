@@ -2,13 +2,9 @@ const miniMapContainer = document.getElementById("mini-map");
 let miniMap;
 
 function showMiniMap(lat, lon) {
-    console.log(lat, lon)
     if (lat && lon && !isNaN(lat) && !isNaN(lon)) {
-
-        // Afficher la mini carte
         miniMapContainer.style.display = "block";
 
-        // Si la carte n'existe pas encore, on la crée
         if (!miniMap) {
             console.log(lat, lon)
             miniMap = L.map('mini-map', {
@@ -20,14 +16,11 @@ function showMiniMap(lat, lon) {
                 attribution: '&copy; OpenStreetMap contributors'
             }).addTo(miniMap);
 
-            // Ajouter un marqueur
             L.marker([lat, lon]).addTo(miniMap);
             console.log(miniMap)
         } else {
-            // Mettre à jour la vue et le marqueur
             miniMap.setView([lat, lon], 10);
 
-            // Supprimer les anciens marqueurs
             miniMap.eachLayer((layer) => {
                 if (layer instanceof L.Marker) {
                     miniMap.removeLayer(layer);

@@ -62,9 +62,9 @@ def transform_entry(entry):
     if len(date_list) < n:
         date_list += [''] * (n - len(date_list))
     if len(latitude_list) < n:
-        latitude_list += [''] * (n - len(latitude_list))
+        latitude_list += ['null'] * (n - len(latitude_list))
     if len(longitude_list) < n:
-        longitude_list += [''] * (n - len(longitude_list))
+        longitude_list += ['null'] * (n - len(longitude_list))
 
     for i in range(n):
         images.append({
