@@ -9,7 +9,6 @@
     <div class="popup-content">
         <div id="image-title"></div>
         <div id="image-info"></div>
-        <div id="image-coordinates"></div>
 
         <img id="popup-img" src="" alt="Animal"/>
         <button class="popup_button close" id="close-popup">
@@ -30,11 +29,26 @@
     </div>
 </div>
 
+<div id="mini-map">
+    <button id="toggle-map-size">
+            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#373737" >
+                <path d="M120-120v-320h80v184l504-504H520v-80h320v320h-80v-184L256-200h184v80H120Z"/>
+            </svg>
+    </button>
+</div>
+
 {% block style %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+
 <link rel="stylesheet" href="{% static 'main/assets/styles/image_popup.css' %}" />
+<link rel="stylesheet" href="{% static 'main/assets/styles/mini_map.css' %}" />
 <link rel="stylesheet" href="{% static 'main/assets/styles/table.css' %}" />
+
 {% endblock %}
 
 {% block javascript %}
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+<script src="{% static 'main/assets/scripts/mini_map.js' %}"></script>
 <script src="{% static 'main/assets/scripts/image_popup.js' %}"></script>
 {% endblock %}
