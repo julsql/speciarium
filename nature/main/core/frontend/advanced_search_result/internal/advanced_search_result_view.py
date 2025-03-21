@@ -32,6 +32,8 @@ def annotate_queryset(queryset):
         details_list=GroupConcat('details', delimiter=','),
         photo_list=GroupConcat('photo', delimiter=','),
         thumbnail_list=GroupConcat('thumbnail', delimiter=','),
+        latitude_list=GroupConcat('latitude', delimiter=','),
+        longitude_list=GroupConcat('longitude', delimiter=','),
     )
 
 def convert_date_format(date):
@@ -50,12 +52,19 @@ def transform_entry(entry):
     photo_list = entry['photo_list'].split(',')
     details_list = entry['details_list'].split(',')
     thumbnail_list = entry['thumbnail_list'].split(',')
+    latitude_list = entry['latitude_list'].split(',')
+    longitude_list = entry['longitude_list'].split(',')
 
     n = len(photo_list)
+
     if len(year_list) < n:
         year_list += [''] * (n - len(year_list))
     if len(date_list) < n:
         date_list += [''] * (n - len(date_list))
+    if len(latitude_list) < n:
+        latitude_list += [''] * (n - len(latitude_list))
+    if len(longitude_list) < n:
+        longitude_list += [''] * (n - len(longitude_list))
 
     for i in range(n):
         images.append({
@@ -66,12 +75,13 @@ def transform_entry(entry):
             'region': region_list[i],
             'photo': photo_list[i],
             'details': details_list[i],
-            'thumbnail': thumbnail_list[i]
+            'thumbnail': thumbnail_list[i],
+            'latitude': latitude_list[i],
+            'longitude': longitude_list[i],
         })
 
     entry['all_photos'] = images
 
-    # Convert lists to sets for distinct values
     if entry['continent_list']:
         entry['continent_list'] = set(continent_list)
     if entry['country_list']:
