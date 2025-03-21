@@ -72,12 +72,14 @@ class SpeciesTable(tables.Table):
         template_code="""
             <span class="all-images" data-images='[
                 {% for image in record.all_photos %}
-                    {"full": "{{ image.photo }}",
-                     "thumbnail": "{{ image.thumbnail }}",
-                     "title": "<i>{{ record.specie__latin_name }}</i>",
-                     "latitude": {{ image.latitude }},
-                     "longitude": {{ image.longitude }},
-                      "info": "Photo prise le {{ image.date }} en {{ image.country }}{% if image.region %} ({{ image.region }}){% endif %}{% if image.details %}. {{ image.details }}{% endif %}"}
+                    {
+                        "full": "{{ image.photo }}",
+                        "thumbnail": "{{ image.thumbnail }}",
+                        "title": "{% if record.specie__french_name %}{{ record.specie__french_name }} - {% endif %}<i>{{ record.specie__latin_name }}</i>",
+                        "latitude": {{ image.latitude }},
+                        "longitude": {{ image.longitude }},
+                        "info": "Photo prise {% if image.date %}le {{ image.date }}{% endif %}en {{ image.country }}{% if image.region %} ({{ image.region }}){% endif %}{% if image.details %}. {{ image.details }}{% endif %}"
+                    }
                     {% if not forloop.last %},{% endif %}
                 {% endfor %}
             ]' hidden></span>

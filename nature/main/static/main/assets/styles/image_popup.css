@@ -55,6 +55,11 @@
     padding-left: 10px;
 }
 
+#image-title > i {
+    word-wrap: break-word;
+    font-size: 16px;
+}
+
 #image-info {
     text-align: center;
     word-wrap: break-word;

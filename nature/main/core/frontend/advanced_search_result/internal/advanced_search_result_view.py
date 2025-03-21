@@ -1,6 +1,7 @@
 from datetime import datetime
 
-from django.db.models import Min
+from django.db.models import Min, F, Value
+from django.db.models.functions import Coalesce
 from django_tables2 import RequestConfig
 
 from main.core.frontend.advanced_search_result.internal.group_concat import GroupConcat
@@ -21,19 +22,19 @@ def annotate_queryset(queryset):
         'specie__class_field', 'specie__order_field', 'specie__family'
     ).annotate(
         min_year=Min('year'),
-        year_list=GroupConcat('year', delimiter=','),
-        date_list=GroupConcat('date', delimiter=','),
-        continent_list=GroupConcat('continent', delimiter=','),
+        year_list=GroupConcat(Coalesce(F('year'), Value('')), delimiter=','),
+        date_list=GroupConcat(Coalesce(F('date'), Value('')), delimiter=','),
+        continent_list=GroupConcat(Coalesce(F('continent'), Value('')), delimiter=','),
         first_continent=Min('continent'),
-        country_list=GroupConcat('country', delimiter=','),
+        country_list=GroupConcat(Coalesce(F('country'), Value('')), delimiter=','),
         first_country=Min('country'),
-        region_list=GroupConcat('region', delimiter=','),
+        region_list=GroupConcat(Coalesce(F('region'), Value('')), delimiter=','),
         first_region=Min('region'),
-        details_list=GroupConcat('details', delimiter=','),
-        photo_list=GroupConcat('photo', delimiter=','),
-        thumbnail_list=GroupConcat('thumbnail', delimiter=','),
-        latitude_list=GroupConcat('latitude', delimiter=','),
-        longitude_list=GroupConcat('longitude', delimiter=','),
+        details_list=GroupConcat(Coalesce(F('details'), Value('')), delimiter=','),
+        photo_list=GroupConcat(Coalesce(F('photo'), Value('')), delimiter=','),
+        thumbnail_list=GroupConcat(Coalesce(F('thumbnail'), Value('')), delimiter=','),
+        latitude_list=GroupConcat(Coalesce(F('latitude'), Value('')), delimiter=','),
+        longitude_list=GroupConcat(Coalesce(F('longitude'), Value('')), delimiter=','),
     )
 
 def convert_date_format(date):
@@ -44,8 +45,8 @@ def convert_date_format(date):
 
 def transform_entry(entry):
     images = []
-    year_list = entry['year_list'].split(',') if entry['year_list'] else []
-    date_list = entry['date_list'].split(',') if entry['date_list'] else []
+    year_list = entry['year_list'].split(',')
+    date_list = entry['date_list'].split(',')
     continent_list = entry['continent_list'].split(',')
     country_list = entry['country_list'].split(',')
     region_list = entry['region_list'].split(',')
@@ -55,29 +56,18 @@ def transform_entry(entry):
     latitude_list = entry['latitude_list'].split(',')
     longitude_list = entry['longitude_list'].split(',')
 
-    n = len(photo_list)
-
-    if len(year_list) < n:
-        year_list += [''] * (n - len(year_list))
-    if len(date_list) < n:
-        date_list += [''] * (n - len(date_list))
-    if len(latitude_list) < n:
-        latitude_list += ['null'] * (n - len(latitude_list))
-    if len(longitude_list) < n:
-        longitude_list += ['null'] * (n - len(longitude_list))
-
-    for i in range(n):
+    for i in range(len(photo_list)):
         images.append({
-            'year': year_list[i],
-            'date': convert_date_format(date_list[i]),
-            'continent': continent_list[i],
-            'country': country_list[i],
-            'region': region_list[i],
-            'photo': photo_list[i],
-            'details': details_list[i],
-            'thumbnail': thumbnail_list[i],
-            'latitude': latitude_list[i],
-            'longitude': longitude_list[i],
+            'year': year_list[i] if year_list[i] else '',
+            'date': convert_date_format(date_list[i]) if date_list[i] else '',
+            'continent': continent_list[i] if continent_list[i] else '',
+            'country': country_list[i] if country_list[i] else '',
+            'region': region_list[i] if region_list[i] else '',
+            'photo': photo_list[i] if photo_list[i] else '',
+            'details': details_list[i] if details_list[i] else '',
+            'thumbnail': thumbnail_list[i] if thumbnail_list[i] else '',
+            'latitude': latitude_list[i] if longitude_list[i] else 'null',
+            'longitude': longitude_list[i] if longitude_list[i] else 'null',
         })
 
     entry['all_photos'] = images
