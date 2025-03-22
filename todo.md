@@ -1,3 +1,2 @@
-- amélioration pour petit écran
 - modification des espèces dans l'appli
 - formulaire avec multiples valeurs

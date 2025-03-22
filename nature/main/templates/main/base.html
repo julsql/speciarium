@@ -15,27 +15,25 @@
         <h1>Recherche avancée d’espèce</h1>
     </a>
     {% if user.is_authenticated %}
-    <div class="actions">
-        <div class="tab">
-            <div class="onglet">
-                <a href="{% url 'home' %}?latin_name={{ request.GET.latin_name }}&french_name={{ request.GET.french_name }}&class_field={{ request.GET.class_field }}&order_field={{ request.GET.order_field }}&family={{ request.GET.family }}&continent={{ request.GET.continent }}&country={{ request.GET.country }}&region={{ request.GET.region }}&year={{ request.GET.year }}&start_date={{ request.GET.start_date }}&end_date={{ request.GET.end_date }}">
-                    Mes espèces
-                </a>
-                <div class="border-shadow"></div>
-            </div>
-            <div class="onglet">
-                <a href="{% url 'photos' %}?latin_name={{ request.GET.latin_name }}&french_name={{ request.GET.french_name }}&class_field={{ request.GET.class_field }}&order_field={{ request.GET.order_field }}&family={{ request.GET.family }}&continent={{ request.GET.continent }}&country={{ request.GET.country }}&region={{ request.GET.region }}&year={{ request.GET.year }}&start_date={{ request.GET.start_date }}&end_date={{ request.GET.end_date }}">
-                    Mes photos
-                </a>
-                <div class="border-shadow"></div>
-            </div>
-            <div class="onglet">
-                <a href="{% url 'carte' %}?latin_name={{ request.GET.latin_name }}&french_name={{ request.GET.french_name }}&class_field={{ request.GET.class_field }}&order_field={{ request.GET.order_field }}&family={{ request.GET.family }}&continent={{ request.GET.continent }}&country={{ request.GET.country }}&region={{ request.GET.region }}&year={{ request.GET.year }}&start_date={{ request.GET.start_date }}&end_date={{ request.GET.end_date }}">
-                    La carte
-                </a>
-                <div class="border-shadow"></div>
-            </div>
+    <div class="tab">
+        <div class="onglet">
+            <a href="{% url 'home' %}?latin_name={{ request.GET.latin_name }}&french_name={{ request.GET.french_name }}&class_field={{ request.GET.class_field }}&order_field={{ request.GET.order_field }}&family={{ request.GET.family }}&continent={{ request.GET.continent }}&country={{ request.GET.country }}&region={{ request.GET.region }}&year={{ request.GET.year }}&start_date={{ request.GET.start_date }}&end_date={{ request.GET.end_date }}">
+                Mes espèces
+            </a>
         </div>
+        <div class="onglet">
+            <a href="{% url 'photos' %}?latin_name={{ request.GET.latin_name }}&french_name={{ request.GET.french_name }}&class_field={{ request.GET.class_field }}&order_field={{ request.GET.order_field }}&family={{ request.GET.family }}&continent={{ request.GET.continent }}&country={{ request.GET.country }}&region={{ request.GET.region }}&year={{ request.GET.year }}&start_date={{ request.GET.start_date }}&end_date={{ request.GET.end_date }}">
+                Mes photos
+            </a>
+        </div>
+        <div class="onglet">
+            <a href="{% url 'carte' %}?latin_name={{ request.GET.latin_name }}&french_name={{ request.GET.french_name }}&class_field={{ request.GET.class_field }}&order_field={{ request.GET.order_field }}&family={{ request.GET.family }}&continent={{ request.GET.continent }}&country={{ request.GET.country }}&region={{ request.GET.region }}&year={{ request.GET.year }}&start_date={{ request.GET.start_date }}&end_date={{ request.GET.end_date }}">
+                La carte
+            </a>
+        </div>
+    </div>
+    <div class="actions">
+
         {% include 'upload_images/module.html' %}
         <form class="logout" action="{% url 'logout' %}" method="post">
             {% csrf_token %}
