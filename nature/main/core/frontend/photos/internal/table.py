@@ -1,7 +1,10 @@
 import django_tables2 as tables
+
+from main.models.photo import Photos
 from main.models.species import Species
 
 italic = {"style": "font-style: italic;"}
+
 
 def create_thumbnail_column():
     template = '''
@@ -18,7 +21,8 @@ def create_thumbnail_column():
         verbose_name="Photo"
     )
 
-class MapTable(tables.Table):
+
+class PhotosTable(tables.Table):
     specie__latin_name = tables.Column(verbose_name="Nom latin", attrs={"td": italic})
     specie__french_name = tables.Column(verbose_name="Nom vernaculaire")
     specie__class_field = tables.Column(verbose_name="Classe", attrs={"td": italic})
@@ -49,7 +53,7 @@ class MapTable(tables.Table):
     )
 
     class Meta:
-        model = Species
+        model = Photos
         template_name = "table/module.html"
         fields = ("specie__latin_name", "specie__french_name", "specie__class_field",
                   "specie__order_field", "specie__family", "date",

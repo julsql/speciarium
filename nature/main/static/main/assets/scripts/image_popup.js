@@ -16,6 +16,7 @@ rows.forEach(row => {
         if (event.target.tagName === "IMG") {
             disableScroll(false);
             const allImagesData = row.querySelector(".all-images")?.dataset.images;
+            console.log(allImagesData)
             if (allImagesData) {
                 currentGroup = JSON.parse(allImagesData); // Convertir JSON en array d'objets
             } else {

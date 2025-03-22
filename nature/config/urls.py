@@ -28,6 +28,7 @@ from main.core.frontend.carte.internal.carte_view import carte
 from main.core.frontend.home.internal.home_view import home
 from main.core.frontend.errors.internal.errors_view import error_500_view, error_404_view
 from main.core.frontend.login.internal.login_view import login_view
+from main.core.frontend.photos.internal.photos_view import photos
 
 handler500 = error_500_view
 handler404 = error_404_view
@@ -39,6 +40,7 @@ urlpatterns = [
     path('accounts/', include('django.contrib.auth.urls')),
     path('', home, name='home'),
     path('carte/', carte, name='carte'),
+    path('photos/', photos, name='photos'),
     path('upload-images/', upload_images, name='upload'),
     path('hash/', get_hash, name='hash'),
     path('clean/', clean_database, name='hash'),

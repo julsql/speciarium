@@ -7,13 +7,6 @@ def create_thumbnail_column(image_number):
             <img src="{{{{ record.all_photos.{image_number}.thumbnail }}}}"
                 class="thumbnail"
                 data-full="{{{{ record.all_photos.{image_number}.photo }}}}"
-                data-title="<h2>{{% if record.specie__french_name %}}{{{{ record.specie__french_name }}}} - {{% endif %}}<i>{{{{ record.specie__latin_name }}}}</i></h2>"
-                data-info="
-                <p>Photo prise le {{{{ record.all_photos.{image_number}.date }}}}
-                en {{{{ record.all_photos.{image_number}.country }}}}{{% if record.all_photos.{image_number}.region %}}({{{{ record.all_photos.{image_number}.region }}}}){{% endif %}}{{% if record.all_photos.{image_number}.details %}}. {{{{ record.all_photos.{image_number}.details }}}}{{% endif %}}
-                </p>
-                
-                "
                 alt="{{{{ record.specie__latin_name }}}}"
             >
         {{% endif %}}
@@ -78,7 +71,7 @@ class SpeciesTable(tables.Table):
                         "title": "{% if record.specie__french_name %}{{ record.specie__french_name }} - {% endif %}<i>{{ record.specie__latin_name }}</i>",
                         "latitude": {{ image.latitude }},
                         "longitude": {{ image.longitude }},
-                        "info": "Photo prise {% if image.date %}le {{ image.date }}{% endif %}en {{ image.country }}{% if image.region %} ({{ image.region }}){% endif %}{% if image.details %}. {{ image.details }}{% endif %}"
+                        "info": "Photo prise {% if image.date %}le {{ image.date }} {% endif %}en {{ image.country }}{% if image.region %} ({{ image.region }}){% endif %}{% if image.details %}. {{ image.details }}{% endif %}"
                     }
                     {% if not forloop.last %},{% endif %}
                 {% endfor %}
@@ -90,7 +83,7 @@ class SpeciesTable(tables.Table):
 
     class Meta:
             model = Species
-            template_name = "advanced_search_result/table.html"
+            template_name = "table/module.html"
             fields = ("specie__latin_name", "specie__french_name", "specie__class_field",
                       "specie__order_field", "specie__family", "min_year",
                       "continent_list", "country_list", "region_list",

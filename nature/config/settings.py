@@ -61,11 +61,13 @@ TEMPLATES = [
         'DIRS': [
             BASE_DIR / 'main/core/frontend/advanced_search/templates',
             BASE_DIR / 'main/core/frontend/advanced_search_result/templates',
+            BASE_DIR / 'main/core/frontend/table/templates',
             BASE_DIR / 'main/core/frontend/login/templates',
             BASE_DIR / 'main/core/frontend/home/templates',
             BASE_DIR / 'main/core/frontend/errors/templates',
             BASE_DIR / 'main/core/frontend/upload_images/templates',
             BASE_DIR / 'main/core/frontend/carte/templates',
+            BASE_DIR / 'main/core/frontend/photos/templates',
         ],
         'APP_DIRS': True,
         'OPTIONS': {

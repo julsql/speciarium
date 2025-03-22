@@ -5,12 +5,12 @@ from django_tables2 import RequestConfig
 
 from main.core.frontend.advanced_search.internal.advanced_search_view import advanced_search
 from main.core.frontend.advanced_search_result.internal.advanced_search_result_view import filter_queryset
-from main.core.frontend.carte.internal.table import MapTable
+from main.core.frontend.photos.internal.table import PhotosTable
 from main.models.photo import Photos
 
 
 @login_required
-def carte(request: HttpRequest) -> HttpResponse:
+def photos(request: HttpRequest) -> HttpResponse:
     form, continents, years, countries, regions = advanced_search(request)
     value = {'form': form,
              'continents': continents,
@@ -93,7 +93,7 @@ def configure_table(request, queryset):
             per_page = 25
     except ValueError:
         per_page = 25
-    table = MapTable(queryset)
+    table = PhotosTable(queryset)
     RequestConfig(request, paginate={"per_page": per_page}).configure(table)
     return table
 
