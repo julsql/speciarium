@@ -56,3 +56,21 @@ window.onload = function () {
         }
     })
 }
+
+const toggleForm = document.getElementById('toggle-form');
+const formContent = document.getElementById('form-content');
+
+let expanded = true;
+
+toggleForm.addEventListener("click", (event) => {
+    if (expanded) {
+        formContent.style.display = "none";
+        toggleForm.style.transform = "rotate(180deg)"
+    } else {
+        formContent.style.display = "block";
+        toggleForm.style.transform = "rotate(360deg)"
+
+    }
+
+    expanded = !expanded;
+})

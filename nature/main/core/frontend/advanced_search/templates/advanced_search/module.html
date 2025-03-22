@@ -1,138 +1,145 @@
 {% load static %}
 
+
 <form method="get" class="mb-4 form">
     <div class="formulaire">
-        <span class="clear-all" id="clear-all">Tout vider &#x2715;</span>
-        <div class="row">
-            <div class="col-md-4">
-                <p>{{ form.latin_name.label }}</p>
-                <div class="input-container">
-                    {{ form.latin_name }}
-                    <span class="clear-btn">&#x2715;</span>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <p>{{ form.french_name.label }}</p>
-                <div class="input-container">
-                    {{ form.french_name }}
-                    <span class="clear-btn">&#x2715;</span>
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-4">
-                <p>{{ form.class_field.label }}</p>
-                <div class="input-container">
-                    {{ form.class_field }}
-                    <span class="clear-btn">&#x2715;</span>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <p>{{ form.order_field.label }}</p>
-                <div class="input-container">
-                    {{ form.order_field }}
-                    <span class="clear-btn">&#x2715;</span>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <p>{{ form.family.label }}</p>
-                <div class="input-container">
-                    {{ form.family }}
-                    <span class="clear-btn">&#x2715;</span>
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-4">
-                <p>{{ form.continent.label }}</p>
-                <div class="input-container">
-                    {{ form.continent }}
-                    <span class="clear-btn">&#x2715;</span>
-                </div>
-                {% if form.continent.errors %}
-                <div class="text-danger">
-                    {{ form.continent.errors }}
-                </div>
-                {% endif %}
-            </div>
-            <div class="col-md-4">
-                <p>{{ form.country.label }}</p>
-                <div class="input-container">
-                    {{ form.country }}
-                    <span class="clear-btn">&#x2715;</span>
-                </div>
-                {% if form.country.errors %}
-                <div class="text-danger">
-                    {{ form.country.errors }}
-                </div>
-                {% endif %}
-            </div>
-            <div class="col-md-4">
-                <p>{{ form.region.label }}</p>
-                <div class="input-container">
-                    {{ form.region }}
-                    <span class="clear-btn">&#x2715;</span>
-                </div>
-                {% if form.region.errors %}
-                <div class="text-danger">
-                    {{ form.region.errors }}
-                </div>
-                {% endif %}
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-4">
-                <p>{{ form.year.label }}</p>
-                <div class="input-container">
-                    {{ form.year }}
-                    <span class="clear-btn" id="clear-year">&#x2715;</span>
-                </div>
-                {% if form.year.errors %}
-                <div class="text-danger">
-                    {{ form.year.errors }}
-                </div>
-                {% endif %}
-            </div>
-            <div class="col-md-4">
-                <p>{{ form.start_date.label }}</p>
-                <div class="input-container date">
+        <button id="toggle-form" type="button">
+            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#373737">
+                <path d="M480-528 296-344l-56-56 240-240 240 240-56 56-184-184Z"/>
+            </svg>
+        </button>
+        <div id="form-content">
+            <span class="clear-all" id="clear-all">Tout vider &#x2715;</span>
+            <div class="row">
+                <div class="col-md-4">
+                    <p>{{ form.latin_name.label }}</p>
                     <div class="input-container">
-                        {{ form.start_date }}
-                        <span class="clear-btn" id="clear-start-date">&#x2715;</span>
+                        {{ form.latin_name }}
+                        <span class="clear-btn">&#x2715;</span>
                     </div>
+                </div>
+                <div class="col-md-4">
+                    <p>{{ form.french_name.label }}</p>
                     <div class="input-container">
-                        {{ form.end_date }}
-                        <span class="clear-btn" id="clear-end-date">&#x2715;</span>
+                        {{ form.french_name }}
+                        <span class="clear-btn">&#x2715;</span>
                     </div>
                 </div>
             </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <p>{{ form.class_field.label }}</p>
+                    <div class="input-container">
+                        {{ form.class_field }}
+                        <span class="clear-btn">&#x2715;</span>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <p>{{ form.order_field.label }}</p>
+                    <div class="input-container">
+                        {{ form.order_field }}
+                        <span class="clear-btn">&#x2715;</span>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <p>{{ form.family.label }}</p>
+                    <div class="input-container">
+                        {{ form.family }}
+                        <span class="clear-btn">&#x2715;</span>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <p>{{ form.continent.label }}</p>
+                    <div class="input-container">
+                        {{ form.continent }}
+                        <span class="clear-btn">&#x2715;</span>
+                    </div>
+                    {% if form.continent.errors %}
+                    <div class="text-danger">
+                        {{ form.continent.errors }}
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="col-md-4">
+                    <p>{{ form.country.label }}</p>
+                    <div class="input-container">
+                        {{ form.country }}
+                        <span class="clear-btn">&#x2715;</span>
+                    </div>
+                    {% if form.country.errors %}
+                    <div class="text-danger">
+                        {{ form.country.errors }}
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="col-md-4">
+                    <p>{{ form.region.label }}</p>
+                    <div class="input-container">
+                        {{ form.region }}
+                        <span class="clear-btn">&#x2715;</span>
+                    </div>
+                    {% if form.region.errors %}
+                    <div class="text-danger">
+                        {{ form.region.errors }}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <p>{{ form.year.label }}</p>
+                    <div class="input-container">
+                        {{ form.year }}
+                        <span class="clear-btn" id="clear-year">&#x2715;</span>
+                    </div>
+                    {% if form.year.errors %}
+                    <div class="text-danger">
+                        {{ form.year.errors }}
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="col-md-4">
+                    <p>{{ form.start_date.label }}</p>
+                    <div class="input-container date">
+                        <div class="input-container">
+                            {{ form.start_date }}
+                            <span class="clear-btn" id="clear-start-date">&#x2715;</span>
+                        </div>
+                        <div class="input-container">
+                            {{ form.end_date }}
+                            <span class="clear-btn" id="clear-end-date">&#x2715;</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary mt-3">Rechercher</button>
         </div>
-        <button type="submit" class="btn btn-primary mt-3">Rechercher</button>
     </div>
 
-
-        <div id="tab-header">
-            <div id="total-species">
-                {% if total_results > 1 %}
-                <p>{{total_results}} espèces trouvées.</p>
-                {% elif total_results == 1 %}
-                <p>{{total_results}} espèce trouvée.</p>
-                {% else %}
-                <p>Aucune espèce trouvée.</p>
-                {% endif %}
-            </div>
-            <div id="pagination-header">
-                {% if total_results > 10 %}
-                <select name="per_page" id="per_page" onchange="this.form.submit()">
-                    <option value="10" {% if request.GET.per_page == '10' %}selected{% endif %}>10</option>
-                    <option value="25" {% if request.GET.per_page == '25' or not request.GET.per_page %}selected{% endif %}>25</option>
-                    <option value="50" {% if request.GET.per_page == '50' %}selected{% endif %}>50</option>
-                    <option value="100" {% if request.GET.per_page == '100' %}selected{% endif %}>100</option>
-                </select>
-                {% include 'advanced_search_result/pagination.html' %}
-                {% endif %}
-            </div>
+    <div id="tab-header">
+        <div id="total-species">
+            {% if total_results > 1 %}
+            <p>{{total_results}} espèces trouvées.</p>
+            {% elif total_results == 1 %}
+            <p>{{total_results}} espèce trouvée.</p>
+            {% else %}
+            <p>Aucune espèce trouvée.</p>
+            {% endif %}
         </div>
+        <div id="pagination-header">
+            {% if total_results > 10 %}
+            <select name="per_page" id="per_page" onchange="this.form.submit()">
+                <option value="10" {% if request.GET.per_page == '10' %}selected{% endif %}>10</option>
+                <option value="25" {% if request.GET.per_page == '25' or not request.GET.per_page %}selected{% endif %}>25</option>
+                <option value="50" {% if request.GET.per_page == '50' %}selected{% endif %}>50</option>
+                <option value="100" {% if request.GET.per_page == '100' %}selected{% endif %}>100</option>
+            </select>
+            {% include 'advanced_search_result/pagination.html' %}
+            {% endif %}
+        </div>
+    </div>
 </form>
 
 <datalist id="continent-list">
@@ -160,9 +167,9 @@
 </datalist>
 
 {% block style %}
-<link rel="stylesheet" href="{% static 'main/assets/styles/form.css' %}" />
-<link rel="stylesheet" href="{% static 'main/assets/styles/pagination.css' %}" />
-<link rel="stylesheet" href="{% static 'main/assets/styles/table-header.css' %}" />
+<link rel="stylesheet" href="{% static 'main/assets/styles/form.css' %}"/>
+<link rel="stylesheet" href="{% static 'main/assets/styles/pagination.css' %}"/>
+<link rel="stylesheet" href="{% static 'main/assets/styles/table-header.css' %}"/>
 {% endblock %}
 
 {% block javascript %}
