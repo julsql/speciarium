@@ -16,6 +16,6 @@ def home(request: HttpRequest) -> HttpResponse:
              'regions': regions}
 
     table, total_results = advanced_search_result(request, form)
-    value.update({'table': table, 'total_results': total_results})
+    value.update({'table': table, 'total_results': total_results, 'page': "tab"})
 
     return render(request, 'home/module.html', value)

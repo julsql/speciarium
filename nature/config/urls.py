@@ -37,6 +37,7 @@ urlpatterns = [
     path('accounts/logout/', auth_views.LogoutView.as_view(), name='logout'),
     path('accounts/', include('django.contrib.auth.urls')),
     path('', home, name='home'),
+    path('carte/', home, name='carte'),
     path('upload-images/', upload_images, name='upload'),
     path('hash/', get_hash, name='hash'),
     path('clean/', clean_database, name='hash'),
