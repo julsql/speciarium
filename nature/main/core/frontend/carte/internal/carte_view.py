@@ -1,11 +1,9 @@
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpRequest
 from django.shortcuts import render
-from django_tables2 import RequestConfig
 
 from main.core.frontend.advanced_search.internal.advanced_search_view import advanced_search
 from main.core.frontend.advanced_search_result.internal.advanced_search_result_view import filter_queryset
-from main.core.frontend.carte.internal.table import MapTable
 from main.models.photo import Photos
 
 
@@ -18,10 +16,10 @@ def carte(request: HttpRequest) -> HttpResponse:
              'countries': countries,
              'regions': regions}
 
-    table, total_results = advanced_search_result_map(request, form)
-    value.update({'table': table, 'total_results': total_results, 'page': "photos"})
+    results, total_results = advanced_search_result_map(form)
+    value.update({'results': results, 'total_results': total_results, 'page': "photos"})
 
-    return render(request, 'photos/module.html', value)
+    return render(request, 'carte/module.html', value)
 
 
 def annotate_queryset(queryset):
@@ -31,7 +29,7 @@ def annotate_queryset(queryset):
         'continent', 'country', 'region', 'latitude', 'longitude', 'thumbnail', 'photo')
 
 
-def advanced_search_result_map(request, form):
+def advanced_search_result_map(form):
     queryset = Photos.objects.select_related('specie').all()
     filter_mappings = {
         'latin_name': 'specie__latin_name__icontains',
@@ -65,9 +63,8 @@ def advanced_search_result_map(request, form):
     queryset = annotate_queryset(queryset)
     total_results = queryset.count()
     queryset = process_queryset(queryset)
-    table = configure_table(request, queryset)
 
-    return table, total_results
+    return queryset, total_results
 
 
 def convert_date_format(date):
@@ -84,20 +81,6 @@ def convert_coordinates(longitude, latitude):
         return ''
 
 
-def configure_table(request, queryset):
-    per_page = request.GET.get("per_page", 25)
-    try:
-        # Vérifier si per_page est un entier valide
-        per_page = int(per_page)
-        if per_page <= 0:  # Sécurité pour éviter les valeurs invalides
-            per_page = 25
-    except ValueError:
-        per_page = 25
-    table = MapTable(queryset)
-    RequestConfig(request, paginate={"per_page": per_page}).configure(table)
-    return table
-
-
 def process_queryset(queryset):
     queryset = list(queryset)
     for entry in queryset:
@@ -108,4 +91,6 @@ def process_queryset(queryset):
 def transform_entry(entry):
     entry['date'] = convert_date_format(entry['date'])
     entry['coordinates'] = convert_coordinates(entry['latitude'], entry['longitude'])
+    entry['latitude'] = entry['latitude'] if entry['latitude'] else '""'
+    entry['longitude'] = entry['longitude'] if entry['longitude'] else '""'
     return entry
