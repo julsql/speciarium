@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from django.db.models import Min, F, Value
-from django.db.models.functions import Coalesce
+from django.db.models.functions import Coalesce, Round
 from django_tables2 import RequestConfig
 
 from main.core.frontend.advanced_search_result.internal.group_concat import GroupConcat
@@ -107,6 +107,7 @@ def configure_table(request, queryset):
 
 def advanced_search_result(request, form):
     queryset = Photos.objects.select_related('specie').all()
+
     filter_mappings = {
         'latin_name': 'specie__latin_name__icontains',
         'genus': 'specie__genus__icontains',
@@ -121,7 +122,6 @@ def advanced_search_result(request, form):
         'region': 'region',
         'details': 'details__icontains',
     }
-
     if form.is_valid():
         data = form.cleaned_data
         queryset = filter_queryset(queryset, form, filter_mappings)
@@ -129,12 +129,25 @@ def advanced_search_result(request, form):
         start_date = data.get("start_date")
         end_date = data.get("end_date")
 
+        latitude = data.get("latitude")
+        longitude = data.get("longitude")
+
+        decimal_coordinates = 3
+
         if start_date and end_date:
             queryset = queryset.filter(date__range=[start_date, end_date])
         elif start_date:
             queryset = queryset.filter(date__gte=start_date)
         elif end_date:
             queryset = queryset.filter(date__lte=end_date)
+        if latitude:
+            queryset = queryset.annotate(
+                rounded_latitude=Round('latitude', decimal_coordinates)
+            ).filter(rounded_latitude=round(latitude, decimal_coordinates))
+        if longitude:
+            queryset = queryset.annotate(
+                rounded_longitude=Round('longitude', decimal_coordinates)
+            ).filter(rounded_longitude=round(longitude, decimal_coordinates))
 
     queryset = annotate_queryset(queryset)
     total_results = queryset.count()

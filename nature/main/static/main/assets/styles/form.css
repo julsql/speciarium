@@ -241,6 +241,7 @@ input label {
     color: #999;
     font-size: 14px;
     transition: color 0.2s ease-in-out;
+    user-select: none;
 }
 
 .clear-all:hover {

@@ -114,6 +114,32 @@
                     </div>
                 </div>
             </div>
+            <div class="row" style="display: none">
+                <div class="col-md-4">
+                    <p>{{ form.latitude.label }}</p>
+                    <div class="input-container">
+                        {{ form.latitude }}
+                        <span class="clear-btn">&#x2715;</span>
+                    </div>
+                    {% if form.latitude.errors %}
+                    <div class="text-danger">
+                        {{ form.latitude.errors }}
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="col-md-4">
+                    <p>{{ form.longitude.label }}</p>
+                    <div class="input-container">
+                        {{ form.longitude }}
+                        <span class="clear-btn">&#x2715;</span>
+                    </div>
+                    {% if form.longitude.errors %}
+                    <div class="text-danger">
+                        {{ form.longitude.errors }}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
             <button type="submit" class="btn btn-primary mt-3">Rechercher</button>
         </div>
     </div>

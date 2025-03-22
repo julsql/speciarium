@@ -7,7 +7,6 @@ function showMiniMap(lat, lon) {
         miniMapContainer.style.display = "block";
 
         if (!miniMap) {
-            console.log(lat, lon)
             miniMap = L.map('mini-map', {
                 attributionControl: false,
                 zoomControl: false

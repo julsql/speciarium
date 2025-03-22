@@ -17,6 +17,8 @@ class SpeciesSearchForm(forms.Form):
     region = forms.CharField(max_length=255, required=False, label="Région", widget=forms.TextInput(attrs={'list': 'region-list'}))
     title = forms.CharField(max_length=255, required=False, label="Titre")
     details = forms.CharField(widget=forms.Textarea, required=False, label="Détails")
+    latitude = forms.FloatField(min_value=-90, max_value=90, required=False, label="Latitude")
+    longitude = forms.FloatField(min_value=-90, max_value=90, required=False, label="Longitude")
 
     continents = Photos.objects.values_list('continent', flat=True).distinct().order_by('continent')
     years = Photos.objects.values_list('year', flat=True).distinct().order_by('year')

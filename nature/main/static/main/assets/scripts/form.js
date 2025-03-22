@@ -21,7 +21,7 @@ function toggleClearBtn(input, clearBtn) {
 // Fonction pour effacer la valeur de l'input
 function clearInput(input, clearBtn) {
     input.value = '';
-    toggleClearBtn(input, clearBtn); // Met à jour la visibilité de la croix après effacement
+    toggleClearBtn(input, clearBtn);
 }
 
 window.onload = function () {
@@ -71,6 +71,5 @@ toggleForm.addEventListener("click", (event) => {
         toggleForm.style.transform = "rotate(360deg)"
 
     }
-
     expanded = !expanded;
 })

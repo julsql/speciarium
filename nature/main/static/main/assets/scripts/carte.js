@@ -3,13 +3,11 @@ const images = document.getElementById("data-carte");
 window.onload = function () {
     const allImagesData = images.dataset.images;
     let data;
-    console.log(allImagesData)
     if (allImagesData) {
         data = JSON.parse(allImagesData);
     } else {
         data = [];
     }
-    console.log(data)
     showMap(data)
 }
 
@@ -47,9 +45,13 @@ function showMap(data) {
         const tooltipContent = labels.map(label => `• ${label}`).join("<br>");
 
         marker.bindTooltip(tooltipContent, {
-            permanent: false, // Affiché seulement au survol
+            permanent: false,
             direction: "top",
-            className: "custom-tooltip" // Ajout d'une classe CSS pour styliser
+            className: "custom-tooltip"
+        });
+        marker.on('click', function () {
+            console.log("coucou")
+            window.location.href = `/photos/?latitude=${lat}&longitude=${lon}`;
         });
     });
 

@@ -1,4 +1,5 @@
 from django.contrib.auth.decorators import login_required
+from django.db.models.functions import Round
 from django.http import HttpResponse, HttpRequest
 from django.shortcuts import render
 from django_tables2 import RequestConfig
@@ -55,12 +56,25 @@ def advanced_search_result_map(request, form):
         start_date = data.get("start_date")
         end_date = data.get("end_date")
 
+        latitude = data.get("latitude")
+        longitude = data.get("longitude")
+
+        decimal_coordinates = 3
+
         if start_date and end_date:
             queryset = queryset.filter(date__range=[start_date, end_date])
         elif start_date:
             queryset = queryset.filter(date__gte=start_date)
         elif end_date:
             queryset = queryset.filter(date__lte=end_date)
+        if latitude:
+            queryset = queryset.annotate(
+                rounded_latitude=Round('latitude', decimal_coordinates)
+            ).filter(rounded_latitude=round(latitude, decimal_coordinates))
+        if longitude:
+            queryset = queryset.annotate(
+                rounded_longitude=Round('longitude', decimal_coordinates)
+            ).filter(rounded_longitude=round(longitude, decimal_coordinates))
 
     queryset = annotate_queryset(queryset)
     total_results = queryset.count()
