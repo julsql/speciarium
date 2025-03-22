@@ -1,7 +1,7 @@
 /* Style de base pour la navigation */
 nav[aria-label="Table navigation"] {
     text-align: center;
-    margin: auto 0;
+    margin: 20px 0;
 }
 
 /* Liste des pages */
@@ -14,6 +14,7 @@ nav[aria-label="Table navigation"] {
     height: 45px;
     overflow: hidden;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    max-width: calc(100vw - 40px);
 }
 
 /* Liens individuels */
@@ -35,6 +36,13 @@ nav[aria-label="Table navigation"] {
     transition: all 0.2s ease-in-out;
     color: rgb(55, 55, 55);
     height: 100%
+}
+
+@media (max-width: 768px) {
+    .pagination li a, .pagination li span {
+        font-size: 12px;
+        padding: 0 8px;
+    }
 }
 
 /* Liens actifs */

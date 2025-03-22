@@ -2,16 +2,21 @@
 #tab-header {
     display: flex;
     justify-content: space-between;
+    flex-wrap: wrap;
 }
 
 #pagination-header {
-    margin: 20px 0;
     display: flex;
+    flex-wrap: wrap;
 }
 
 /* Focus visuel */
 select:focus {
     outline: none; /* Supprimer le contour par défaut */
+}
+
+#per_page {
+    margin: 20px 10px 0 0;
 }
 
 /* Style pour les options */
@@ -28,10 +33,13 @@ select option {
         font-size: 12px; /* Réduction de la taille de la police */
         padding: 8px 12px; /* Réduction des marges internes */
     }
+    #per_page {
+        padding: 8px;
+    }
 }
 
 #total-species {
-    margin: auto 0;
+    margin: auto 10px auto 0;
     height: 50px;
     display: table;
 }
