@@ -1,5 +1,28 @@
 {% load static %}
 
+<div id="tab-header">
+    <div id="total-species">
+        {% if total_results > 1 %}
+        <p>{{total_results}} espèces trouvées.</p>
+        {% elif total_results == 1 %}
+        <p>{{total_results}} espèce trouvée.</p>
+        {% else %}
+        <p>Aucune espèce trouvée.</p>
+        {% endif %}
+    </div>
+    <div id="pagination-header">
+        {% if total_results > 10 %}
+        <select name="per_page" id="per_page" onchange="this.form.submit()">
+            <option value="10" {% if request.GET.per_page == '10' %}selected{% endif %}>10</option>
+            <option value="25" {% if request.GET.per_page == '25' or not request.GET.per_page %}selected{% endif %}>25</option>
+            <option value="50" {% if request.GET.per_page == '50' %}selected{% endif %}>50</option>
+            <option value="100" {% if request.GET.per_page == '100' %}selected{% endif %}>100</option>
+        </select>
+        {% include 'advanced_search_result/pagination.html' %}
+        {% endif %}
+    </div>
+</div>
+
 {% if total_results > 0 %}
     {% load render_table from django_tables2 %}
     {% render_table table %}

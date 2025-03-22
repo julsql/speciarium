@@ -65,6 +65,7 @@ TEMPLATES = [
             BASE_DIR / 'main/core/frontend/home/templates',
             BASE_DIR / 'main/core/frontend/errors/templates',
             BASE_DIR / 'main/core/frontend/upload_images/templates',
+            BASE_DIR / 'main/core/frontend/carte/templates',
         ],
         'APP_DIRS': True,
         'OPTIONS': {

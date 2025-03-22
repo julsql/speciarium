@@ -19,9 +19,14 @@
         {% if page and page == 'carte' or page == 'tab' %}
         <div class="tab">
             {% if page == 'tab' %}
-            <a href="{% url 'carte' %}">Carte</a>
+            <a href="{% url 'carte' %}?latin_name={{ request.GET.latin_name }}&french_name={{ request.GET.french_name }}&class_field={{ request.GET.class_field }}&order_field={{ request.GET.order_field }}&family={{ request.GET.family }}&continent={{ request.GET.continent }}&country={{ request.GET.country }}&region={{ request.GET.region }}&year={{ request.GET.year }}&start_date={{ request.GET.start_date }}&end_date={{ request.GET.end_date }}">
+                Carte
+            </a>
             {% elif page == 'carte' %}
-            <a href="{% url '' %}">Tableau</a>
+            <a href="{% url 'home' %}?latin_name={{ request.GET.latin_name }}&french_name={{ request.GET.french_name }}&class_field={{ request.GET.class_field }}&order_field={{ request.GET.order_field }}&family={{ request.GET.family }}&continent={{ request.GET.continent }}&country={{ request.GET.country }}&region={{ request.GET.region }}&year={{ request.GET.year }}&start_date={{ request.GET.start_date }}&end_date={{ request.GET.end_date }}">
+                Tableau
+            </a>
+
             {% endif %}
             <div class="border-shadow"></div>
         </div>

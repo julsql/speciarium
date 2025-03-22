@@ -24,6 +24,7 @@ from django.conf.urls.static import static
 from main.core.backend.get_hash.internal.get_hash_view import get_hash
 from main.core.backend.load_data.clean.internal.clean_database_view import clean_database
 from main.core.backend.load_data.upload_images.internal.upload_images_endpoint import upload_images
+from main.core.frontend.carte.internal.carte_view import carte
 from main.core.frontend.home.internal.home_view import home
 from main.core.frontend.errors.internal.errors_view import error_500_view, error_404_view
 from main.core.frontend.login.internal.login_view import login_view
@@ -37,7 +38,7 @@ urlpatterns = [
     path('accounts/logout/', auth_views.LogoutView.as_view(), name='logout'),
     path('accounts/', include('django.contrib.auth.urls')),
     path('', home, name='home'),
-    path('carte/', home, name='carte'),
+    path('carte/', carte, name='carte'),
     path('upload-images/', upload_images, name='upload'),
     path('hash/', get_hash, name='hash'),
     path('clean/', clean_database, name='hash'),

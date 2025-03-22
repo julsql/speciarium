@@ -8,6 +8,7 @@ from main.core.frontend.advanced_search_result.internal.group_concat import Grou
 from main.core.frontend.advanced_search_result.internal.table import SpeciesTable
 from main.models.photo import Photos
 
+
 def filter_queryset(queryset, form, filter_mappings):
     for form_field, model_field in filter_mappings.items():
         value = form.cleaned_data.get(form_field)
@@ -37,11 +38,13 @@ def annotate_queryset(queryset):
         longitude_list=GroupConcat(Coalesce(F('longitude'), Value('')), delimiter=','),
     )
 
+
 def convert_date_format(date):
     try:
         return datetime.strptime(date, '%Y-%m-%d').strftime('%d/%m/%Y')
     except ValueError:
         return ''
+
 
 def transform_entry(entry):
     images = []
