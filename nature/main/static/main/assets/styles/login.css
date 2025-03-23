@@ -12,11 +12,10 @@
     margin-bottom: 10px;
 }
 
-.container form{
+.container form {
     position: relative;
     margin: 20px auto 0 auto;
     max-width: 1100px;
-    min-width: 500px;
     background-color: #fff;
     overflow: hidden;
     border-radius: 7px;
@@ -27,45 +26,51 @@ button, input, optgroup, select, textarea {
     font-size: inherit;
 }
 
-.container form{
+.container form {
     background-color: #fff;
     transition: 0.3s ease;
 }
 
-.container form form.second{
+.container form form.second {
     opacity: 0;
     pointer-events: none;
     transform: translateX(100%);
 }
-form.secActive form.second{
+
+form.secActive form.second {
     opacity: 1;
     pointer-events: auto;
     transform: translateX(0);
 }
-form.secActive form.first{
+
+form.secActive form.first {
     opacity: 0;
     pointer-events: none;
     transform: translateX(-100%);
 }
-.container form .title{
+
+.container form .title {
     display: block;
     font-size: 14px;
     font-weight: 500;
     margin: 6px 0 8px 0;
     color: #333;
 }
-.container form .fields{
+
+.container form .fields {
     display: flex;
     align-items: center;
     justify-content: space-between;
     flex-wrap: wrap;
 }
-form .fields input{
+
+form .fields input {
     display: flex;
     width: calc(100% / 3 - 15px);
     flex-direction: column;
     margin: 4px 0;
 }
+
 input label {
     font-size: 12px;
     font-weight: 500;
@@ -86,18 +91,22 @@ form input, form select {
     max-width: 300px;
     margin: 3px 0;
 }
+
 form input :focus,
-form input select:focus{
-    box-shadow: 0 3px 6px rgba(0,0,0,0.13);
+form input select:focus {
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.13);
 }
+
 form input select,
-form input[type="date"]{
+form input[type="date"] {
     color: #707070;
 }
-form input[type="date"]:valid{
+
+form input[type="date"]:valid {
     color: #333;
 }
-.container form button, .backBtn{
+
+.container form button, .backBtn {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -108,35 +117,49 @@ form input[type="date"]:valid{
     outline: none;
     color: #fff;
     border-radius: 5px;
-    margin-right: 0;
+    margin-right: auto;
     margin-left: auto;
     margin-top: 10px;
     background-color: rgb(55, 55, 55);
     transition: all 0.3s linear;
     cursor: pointer;
 }
-.container form .btnText{
+
+.container form .btnText {
     font-size: 12px;
     font-weight: 400;
 }
-.container form button:hover{
+
+.container form button:hover {
     background-color: rgb(70, 70, 70);
 }
+
 form button i,
-form .backBtn i{
+form .backBtn i {
     margin: 0 6px;
 }
-form .backBtn i{
+
+form .backBtn i {
     transform: rotate(180deg);
 }
-form .buttons{
+
+form .buttons {
     display: flex;
     align-items: center;
 }
-form .buttons button , .backBtn{
+
+form .buttons button, .backBtn {
     margin-right: 14px;
 }
+
 form p {
     margin-bottom: 0;
     text-align: center;
+}
+
+
+@media (max-width: 600px) {
+    header a {
+        display: none;
+    }
 }

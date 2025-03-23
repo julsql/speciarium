@@ -43,11 +43,9 @@ th {
     text-align: inherit;
 }
 
-@media (min-width: 768px) {
-    .col-md-4 {
-        flex: 0 0 auto;
-        width: 33.33333333%;
-    }
+.col-md-4 {
+    flex: 0 0 auto;
+    width: 33.33333333%;
 }
 
 .container .formulaire .form {
@@ -180,25 +178,6 @@ input label {
     margin-bottom: 0;
 }
 
-@media (max-width: 750px) {
-    .container .formulaire {
-        overflow-y: scroll;
-    }
-
-    .container .formulaire::-webkit-scrollbar {
-        display: none;
-    }
-
-    .formulaire .fields input {
-        width: calc(100% / 2 - 15px);
-    }
-}
-
-@media (max-width: 300px) {
-    .formulaire .fields input {
-        width: 100%;
-    }
-}
 
 .input-container {
     position: relative;
@@ -259,4 +238,36 @@ input label {
     background-color: transparent;
     transition: all 0.2s linear;
     cursor: pointer;
+}
+
+@media (max-width: 811px) {
+    .container .formulaire {
+        overflow-y: scroll;
+    }
+
+    .container .formulaire::-webkit-scrollbar {
+        display: none;
+    }
+
+    .formulaire .fields input {
+        width: calc(100% / 2 - 15px);
+    }
+
+    .formulaire input, .formulaire select, .input-container {
+        max-width: unset;
+    }
+
+    .row {
+        justify-content: space-between;
+    }
+
+    .col-md-4 {
+        width: 50%;
+    }
+}
+
+@media (max-width: 500px) {
+    .col-md-4 {
+        width: 100%;
+    }
 }
