@@ -115,6 +115,8 @@ input label {
 
 .formulaire input select,
 .formulaire input[type="date"] {
+    -webkit-appearance: none;
+    appearance: none;
     color: #707070;
 }
 
@@ -180,6 +182,8 @@ input label {
 }
 
 .input-container input[type="date"] {
+    -webkit-appearance: none;
+    appearance: none;
     padding-right: 30px;
     font-size: 12px;
 }
