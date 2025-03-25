@@ -233,7 +233,7 @@ input label {
 
 #form-content {
     margin-top: 10px;
-    max-height: 500px;
+    max-height: 1000px;
     transition: max-height 0.5s ease-out, opacity 0.5s ease-out, margin-top 0.5s ease-out;
 }
 
@@ -252,6 +252,10 @@ input label {
 }
 
 @media (max-width: 811px) {
+    .btn {
+        margin-top: 10px;
+    }
+
     .container .formulaire {
         overflow-y: scroll;
     }
@@ -277,7 +281,7 @@ input label {
     }
 }
 
-@media (max-width: 500px) {
+@media (max-width: 578px) {
     .col-md-4 {
         width: calc(100%);
     }
