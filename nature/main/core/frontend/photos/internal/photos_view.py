@@ -94,7 +94,7 @@ def convert_date_format(date):
 def convert_coordinates(longitude, latitude):
     try:
         return f'{latitude:.3f}, {longitude:.3f}'
-    except TypeError:
+    except (TypeError, ValueError):
         return ''
 
 
@@ -121,5 +121,7 @@ def process_queryset(queryset):
 
 def transform_entry(entry):
     entry['date'] = convert_date_format(entry['date'])
+    entry['latitude'] = entry['latitude'] if entry['latitude'] else 'null'
+    entry['longitude'] = entry['longitude'] if entry['longitude'] else 'null'
     entry['coordinates'] = convert_coordinates(entry['latitude'], entry['longitude'])
     return entry

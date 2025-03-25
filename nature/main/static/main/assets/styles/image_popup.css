@@ -79,7 +79,7 @@ h2 i {
 }
 
 .popup_button {
-    position: fixed;
+    position: absolute;
     top: 50%;
     transform: translateY(-50%);
     background-color: rgba(0, 0, 0, 0.7);
@@ -100,20 +100,33 @@ button:hover {
 }
 
 #close-popup {
+    position: absolute;
+    background-color: transparent;
     top: 20px;
     right: 0;
     font-size: 30px;
 }
 
 .prev {
-    left: 0;
+    left: -40px;
 }
 
 .next {
-    right: 0;
+    right: -40px;
 }
 
 @media (max-width: 600px) {
+    .popup_button {
+        position: fixed;
+    }
+
+    .prev {
+        left: 0;
+    }
+
+    .next {
+        right: 0;
+    }
 
     #image-title {
         font-size: 12px;

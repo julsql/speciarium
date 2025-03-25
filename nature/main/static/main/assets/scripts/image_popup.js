@@ -17,7 +17,7 @@ rows.forEach(row => {
             disableScroll(false);
             const allImagesData = row.querySelector(".all-images")?.dataset.images;
             if (allImagesData) {
-                currentGroup = JSON.parse(allImagesData); // Convertir JSON en array d'objets
+                currentGroup = JSON.parse(allImagesData);
             } else {
                 currentGroup = [];
             }
