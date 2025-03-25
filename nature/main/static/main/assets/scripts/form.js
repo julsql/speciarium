@@ -8,6 +8,7 @@ const clearBtnDateEnd = document.getElementById('clear-end-date');
 
 const inputDates = [inputDateStart, inputDateEnd];
 const clearBtnDates = [clearBtnDateStart, clearBtnDateEnd];
+const clearBtnAll = document.getElementById('clear-all');
 
 // Fonction pour afficher ou cacher la croix
 function toggleClearBtn(input, clearBtn) {
@@ -24,52 +25,48 @@ function clearInput(input, clearBtn) {
     toggleClearBtn(input, clearBtn);
 }
 
-window.onload = function () {
-    const clearBtnAll = document.getElementById('clear-all');
-    clearBtnAll.addEventListener('click', () => {
-        inputs.forEach((input, index) => {
-            const clearBtn = clearBtns[index];
-            clearInput(input, clearBtn);
-        });
-        inputDates.forEach((input) => {
-            input.value = "";
-        })
-    });
-
+clearBtnAll.addEventListener('click', () => {
     inputs.forEach((input, index) => {
         const clearBtn = clearBtns[index];
-        toggleClearBtn(input, clearBtn);
-        input.addEventListener('input', () => toggleClearBtn(input, clearBtn));
-        clearBtn.addEventListener('click', () => clearInput(input, clearBtn));
+        clearInput(input, clearBtn);
     });
-
-    inputDates.forEach((input, index) => {
-        const clearBtnDate = clearBtnDates[index];
-        input.addEventListener('input', () => {
-            clearBtnDate.style.display = 'block';
-        });
-        if (clearBtnDate) {
-            clearBtnDate.addEventListener('click', () => {
-                input.value = '';
-                clearBtnDate.style.display = 'none';
-            });
-        }
+    inputDates.forEach((input) => {
+        input.value = "";
     })
-}
+});
+
+inputs.forEach((input, index) => {
+    const clearBtn = clearBtns[index];
+    toggleClearBtn(input, clearBtn);
+    input.addEventListener('input', () => toggleClearBtn(input, clearBtn));
+    clearBtn.addEventListener('click', () => clearInput(input, clearBtn));
+});
+
+inputDates.forEach((input, index) => {
+    const clearBtnDate = clearBtnDates[index];
+    input.addEventListener('input', () => {
+        clearBtnDate.style.display = 'block';
+    });
+    if (clearBtnDate) {
+        clearBtnDate.addEventListener('click', () => {
+            input.value = '';
+            clearBtnDate.style.display = 'none';
+        });
+    }
+})
 
 const toggleForm = document.getElementById('toggle-form');
+const toggleImg = document.querySelectorAll('#toggle-form > svg')[0];
 const formContent = document.getElementById('form-content');
 
 let expanded = true;
 
-toggleForm.addEventListener("click", (event) => {
+toggleForm.addEventListener("click", () => {
+    formContent.classList.toggle("hidden");
     if (expanded) {
-        formContent.style.display = "none";
-        toggleForm.style.transform = "rotate(180deg)"
+        toggleImg.style.transform = "rotate(180deg)"
     } else {
-        formContent.style.display = "block";
-        toggleForm.style.transform = "rotate(360deg)"
-
+        toggleImg.style.transform = "rotate(360deg)"
     }
     expanded = !expanded;
 })

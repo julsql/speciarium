@@ -1,14 +1,12 @@
 const images = document.getElementById("data-carte");
 
 window.onload = function () {
-    const allImagesData = images.dataset.images;
+    const allImagesData = images?.dataset?.images;
     let data;
     if (allImagesData) {
         data = JSON.parse(allImagesData);
-    } else {
-        data = [];
+        showMap(data)
     }
-    showMap(data)
 }
 
 function showMap(data) {
@@ -50,7 +48,6 @@ function showMap(data) {
             className: "custom-tooltip"
         });
         marker.on('click', function () {
-            console.log("coucou")
             window.location.href = `/photos/?latitude=${lat}&longitude=${lon}`;
         });
     });

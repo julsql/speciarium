@@ -213,6 +213,7 @@ input label {
 .clear-all {
     position: absolute;
     right: 20px;
+    top: 20px;
     cursor: pointer;
     color: #999;
     font-size: 14px;
@@ -224,8 +225,16 @@ input label {
     color: #333;
 }
 
+.hidden {
+    max-height: 0!important;
+    opacity: 0;
+    margin-top: 0!important;
+}
+
 #form-content {
     margin-top: 10px;
+    max-height: 500px;
+    transition: max-height 0.5s ease-out, opacity 0.5s ease-out, margin-top 0.5s ease-out;
 }
 
 #toggle-form {
@@ -233,8 +242,13 @@ input label {
     outline: none;
     color: black;
     background-color: transparent;
-    transition: all 0.2s linear;
     cursor: pointer;
+    width: 100%;
+    display: flex;
+}
+
+#toggle-form > svg {
+    transition: all 0.2s linear;
 }
 
 @media (max-width: 811px) {
