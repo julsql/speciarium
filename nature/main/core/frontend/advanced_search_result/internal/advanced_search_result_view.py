@@ -1,20 +1,48 @@
 from datetime import datetime
 
-from django.db.models import Min, F, Value
-from django.db.models.functions import Coalesce, Round
+from django.db.models.functions import Coalesce, Round, Cast
 from django_tables2 import RequestConfig
+from django.db.models import Value, F, Min, TextField, Func, FloatField, Q
 
-from main.core.frontend.advanced_search_result.internal.group_concat import GroupConcat
+from django.contrib.postgres.aggregates import StringAgg
+from django.contrib.postgres.search import TrigramSimilarity
+
 from main.core.frontend.advanced_search_result.internal.table import SpeciesTable
 from main.models.photo import Photos
 
+class Unaccent(Func):
+    function = 'unaccent'
+    output_field = FloatField()
+
+class DoubleMetaphone(Func):
+    function = 'dmetaphone'
+    output_field = TextField()
+
 
 def filter_queryset(queryset, form, filter_mappings):
+    onomastic_search = ['specie__latin_name',
+                        'specie__genus',
+                        'specie__species',
+                        'specie__french_name',
+                        'specie__class_field',
+                        'specie__order_field',
+                        'specie__family']
+
     for form_field, model_field in filter_mappings.items():
         value = form.cleaned_data.get(form_field)
         if value:
-            queryset = queryset.filter(**{model_field: value})
+            if model_field in onomastic_search:
+                queryset = queryset.annotate(
+                    similarity=TrigramSimilarity(Unaccent(F(model_field)), Unaccent(Value(value))),
+                    phonetic_match=DoubleMetaphone(F(model_field))
+                ).filter(
+                    Q(similarity__gt=0.3) | Q(phonetic_match=DoubleMetaphone(Value(value)))
+                ).order_by('-similarity')
+            else:
+                queryset = queryset.filter(**{model_field: value})
     return queryset
+
+
 
 
 def annotate_queryset(queryset):
@@ -23,19 +51,23 @@ def annotate_queryset(queryset):
         'specie__class_field', 'specie__order_field', 'specie__family'
     ).annotate(
         min_year=Min('year'),
-        year_list=GroupConcat(Coalesce(F('year'), Value('')), delimiter=','),
-        date_list=GroupConcat(Coalesce(F('date'), Value('')), delimiter=','),
-        continent_list=GroupConcat(Coalesce(F('continent'), Value('')), delimiter=','),
+
+        # Concaténation de valeurs sous PostgreSQL
+        year_list=StringAgg(Coalesce(Cast(F('year'), TextField()), Value('')), delimiter=','),
+        date_list=StringAgg(Coalesce(Cast(F('date'), TextField()), Value('')), delimiter=','),
+        continent_list=StringAgg(Coalesce(F('continent'), Value('')), delimiter=','),
         first_continent=Min('continent'),
-        country_list=GroupConcat(Coalesce(F('country'), Value('')), delimiter=','),
+        country_list=StringAgg(Coalesce(F('country'), Value('')), delimiter=','),
         first_country=Min('country'),
-        region_list=GroupConcat(Coalesce(F('region'), Value('')), delimiter=','),
+        region_list=StringAgg(Coalesce(F('region'), Value('')), delimiter=','),
         first_region=Min('region'),
-        details_list=GroupConcat(Coalesce(F('details'), Value('')), delimiter=','),
-        photo_list=GroupConcat(Coalesce(F('photo'), Value('')), delimiter=','),
-        thumbnail_list=GroupConcat(Coalesce(F('thumbnail'), Value('')), delimiter=','),
-        latitude_list=GroupConcat(Coalesce(F('latitude'), Value('')), delimiter=','),
-        longitude_list=GroupConcat(Coalesce(F('longitude'), Value('')), delimiter=','),
+        details_list=StringAgg(Coalesce(F('details'), Value('')), delimiter=','),
+        photo_list=StringAgg(Coalesce(F('photo'), Value('')), delimiter=','),
+        thumbnail_list=StringAgg(Coalesce(F('thumbnail'), Value('')), delimiter=','),
+
+        # Convertir les nombres en texte avant la concaténation
+        latitude_list=StringAgg(Coalesce(Cast(F('latitude'), TextField()), Value('')), delimiter=','),
+        longitude_list=StringAgg(Coalesce(Cast(F('longitude'), TextField()), Value('')), delimiter=','),
     )
 
 
@@ -109,13 +141,13 @@ def advanced_search_result(request, form):
     queryset = Photos.objects.select_related('specie').all()
 
     filter_mappings = {
-        'latin_name': 'specie__latin_name__icontains',
-        'genus': 'specie__genus__icontains',
-        'species': 'specie__species__icontains',
-        'french_name': 'specie__french_name__icontains',
-        'class_field': 'specie__class_field__icontains',
-        'order_field': 'specie__order_field__icontains',
-        'family': 'specie__family__icontains',
+        'latin_name': 'specie__latin_name',
+        'genus': 'specie__genus',
+        'species': 'specie__species',
+        'french_name': 'specie__french_name',
+        'class_field': 'specie__class_field',
+        'order_field': 'specie__order_field',
+        'family': 'specie__family',
         'year': 'year',
         'continent': 'continent',
         'country': 'country',

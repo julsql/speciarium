@@ -33,13 +33,13 @@ def annotate_queryset(queryset):
 def advanced_search_result_map(form):
     queryset = Photos.objects.select_related('specie').all()
     filter_mappings = {
-        'latin_name': 'specie__latin_name__icontains',
-        'genus': 'specie__genus__icontains',
-        'species': 'specie__species__icontains',
-        'french_name': 'specie__french_name__icontains',
-        'class_field': 'specie__class_field__icontains',
-        'order_field': 'specie__order_field__icontains',
-        'family': 'specie__family__icontains',
+        'latin_name': 'specie__latin_name',
+        'genus': 'specie__genus',
+        'species': 'specie__species',
+        'french_name': 'specie__french_name',
+        'class_field': 'specie__class_field',
+        'order_field': 'specie__order_field',
+        'family': 'specie__family',
         'year': 'year',
         'continent': 'continent__icontains',
         'country': 'country',

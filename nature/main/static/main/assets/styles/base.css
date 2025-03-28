@@ -44,6 +44,9 @@ header {
 .actions {
     display: flex;
     height: 45px;
+    justify-content: right;
+    gap: 10px;
+    margin-left: 10px;
 }
 
 .italic-field {
@@ -63,24 +66,19 @@ header {
     height: 24px;
 }
 
-.upload-button {
-    margin-right: 10px;
-    width: 45px;
-}
-
 .upload-info {
-    display: flex;
+    display: none;
 }
 
 .upload-info p {
-    margin: auto 10px auto auto;
+    margin: auto 10px auto 10px;
     max-width: 200px;
     text-align: end;
 }
 
 .loading {
     height: 25px;
-    margin: auto 10px auto auto;
+    margin: auto 10px auto 10px;
     display: none;
 }
 
@@ -100,10 +98,6 @@ header {
 
 .logout button {
     min-width: 165px;
-}
-
-.logout button svg {
-    margin-right: 8px;
 }
 
 .tab {
@@ -133,22 +127,43 @@ header {
     margin-left: 5px;
 }
 
+#logout-label {
+    margin-left: 8px;
+}
+
 @media (max-width: 900px) {
     .tab {
         display: block;
     }
+
     .tab a {
-        width: 150px;
+        width: 120px;
         height: 30px;
     }
+
     header {
         height: 90px;
     }
 }
 
 @media (max-width: 600px) {
-    header a {
+    .actions {
+        flex-wrap: wrap;
+    }
+
+    .logout button, .upload-button {
+        height: 40px;
+        min-width: 40px;
+    }
+
+    #logout-label {
         display: none;
     }
 }
 
+
+@media (max-width: 400px) {
+    header a {
+        display: none;
+    }
+}

@@ -1,18 +1,17 @@
 {% load static %}
 
-<div class="upload-info">
+<div class="upload-info" id="upload-info-container">
     <div id="progress-bar-container">
         <div id="progress-bar"></div>
     </div>
 
-<img id="loading" class="loading" src="{% static 'main/images/loading.gif' %}" alt="loading"/>
-<p id="upload-info"></p>
+    <img id="loading" class="loading" src="{% static 'main/images/loading.gif' %}" alt="loading"/>
+    <p id="upload-info"></p>
 </div>
 
 
-
 <!-- Champ input masqué -->
-<input type="file" id="folderInput" webkitdirectory multiple />
+<input type="file" id="folderInput" webkitdirectory multiple/>
 
 <!-- Bouton visible -->
 <label for="folderInput" class="upload-button">
@@ -28,5 +27,5 @@
 {% endblock %}
 
 {% block style %}
-<link rel="stylesheet" href="{% static 'main/assets/styles/upload_images.css' %}" />
+<link rel="stylesheet" href="{% static 'main/assets/styles/upload_images.css' %}"/>
 {% endblock %}

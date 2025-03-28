@@ -29,9 +29,9 @@ function getCoordinates(file) {
             if (lat && lon) {
                 const latitude = convertToDecimal(lat, EXIF.getTag(this, 'GPSLatitudeRef'));
                 const longitude = convertToDecimal(lon, EXIF.getTag(this, 'GPSLongitudeRef'));
-                resolve({ latitude, longitude });
+                resolve({latitude, longitude});
             } else {
-                resolve({ latitude: null, longitude: null }); // Si pas de coordonnées GPS
+                resolve({latitude: null, longitude: null}); // Si pas de coordonnées GPS
             }
         });
     });
@@ -87,13 +87,14 @@ function getWsRequest() {
 }
 
 folderInput.addEventListener("change", async (event) => {
-
     const info = document.getElementById("upload-info");
+    const infoContainer = document.getElementById("upload-info-container");
     const loading = document.getElementById("loading");
     const progressBar = document.getElementById('progress-bar');
     const progressBarContainer = document.getElementById('progress-bar-container');
 
     loading.style.display = "block";
+    infoContainer.style.display = "flex";
     info.style.display = "none";
     progressBarContainer.style.display = "none";
 
@@ -166,8 +167,8 @@ folderInput.addEventListener("change", async (event) => {
         info.style.display = "block";
         loading.style.display = "none";
     } else {
-        const photo_plur = metadata.length>1 ? "photos" : "photo"
-        const photo_delete_plur = imageToDelete.length>1 ? "photos" : "photo"
+        const photo_plur = metadata.length > 1 ? "photos" : "photo"
+        const photo_delete_plur = imageToDelete.length > 1 ? "photos" : "photo"
         if (metadata.length >= MAX_UPLOAD_IMAGES) {
             upload = upload && window.confirm(`Envoyer ${metadata.length} photos et supprimer ${imageToDelete.length} ${photo_delete_plur} ? (Attention, ${MAX_UPLOAD_IMAGES} est le maximum de photos à envoyer en une fois)`);
         } else {
@@ -203,7 +204,7 @@ folderInput.addEventListener("change", async (event) => {
                 } else if (isNumberInteger(data.progress)) {
                     loading.style.display = "none";
                     info.style.display = "block";
-                    info.style.width = "70px";
+                    info.style.width = "50px";
                     progressBarContainer.style.display = "block";
                     info.textContent = `${data.progress}/${species.size}`;
                     const progress = (parseInt(data.progress) / species.size) * 100;
@@ -290,8 +291,7 @@ async function cleanDatabase() {
         method: "GET",
     });
 
-    if (response.ok) {
-    } else {
+    if (!response.ok) {
         alert("Failed to upload images.");
     }
 }
