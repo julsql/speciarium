@@ -4,16 +4,14 @@
 {% block body %}
 {% include 'advanced_search/module.html' %}
 
-<div id="tab-header">
-    <div id="total-species">
-        {% if total_results > 1 %}
-        <p>{{total_results}} photos trouvées.</p>
-        {% elif total_results == 1 %}
-        <p>{{total_results}} photo trouvée.</p>
-        {% else %}
-        <p>Aucune photo trouvée.</p>
-        {% endif %}
-    </div>
+<div id="total-species">
+    {% if total_results > 1 %}
+    <p>{{total_results}} photos trouvées.</p>
+    {% elif total_results == 1 %}
+    <p>{{total_results}} photo trouvée.</p>
+    {% else %}
+    <p>Aucune photo trouvée.</p>
+    {% endif %}
 </div>
 
 
