@@ -15,7 +15,7 @@ services:
       - DEBUG=False
       - DJANGO_ENV=production
     working_dir: /app/nature
-    command: daphne config.asgi:application --bind 0.0.0.0:8000
+    command: daphne -b 0.0.0.0 -p 8000 config.asgi:application
 
   redis:
     image: redis:latest
