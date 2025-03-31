@@ -154,7 +154,7 @@ def advanced_search_result_map(request, form):
     return table, grouped_table, total_results
 
 
-def convert_coordinates(longitude, latitude):
+def convert_coordinates(latitude, longitude):
     try:
         return f'{latitude:.3f}, {longitude:.3f}'
     except (TypeError, ValueError):
