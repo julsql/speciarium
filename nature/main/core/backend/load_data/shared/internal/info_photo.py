@@ -2,15 +2,15 @@ import hashlib
 import os
 from datetime import datetime
 from typing import Any
-
+import reverse_geocoder as rg
 import unicodedata
 import yaml
 from PIL import Image
+import pycountry
 
 from config.settings import MEDIA_ROOT, BASE_DIR, MEDIA_URL
 from main.core.backend.logger.logger import logger
 
-continents_yaml = os.path.join(BASE_DIR, "main/core/backend/load_data/shared/continents.yml")
 VIGNETTE_PATH = 'main/images/vignettes'
 VIGNETTE_ROOT = os.path.join(MEDIA_ROOT, VIGNETTE_PATH)
 SMALL_PATH = 'main/images/small'
@@ -25,10 +25,20 @@ def get_info(image_path, rm_path, timestamp=None, latitude=None, longitude=None,
     infos_photo = {}
 
     try:
-        country, region, continent = get_location_from_path(image_path, rm_path)
+        latitude, longitude = get_place_taken(image_path, latitude, longitude)
+    except Exception as e:
+        logger.error(str(e))
+        latitude, longitude = None, None
+
+    infos_photo["latitude"] = latitude
+    infos_photo["longitude"] = longitude
+
+    try:
+        country, region, continent = get_location_from_path(infos_photo["latitude"], infos_photo["longitude"])
     except ValueError as e:
         logger.error(str(e))
-        raise e
+        country, continent, region = None, None, None
+
     infos_photo["country"] = country
     infos_photo["continent"] = continent
     infos_photo["region"] = region
@@ -65,15 +75,6 @@ def get_info(image_path, rm_path, timestamp=None, latitude=None, longitude=None,
     infos_photo["date"] = date
     infos_photo["year"] = year
 
-    try:
-        latitude, longitude = get_place_taken(image_path, latitude, longitude)
-    except Exception as e:
-        logger.error(str(e))
-        latitude, longitude = None, None
-
-    infos_photo["latitude"] = latitude
-    infos_photo["longitude"] = longitude
-
     for key, value in infos_photo.items():
         if type(value) is str:
             infos_photo[key] = normaliser_unicode(value)
@@ -91,26 +92,34 @@ def replace_root(image_path, rm_root, replace_root_path):
     return os.path.join(replace_root_path, image_path)
 
 
-def get_location_from_path(image_path, rm_path):
-    folders = replace_root(image_path, rm_path, '').split(os.sep)
-    logger.info(folders)
-    if len(folders) > 2:  # Exemple : pays/région/photo.jpeg
-        pays = normaliser_unicode(folders[0])
-        region = normaliser_unicode(folders[1])
-    elif len(folders) == 2:  # Exemple : pays/photo.jpeg
-        pays = normaliser_unicode(folders[0])
-        region = ''
-    else:
-        raise ValueError("Chemin invalide. Vérifiez la structure du chemin.")
-    return pays, region, find_continent(pays)
+def get_location_from_path(lat, lon):
+    if lat and lon and lat != "" and lon != "":
+        result = rg.search((lat, lon))[0]
+        return get_country(result['cc']), result['admin1'], get_continent(result['cc'])
+    return "", "", ""
 
 
-def find_continent(pays):
-    contenu_fichier = load_yaml(continents_yaml)
-    for continent, pays_par_continent in contenu_fichier.items():
-        if pays.lower() in (pays_nom.lower() for pays_nom in pays_par_continent):
+def get_continent(country_code):
+    continent_map = {
+        "Afrique": ["DZ", "AO", "BJ", "BW", "BF", "BI", "CM", "CV", "CF", "TD", "KM", "CG", "CD", "DJ", "EG", "GQ", "ER", "SZ", "ET", "GA", "GM", "GH", "GN", "GW", "KE", "LS", "LR", "LY", "MG", "MW", "ML", "MR", "MU", "MA", "MZ", "NA", "NE", "NG", "RW", "ST", "SN", "SC", "SL", "SO", "ZA", "SS", "SD", "TZ", "TG", "TN", "UG", "ZM", "ZW"],
+        "Asie": ["AF", "AM", "AZ", "BH", "BD", "BT", "BN", "KH", "CN", "CY", "GE", "IN", "ID", "IR", "IQ", "IL", "JP", "JO", "KZ", "KW", "KG", "LA", "LB", "MY", "MV", "MN", "MM", "NP", "KP", "OM", "PK", "PH", "QA", "SA", "SG", "KR", "LK", "SY", "TW", "TJ", "TH", "TR", "TM", "AE", "UZ", "VN", "YE"],
+        "Europe": ["AL", "AD", "AT", "BY", "BE", "BA", "BG", "HR", "CZ", "DK", "EE", "FI", "FR", "DE", "GR", "HU", "IS", "IE", "IT", "XK", "LV", "LI", "LT", "LU", "MT", "MD", "MC", "ME", "NL", "MK", "NO", "PL", "PT", "RO", "RU", "SM", "RS", "SK", "SI", "ES", "SE", "CH", "UA", "GB", "VA"],
+        "Amérique": ["AG", "BS", "BB", "BZ", "CA", "CR", "CU", "DM", "DO", "SV", "GD", "GT", "HT", "HN", "JM", "MX", "NI", "PA", "KN", "LC", "VC", "TT", "US", "AR", "BO", "BR", "CL", "CO", "EC", "FK", "GF", "GY", "PY", "PE", "SR", "UY", "VE"],
+        "Océanie": ["AS", "AU", "CK", "FJ", "PF", "GU", "KI", "MH", "FM", "NR", "NC", "NZ", "NU", "MP", "PW", "PG", "PN", "WS", "SB", "TK", "TO", "TV", "VU", "WF"]
+    }
+    for continent, countries in continent_map.items():
+        if country_code in countries:
             return continent
     return ''
+
+
+def get_country(country_code):
+    try:
+        country = pycountry.countries.get(alpha_2=country_code)
+        country_name = country.name if country else ''
+    except:
+        country_name = ''
+    return country_name
 
 
 def load_yaml(fichier_yaml):

@@ -98,7 +98,6 @@ folderInput.addEventListener("change", async (event) => {
     info.style.display = "none";
     progressBarContainer.style.display = "none";
 
-    // récupération des clefs uniques
     await cleanDatabase();
     const remoteKeys = await getKeys();
 

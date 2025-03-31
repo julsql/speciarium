@@ -10,9 +10,11 @@ from django.contrib.postgres.search import TrigramSimilarity
 from main.core.frontend.advanced_search_result.internal.table import SpeciesTable
 from main.models.photo import Photos
 
+
 class Unaccent(Func):
     function = 'unaccent'
     output_field = FloatField()
+
 
 class DoubleMetaphone(Func):
     function = 'dmetaphone'
@@ -43,8 +45,6 @@ def filter_queryset(queryset, form, filter_mappings):
             else:
                 queryset = queryset.filter(**{model_field: value})
     return queryset
-
-
 
 
 def annotate_queryset(queryset):
