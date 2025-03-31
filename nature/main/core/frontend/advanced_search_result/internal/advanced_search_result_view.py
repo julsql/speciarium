@@ -36,7 +36,9 @@ def filter_queryset(queryset, form, filter_mappings):
                     similarity=TrigramSimilarity(Unaccent(F(model_field)), Unaccent(Value(value))),
                     phonetic_match=DoubleMetaphone(F(model_field))
                 ).filter(
-                    Q(similarity__gt=0.3) | Q(phonetic_match=DoubleMetaphone(Value(value)))
+                    Q(similarity__gt=0.3) |
+                    Q(phonetic_match__icontains=DoubleMetaphone(Value(value))) |
+                    Q(**{f"{model_field}__icontains": value})
                 ).order_by('-similarity')
             else:
                 queryset = queryset.filter(**{model_field: value})
