@@ -2,7 +2,7 @@ from datetime import datetime
 
 from django.contrib.postgres.aggregates import StringAgg
 from django.db.models import Value, F, Min, TextField, Func, Q
-from django.db.models.functions import Coalesce, Round, Cast
+from django.db.models.functions import Coalesce, Round, Cast, Lower
 from django_tables2 import RequestConfig
 
 from main.core.frontend.advanced_search_result.internal.table import SpeciesTable
@@ -23,8 +23,10 @@ def filter_queryset(queryset, form, filter_mappings):
         if value:
             if model_field in onomastic_search:
                 queryset = queryset.annotate(
-                    unaccented_field=Func(f"{model_field}", function="unaccent")
-                ).filter(Q(unaccented_field__icontains=value))
+                    unaccented_field=Func(Lower(f"{model_field}"), function="unaccent")
+                ).filter(
+                    unaccented_field__icontains=Func(Value(value.lower()), function="unaccent")
+                )
             else:
                 queryset = queryset.filter(**{model_field: value})
     return queryset
