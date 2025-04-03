@@ -1,22 +1,12 @@
 from datetime import datetime
 
+from django.contrib.postgres.aggregates import StringAgg
+from django.db.models import Value, F, Min, TextField, Func, Q
 from django.db.models.functions import Coalesce, Round, Cast
 from django_tables2 import RequestConfig
-from django.db.models import Value, F, Min, TextField, Func, FloatField, Q
-
-from django.contrib.postgres.aggregates import StringAgg
-from django.contrib.postgres.search import TrigramSimilarity
 
 from main.core.frontend.advanced_search_result.internal.table import SpeciesTable
 from main.models.photo import Photos
-
-class Unaccent(Func):
-    function = 'unaccent'
-    output_field = FloatField()
-
-class DoubleMetaphone(Func):
-    function = 'dmetaphone'
-    output_field = TextField()
 
 
 def filter_queryset(queryset, form, filter_mappings):
@@ -33,18 +23,11 @@ def filter_queryset(queryset, form, filter_mappings):
         if value:
             if model_field in onomastic_search:
                 queryset = queryset.annotate(
-                    similarity=TrigramSimilarity(Unaccent(F(model_field)), Unaccent(Value(value))),
-                    phonetic_match=DoubleMetaphone(F(model_field))
-                ).filter(
-                    Q(similarity__gt=0.3) |
-                    Q(phonetic_match__icontains=DoubleMetaphone(Value(value))) |
-                    Q(**{f"{model_field}__icontains": value})
-                ).order_by('-similarity')
+                    unaccented_field=Func(f"{model_field}", function="unaccent")
+                ).filter(Q(unaccented_field__icontains=value))
             else:
                 queryset = queryset.filter(**{model_field: value})
     return queryset
-
-
 
 
 def annotate_queryset(queryset):
