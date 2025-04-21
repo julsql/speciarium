@@ -129,7 +129,7 @@ folderInput.addEventListener("change", async (event) => {
                         species.add(filePath[filePath.length - 1])
                         // l'image n'existe pas dans la base de données
                         console.log(key);
-                        const resizedFile = await resizeImage(file, 500, 500);
+                        const resizedFile = await resizeImage(file, 1000, 1000);
                         hasFilesToUpload = true;
                         formData.append('images', resizedFile);
                         const timestamp = await getTimestamp(file)
