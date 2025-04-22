@@ -13,21 +13,17 @@
     }
 }
 
-/* Focus visuel */
-select:focus {
-    outline: none; /* Supprimer le contour par défaut */
-}
-
 #per_page {
-    margin: 20px 0 0 0;
+    margin: 20px 0 20px 0;
 }
 
 /* Style pour les options */
 select option {
-    padding: 10px; /* Espacement intérieur pour chaque option */
-    font-size: 12px; /* Taille de la police */
-    color: #333; /* Couleur du texte */
+    padding: 10px;
+    font-size: 12px;
     text-align: center;
+    font-weight: normal;
+    color: rgb(55, 55, 55);
 }
 
 /* Améliorer les performances sur mobile */
@@ -62,14 +58,18 @@ select {
     border-radius: 5px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     transition: all 0.2s ease-in-out;
-    appearance: none; /* Supprime l'apparence par défaut du navigateur */
-    background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 5'%3E%3Cpath fill='%23737373' d='M2 0L0 2h4zM2 5L0 3h4z'/%3E%3C/svg%3E");
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: none;
     background-repeat: no-repeat;
     background-position: right 10px center;
     background-size: 10px;
     cursor: pointer;
     height: 45px;
     text-indent: 3px;
+    text-align: center;
+    margin: auto 20px;
 }
 
 /* Style au survol */
@@ -79,27 +79,11 @@ select:hover {
     border-color: rgb(55, 55, 55);
 }
 
-select {
-    text-align: center;
-    margin: auto 20px;
-    appearance: none; /* Supprime les flèches natives */
-    -webkit-appearance: none; /* Compatibilité avec WebKit */
-    -moz-appearance: none; /* Compatibilité avec Firefox */
-    background-image: none; /* Supprime l'icône si une image est utilisée */
-    cursor: pointer;
-}
-
 /* Style lors de la sélection (focus) */
 select:focus {
     outline: none;
     box-shadow: 0 0 3px rgb(70, 70, 70);
     border-color: rgb(70, 70, 70);
-}
-
-/* Option individuelle */
-select option {
-    font-weight: normal;
-    color: rgb(55, 55, 55);
 }
 
 /* Style désactivé */
