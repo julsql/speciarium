@@ -23,6 +23,9 @@
 {% block javascript %}
 <script src="{% static 'main/assets/scripts/exif-reader.min.js' %}"></script>
 <script src="https://cdn.jsdelivr.net/npm/exif-js"></script>
+
+
+<script>const currentCollectionId = "{{ request.user.current_collection.id }}";</script>
 <script src="{% static 'main/assets/scripts/upload_images.js' %}"></script>
 {% endblock %}
 

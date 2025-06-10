@@ -1,9 +1,9 @@
 import hashlib
 import os
+import unicodedata
 from datetime import datetime
 from typing import Any
 
-import unicodedata
 import yaml
 from PIL import Image
 
@@ -11,15 +11,29 @@ from config.settings import MEDIA_ROOT, BASE_DIR, MEDIA_URL
 from main.core.backend.logger.logger import logger
 
 continents_yaml = os.path.join(BASE_DIR, "main/core/backend/load_data/shared/continents.yml")
-VIGNETTE_PATH = 'main/images/vignettes'
-VIGNETTE_ROOT = os.path.join(MEDIA_ROOT, VIGNETTE_PATH)
-SMALL_PATH = 'main/images/small'
-SMALL_ROOT = os.path.join(MEDIA_ROOT, SMALL_PATH)
+
+
+def VIGNETTE_PATH(collection_id):
+    return f'main/images/{collection_id}/vignettes'
+
+
+def VIGNETTE_ROOT(collection_id):
+    return os.path.join(MEDIA_ROOT, VIGNETTE_PATH(collection_id))
+
+
+def SMALL_PATH(collection_id):
+    return f'main/images/{collection_id}/small'
+
+
+def SMALL_ROOT(collection_id):
+    return os.path.join(MEDIA_ROOT, SMALL_PATH(collection_id))
+
+
 PHOTO_PATH = 'originales'
 PHOTO_ROOT = os.path.join(BASE_DIR, PHOTO_PATH)
 
 
-def get_info(image_path, rm_path, timestamp=None, latitude=None, longitude=None, image_hash=None) -> dict[
+def get_info(image_path, rm_path, collection_id, timestamp=None, latitude=None, longitude=None, image_hash=None, ) -> dict[
     str, str | None | Any]:
     image_path = normaliser_unicode(image_path)
     infos_photo = {}
@@ -44,8 +58,8 @@ def get_info(image_path, rm_path, timestamp=None, latitude=None, longitude=None,
 
     try:
         image_hash = get_hash(image_path, image_hash)
-        thumbnail = get_thumbnail_path(image_path, rm_path)
-        photo = get_small_image_path(image_path, rm_path)
+        thumbnail = get_thumbnail_path(image_path, rm_path, collection_id)
+        photo = get_small_image_path(image_path, rm_path, collection_id)
     except Exception as e:
         logger.error(str(e))
         raise e
@@ -147,22 +161,22 @@ def get_hash(image_path, image_hash):
         return image_hash
 
 
-def get_thumbnail_path(image_path, rm_path):
-    output_path = vignette_path(image_path, rm_path)
+def get_thumbnail_path(image_path, rm_path, collection_id):
+    output_path = vignette_path(image_path, rm_path, collection_id)
     return replace_root(output_path, str(MEDIA_ROOT) + "/", MEDIA_URL)
 
 
-def get_small_image_path(image_path, rm_path):
-    output_path = petite_path(image_path, rm_path)
+def get_small_image_path(image_path, rm_path, collection_id):
+    output_path = petite_path(image_path, rm_path, collection_id)
     return replace_root(output_path, str(MEDIA_ROOT) + "/", MEDIA_URL)
 
 
-def petite_path(image_path, rm_path):
-    return replace_root(image_path, rm_path, SMALL_ROOT)
+def petite_path(image_path, rm_path, collection_id):
+    return replace_root(image_path, rm_path, SMALL_ROOT(collection_id))
 
 
-def vignette_path(image_path, rm_path):
-    return replace_root(image_path, rm_path, VIGNETTE_ROOT)
+def vignette_path(image_path, rm_path, collection_id):
+    return replace_root(image_path, rm_path, VIGNETTE_ROOT(collection_id))
 
 
 def get_date_taken(image_path, timestamp):
@@ -225,14 +239,15 @@ def convert_to_decimal(coord, ref):
 def images_in_folder(folder_path, all_image_path=None):
     if all_image_path is None:
         all_image_path = []
-    for item in os.listdir(folder_path):
-        item_path = os.path.join(folder_path, item)
+    if os.path.isdir(folder_path):
+        for item in os.listdir(folder_path):
+            item_path = os.path.join(folder_path, item)
 
-        if os.path.isdir(item_path):
-            images_in_folder(item_path, all_image_path)
-        else:
-            if is_image(item_path):
-                all_image_path.append(normaliser_unicode(item_path))
+            if os.path.isdir(item_path):
+                images_in_folder(item_path, all_image_path)
+            else:
+                if is_image(item_path):
+                    all_image_path.append(normaliser_unicode(item_path))
 
     return all_image_path
 

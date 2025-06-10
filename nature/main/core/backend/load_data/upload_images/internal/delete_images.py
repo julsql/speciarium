@@ -8,19 +8,19 @@ from main.models.photo import Photos
 from main.models.species import Species
 from main.core.backend.logger.logger import logger
 
-def delete_images(images_to_delete):
+def delete_images(images_to_delete, collection_id):
     for image_key in images_to_delete:
         try:
             image_path, image_hash = image_key.split(":")
             latin_name = get_latin_name(image_path)
-            thumbnail_path = str(Path(MEDIA_URL) / VIGNETTE_PATH / image_path.lstrip("/"))
+            thumbnail_path = str(Path(MEDIA_URL) / VIGNETTE_PATH(collection_id) / image_path.lstrip("/"))
             Photos.objects.filter(hash=image_hash, thumbnail=thumbnail_path).delete()
             specie_id = Species.objects.filter(latin_name=latin_name).values_list('id', flat=True).first()
             if specie_id and not Photos.objects.filter(specie_id=specie_id).exists():
                 Species.objects.filter(id=specie_id).delete()
 
-            image_small = os.path.join(SMALL_ROOT, image_path)
-            image_vignette = os.path.join(VIGNETTE_ROOT, image_path)
+            image_small = os.path.join(SMALL_ROOT(collection_id), image_path)
+            image_vignette = os.path.join(VIGNETTE_ROOT(collection_id), image_path)
             delete_file_with_permission_check(image_small)
             delete_file_with_permission_check(image_vignette)
         except Exception as e:

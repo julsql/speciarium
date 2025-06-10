@@ -45,9 +45,9 @@ urlpatterns = [
     path('change-map-tiles/<int:map_tiles_id>/', change_map_tiles_view, name='change_map_tiles'),
     path('carte/', carte, name='carte'),
     path('photos/', photos, name='photos'),
-    path('upload-images/', upload_images, name='upload'),
-    path('hash/', get_hash, name='hash'),
-    path('clean/', clean_database, name='hash'),
+    path('upload-images/<int:collection_id>/', upload_images, name='upload'),
+    path('hash/<int:collection_id>/', get_hash, name='hash'),
+    path('clean/<int:collection_id>/', clean_database, name='hash'),
 ]
 
 if settings.DEBUG:

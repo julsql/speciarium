@@ -6,12 +6,13 @@ from config.settings import MEDIA_URL
 from main.models.photo import Photos
 import os
 
-SMALL_PATH = os.path.join(MEDIA_URL, 'main/images/small/')
+def SMALL_PATH(collection_id):
+    return os.path.join(MEDIA_URL, 'main/images', str(collection_id), 'small/')
 
-def get_hash(request: HttpRequest):
+def get_hash(request: HttpRequest, collection_id):
     if request.method == 'GET':
-        values = Photos.objects.values('hash', 'photo')
-        result = [f"{get_title_from_path(photo['photo'])}:{photo['hash']}" for photo in values]
+        values = Photos.objects.filter(collection=collection_id).values('hash', 'photo')
+        result = [f"{get_title_from_path(photo['photo'], collection_id)}:{photo['hash']}" for photo in values]
 
         return JsonResponse({"keys": result})
     return HttpResponseBadRequest("Requête GET demandée")
@@ -19,5 +20,5 @@ def get_hash(request: HttpRequest):
 def normaliser_unicode(texte):
     return unicodedata.normalize('NFC', texte)
 
-def get_title_from_path(path: str):
-    return normaliser_unicode(path.replace(SMALL_PATH, ""))
+def get_title_from_path(path: str, collection_id):
+    return normaliser_unicode(path.replace(SMALL_PATH(collection_id), ""))

@@ -6,12 +6,18 @@ from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
 
 from main.core.backend.load_data.shared.internal.image import resize_image, create_directories
+from main.core.backend.load_data.shared.internal.info_photo import VIGNETTE_PATH, SMALL_PATH
 
 
-def create_images(image_file, path: str):
-    thumbnail_path = os.path.join('main/images/vignettes', path)
-    small_image_path = os.path.join('main/images/small', path)
+def create_images(image_file, path: str, collection_id):
+    thumbnail_path = os.path.join(VIGNETTE_PATH(collection_id), path)
+    small_image_path = os.path.join(SMALL_PATH(collection_id), path)
 
+    try:
+        os.makedirs(thumbnail_path)
+        os.makedirs(small_image_path)
+    except Exception:
+        pass
     create_thumbnail(image_file, thumbnail_path, 300)
     create_small_image(image_file, small_image_path, 1000)
 

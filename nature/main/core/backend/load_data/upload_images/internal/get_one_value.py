@@ -5,7 +5,7 @@ from main.core.backend.load_data.shared.internal.info_species import get_species
 from main.core.backend.logger.logger import logger
 from main.models.species import Species
 
-def get_photo_value(metadata):
+def get_photo_value(metadata, collection_id):
     datetime = ""
     if 'datetime' in metadata:
         datetime = metadata['datetime']
@@ -13,7 +13,7 @@ def get_photo_value(metadata):
     path = metadata.get('filepath')
     latitude = metadata.get('latitude')
     longitude = metadata.get('longitude')
-    return get_info(path, "", datetime, latitude, longitude, image_hash)
+    return get_info(path, "", collection_id, datetime, latitude, longitude, image_hash)
 
 async def get_specie_data(latin_name: str) -> dict[str, str] | None:
     species_already_added = await sync_to_async(list, thread_sensitive=True)(

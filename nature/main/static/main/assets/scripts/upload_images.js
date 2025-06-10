@@ -165,6 +165,8 @@ folderInput.addEventListener("change", async (event) => {
     if (imageToDelete.length === 0 && !hasFilesToUpload) {
         info.textContent = "Aucune image n'a changé";
         info.style.display = "block";
+        info.style.width = "200px";
+        info.style
         loading.style.display = "none";
     } else {
         const photo_plur = metadata.length > 1 ? "photos" : "photo"
@@ -215,6 +217,7 @@ folderInput.addEventListener("change", async (event) => {
             socket.onerror = function (event) {
                 console.error(event);
                 info.textContent = "Erreur lors du traitement des images";
+                info.style.width = "200px";
                 progressBar.style.width = '0';
                 progressBarContainer.style.display = "none";
                 info.style.width = "auto";
@@ -228,7 +231,7 @@ folderInput.addEventListener("change", async (event) => {
                 info.style.width = "auto";
             };
 
-            const response = await fetch(`upload-images/`, {
+            const response = await fetch(`/upload-images/${currentCollectionId}/`, {
                 method: "POST",
                 headers: headers,
                 body: formData,
@@ -268,7 +271,8 @@ function getCsrfToken() {
 }
 
 async function getKeys() {
-    const response = await fetch(`hash/`, {
+
+    const response = await fetch(`/hash/${currentCollectionId}/`, {
         method: "GET",
     });
 
@@ -287,7 +291,7 @@ async function getKeys() {
 }
 
 async function cleanDatabase() {
-    const response = await fetch(`clean/`, {
+    const response = await fetch(`/clean/${currentCollectionId}/`, {
         method: "GET",
     });
 

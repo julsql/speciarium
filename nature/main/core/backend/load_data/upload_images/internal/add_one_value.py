@@ -2,6 +2,7 @@ from django.core.exceptions import ValidationError
 from django.db import transaction
 
 from main.core.backend.logger.logger import logger
+from main.models.collection import Collection
 from main.models.photo import Photos
 from main.models.species import Species
 
@@ -28,9 +29,10 @@ def add_specie(info_specie: dict[str, str]) -> None:
 
 
 @transaction.atomic
-def add_photo(info_photo: dict[str, str]) -> None:
+def add_photo(info_photo: dict[str, str], collection_id) -> None:
     try:
         specie = Species.objects.filter(latin_name=info_photo['latin_name']).first()
+        collection = Collection.objects.filter(id=collection_id).first()
         photo = Photos(
             year=info_photo["year"],
             date=info_photo["date"],
@@ -44,6 +46,7 @@ def add_photo(info_photo: dict[str, str]) -> None:
             details=info_photo["details"],
             specie=specie,
             hash=info_photo["hash"],
+            collection=collection,
         )
 
         photo.full_clean()

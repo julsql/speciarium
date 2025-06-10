@@ -10,9 +10,9 @@ from main.models.species import Species
 PHOTO_PATH = os.path.join(BASE_DIR, 'originales')
 
 
-def get_dataset_on_each_image() -> list[dict[str, str]]:
+def get_dataset_on_each_image(collection_id) -> list[dict[str, str]]:
     all_image_path = images_in_folder(PHOTO_PATH)
-    return get_dataset_from_images_path(all_image_path, f"{PHOTO_PATH}/")
+    return get_dataset_from_images_path(all_image_path, f"{PHOTO_PATH}/", collection_id)
 
 
 def get_all_species_data(latin_name_list: list[str]) -> list[dict[str, str]]:
@@ -33,14 +33,14 @@ def get_all_species_data(latin_name_list: list[str]) -> list[dict[str, str]]:
     return info_species
 
 
-def get_dataset_from_images_path(images_path, path_to_remove) -> list[dict[str, str]]:
+def get_dataset_from_images_path(images_path, path_to_remove, collection_id) -> list[dict[str, str]]:
     logger.info(f"Nombre d'images {len(images_path)}")
     info_photo = []
     i = 0
     for image_path in images_path:
         try:
-            photo = get_info(image_path, path_to_remove)
-            create_images(image_path, path_to_remove)
+            photo = get_info(image_path, path_to_remove, collection_id)
+            create_images(image_path, path_to_remove, collection_id)
             info_photo.append(photo)
         except Exception as e:
             logger.error(e)
