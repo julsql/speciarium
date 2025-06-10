@@ -5,6 +5,7 @@ from django.shortcuts import render
 
 from main.core.frontend.advanced_search.internal.advanced_search_view import advanced_search
 from main.core.frontend.advanced_search_result.internal.advanced_search_result_view import filter_queryset
+from main.models.map_tiles import MapTiles
 from main.models.photo import Photos
 
 
@@ -18,7 +19,13 @@ def carte(request: HttpRequest) -> HttpResponse:
              'regions': regions}
 
     results, total_results = advanced_search_result_map(form, request)
-    value.update({'results': results, 'total_results': total_results, 'page': "photos"})
+
+    if request.user.map_tiles:
+        map_server = request.user.map_tiles.server
+    else:
+        map_server = MapTiles.objects.all().first().server
+
+    value.update({'results': results, 'total_results': total_results, 'page': "photos", 'map_server': map_server})
 
     return render(request, 'carte/module.html', value)
 

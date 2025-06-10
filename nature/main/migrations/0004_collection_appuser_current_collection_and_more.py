@@ -32,6 +32,20 @@ class Migration(migrations.Migration):
             field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL,
                                     related_name='current_users', to='main.collection'),
         ),
+        migrations.CreateModel(
+            name='MapTiles',
+            fields=[
+                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('name', models.CharField(max_length=50, unique=True)),
+                ('description', models.CharField(max_length=500)),
+                ('server', models.URLField()),
+            ],
+        ),
+        migrations.AddField(
+            model_name='appuser',
+            name='map_tiles',
+            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='users', to='main.maptiles'),
+        ),
         migrations.RunPython(create_collection),
         migrations.AddField(
             model_name='photos',

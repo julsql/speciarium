@@ -15,7 +15,7 @@ function showMap(data) {
         zoomControl: false
     }).setView([0, 0], 2);  // Vue initiale large
 
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    L.tileLayer(mapTiles ?? 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; OpenStreetMap contributors'
     }).addTo(carte);
 

@@ -9,7 +9,6 @@
         <p>Nom d'utilisateur : {{ username }}</p>
     </div>
     <div>
-        <br/>
         <h4>Mes collections</h4>
         <div class="list">
             <ul>
@@ -19,6 +18,21 @@
                 {% else %}
                 <li class="unselected_collection">{{ collection_title }} <a
                         href="{% url 'change_collection' collection_id %}">Sélectionner</a></li>
+                {% endif %}
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    <div>
+        <h4>Changer de fond de carte</h4>
+        <div class="list">
+            <ul>
+                {% for map_tiles_id, map_tiles_title in map_tiles %}
+                {% if map_tiles_id == current_map_tiles_id %}
+                <li class="current_collection">{{ map_tiles_title }}</li>
+                {% else %}
+                <li class="unselected_collection">{{ map_tiles_title }} <a
+                        href="{% url 'change_map_tiles' map_tiles_id %}">Sélectionner</a></li>
                 {% endif %}
                 {% endfor %}
             </ul>
@@ -38,4 +52,3 @@
 {% block style %}
 <link rel="stylesheet" href="{% static 'main/assets/styles/profile.css' %}" />
 {% endblock %}
-`
