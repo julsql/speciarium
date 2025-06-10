@@ -1,0 +1,41 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block body %}
+<div class="section">
+        <h2>Mes informations</h2>
+        <h3>{{ first_name }} {{ last_name }}</h3>
+    <div>
+        <p>Nom d'utilisateur : {{ username }}</p>
+    </div>
+    <div>
+        <br/>
+        <h4>Mes collections</h4>
+        <div class="list">
+            <ul>
+                {% for collection_id, collection_title in collections %}
+                {% if collection_id == current_collection_id %}
+                <li class="current_collection">{{ collection_title }}</li>
+                {% else %}
+                <li class="unselected_collection">{{ collection_title }} <a
+                        href="{% url 'change_collection' collection_id %}">Sélectionner</a></li>
+                {% endif %}
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    <br/>
+    <form action="{% url 'logout' %}" method="post">
+        {% csrf_token %}
+        <button type="submit" class="logout-btn">
+            Se déconnecter
+        </button>
+    </form>
+</div>
+
+{% endblock %}
+
+{% block style %}
+<link rel="stylesheet" href="{% static 'main/assets/styles/profile.css' %}" />
+{% endblock %}
+`

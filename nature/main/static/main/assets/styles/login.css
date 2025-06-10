@@ -19,16 +19,13 @@
     overflow: hidden;
     border-radius: 7px;
     padding: 20px;
+    transition: 0.3s ease;
 }
 
 button, input, optgroup, select, textarea {
     font-size: inherit;
 }
 
-.container form {
-    background-color: #fff;
-    transition: 0.3s ease;
-}
 
 .container form form.second {
     opacity: 0;
@@ -78,7 +75,7 @@ input label {
 
 form input, form select {
     outline: none;
-    font-size: 12px;
+    font-size: 14px;
     font-weight: 400;
     color: #333;
     border-radius: 5px;
@@ -124,7 +121,7 @@ form input[type="date"]:valid {
 }
 
 .container form .btnText {
-    font-size: 12px;
+    font-size: 14px;
     font-weight: 400;
 }
 

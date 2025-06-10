@@ -68,6 +68,7 @@ TEMPLATES = [
             BASE_DIR / 'main/core/frontend/upload_images/templates',
             BASE_DIR / 'main/core/frontend/carte/templates',
             BASE_DIR / 'main/core/frontend/photos/templates',
+            BASE_DIR / 'main/core/frontend/profile/templates',
         ],
         'APP_DIRS': True,
         'OPTIONS': {
