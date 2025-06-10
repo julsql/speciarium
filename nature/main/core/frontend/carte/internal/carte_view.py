@@ -17,7 +17,7 @@ def carte(request: HttpRequest) -> HttpResponse:
              'countries': countries,
              'regions': regions}
 
-    results, total_results = advanced_search_result_map(form)
+    results, total_results = advanced_search_result_map(form, request)
     value.update({'results': results, 'total_results': total_results, 'page': "photos"})
 
     return render(request, 'carte/module.html', value)
@@ -30,8 +30,13 @@ def annotate_queryset(queryset):
         'continent', 'country', 'region', 'latitude', 'longitude', 'thumbnail', 'photo')
 
 
-def advanced_search_result_map(form):
-    queryset = Photos.objects.select_related('specie').all()
+def advanced_search_result_map(form, request):
+    if request.user.current_collection:
+        collection = request.user.current_collection
+    else:
+        collection = request.user.collections.all().first()
+
+    queryset = Photos.objects.select_related('specie').filter(collection=collection)
     filter_mappings = {
         'latin_name': 'specie__latin_name',
         'genus': 'specie__genus',

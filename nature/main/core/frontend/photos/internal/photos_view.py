@@ -33,7 +33,13 @@ def annotate_queryset(queryset):
 
 
 def advanced_search_result_map(request, form):
-    queryset = Photos.objects.select_related('specie').all()
+    if request.user.current_collection:
+        collection = request.user.current_collection
+    else:
+        collection = request.user.collections.all().first()
+
+    queryset = Photos.objects.select_related('specie').filter(collection=collection)
+
     filter_mappings = {
         'latin_name': 'specie__latin_name',
         'genus': 'specie__genus',
