@@ -13,6 +13,9 @@
 <header>
     <a href="/" class="title">
         <h1>Recherche avancée d’espèce</h1>
+        {% if user.is_authenticated %}
+        <h2>{{ user.current_collection.title }}</h2>
+        {% endif %}
     </a>
     {% if user.is_authenticated %}
     <div class="tab">
