@@ -5,7 +5,7 @@ from django.shortcuts import render
 from django_tables2 import RequestConfig
 
 from main.core.frontend.advanced_search.internal.advanced_search_view import advanced_search
-from main.core.frontend.advanced_search_result.internal.advanced_search_result_view import filter_queryset
+from main.core.frontend.advanced_search_result.internal.advanced_search_result_view import filter_queryset, get_number
 from main.core.frontend.photos.internal.table import PhotosTable
 from main.models.map_tiles import MapTiles
 from main.models.photo import Photos
@@ -136,4 +136,5 @@ def transform_entry(entry):
     entry['latitude'] = entry['latitude'] if entry['latitude'] else 'null'
     entry['longitude'] = entry['longitude'] if entry['longitude'] else 'null'
     entry['coordinates'] = convert_coordinates(entry['latitude'], entry['longitude'])
+    entry['number_picture'] = get_number(entry['thumbnail'])
     return entry

@@ -44,7 +44,7 @@ class PhotosTable(tables.Table):
                             "title": "{% if record.specie__french_name %}{{ record.specie__french_name }} - {% endif %}<i>{{ record.specie__latin_name }}</i>",
                             "latitude": {{ record.latitude }},
                             "longitude": {{ record.longitude }},
-                            "info": "Photo prise {% if record.date %}le {{ record.date }} {% endif %}en {{ record.country }} {% if record.region %} ({{ record.region }}){% endif %}{% if record.details %}. {{ record.details }}{% endif %}"
+                            "info": "Photo {{ record.number_picture }} prise {% if record.date %}le {{ record.date }} {% endif %}en {{ record.country }} {% if record.region %} ({{ record.region }}){% endif %}{% if record.details %}. {{ record.details }}{% endif %}"
                         }
                 ]' hidden></span>
                 """,

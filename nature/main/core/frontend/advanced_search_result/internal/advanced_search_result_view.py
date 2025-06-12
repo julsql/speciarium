@@ -65,6 +65,9 @@ def convert_date_format(date):
         return ''
 
 
+def get_number(thumbnail_path):
+    return thumbnail_path.split(" ")[-1]
+
 def transform_entry(entry):
     images = []
     year_list = entry['year_list'].split(',')
@@ -90,6 +93,7 @@ def transform_entry(entry):
             'thumbnail': thumbnail_list[i] if thumbnail_list[i] else '',
             'latitude': latitude_list[i] if longitude_list[i] else 'null',
             'longitude': longitude_list[i] if longitude_list[i] else 'null',
+            'number_picture': get_number(thumbnail_list[i]) if thumbnail_list[i] else '',
         })
 
     entry['all_photos'] = images

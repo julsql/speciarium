@@ -71,7 +71,7 @@ class SpeciesTable(tables.Table):
                         "title": "{% if record.specie__french_name %}{{ record.specie__french_name }} - {% endif %}<i>{{ record.specie__latin_name }}</i>",
                         "latitude": {{ image.latitude }},
                         "longitude": {{ image.longitude }},
-                        "info": "Photo prise {% if image.date %}le {{ image.date }} {% endif %}en {{ image.country }}{% if image.region %} ({{ image.region }}){% endif %}{% if image.details %}. {{ image.details }}{% endif %}"
+                        "info": "Photo {{ image.number_picture }} prise {% if image.date %}le {{ image.date }} {% endif %}en {{ image.country }}{% if image.region %} ({{ image.region }}){% endif %}{% if image.details %}. {{ image.details }}{% endif %}"
                     }
                     {% if not forloop.last %},{% endif %}
                 {% endfor %}
