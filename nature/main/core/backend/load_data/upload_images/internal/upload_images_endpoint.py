@@ -11,9 +11,9 @@ from main.core.backend.load_data.upload_images.internal.get_one_value import get
 from main.core.backend.logger.logger import logger
 
 
-def upload_images(request):
+def upload_images(request, collection_id):
     if request.method == "POST":
-        async_to_sync(process_images)(request)
+        async_to_sync(process_images)(request, collection_id)
         return JsonResponse({"message": "Traitement en cours"}, status=202)
 
     return JsonResponse({"error": "Invalid request"}, status=400)
@@ -33,13 +33,13 @@ async def send_progress(progress):
         logger.error(e)
 
 
-async def process_images(request):
+async def process_images(request, collection_id):
     images = []
     if "images" in request.FILES:
         images = request.FILES.getlist("images")
     image_to_delete = json.loads(request.POST.get("imageToDelete"))
     await send_progress("Début de la suppression des images")
-    await sync_to_async(delete_images)(image_to_delete)
+    await sync_to_async(delete_images)(image_to_delete, collection_id)
 
     metadata = json.loads(request.POST.get("metadata"))
     results = []
@@ -47,7 +47,7 @@ async def process_images(request):
     if len(metadata) > 0:
         for index, (image, meta) in enumerate(zip(images, metadata)):
             try:
-                await treatment_image(image, meta, index)
+                await treatment_image(image, meta, index, collection_id)
             except Exception as e:
                 logger.error(e)
                 await send_progress(str(e))
@@ -56,13 +56,13 @@ async def process_images(request):
     return image_to_delete, results
 
 
-async def treatment_image(image, metadata, i):
-    info_photo = get_photo_value(metadata)
-    create_images(image, metadata['filepath'])
+async def treatment_image(image, metadata, i, collection_id):
+    info_photo = get_photo_value(metadata, collection_id)
+    create_images(image, metadata['filepath'], collection_id)
     info_specie = await get_specie_data(info_photo['latin_name'])
     if info_specie:
         await sync_to_async(add_specie, thread_sensitive=True)(info_specie)
-    await sync_to_async(add_photo, thread_sensitive=True)(info_photo)
+    await sync_to_async(add_photo, thread_sensitive=True)(info_photo, collection_id)
 
     print(f"espèce {i} : {info_photo['latin_name']}")
     logger.info(f"espèce {i} : {info_photo['latin_name']}")

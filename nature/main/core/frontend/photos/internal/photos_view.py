@@ -7,11 +7,17 @@ from django_tables2 import RequestConfig
 from main.core.frontend.advanced_search.internal.advanced_search_view import advanced_search
 from main.core.frontend.advanced_search_result.internal.advanced_search_result_view import filter_queryset
 from main.core.frontend.photos.internal.table import PhotosTable
+from main.models.map_tiles import MapTiles
 from main.models.photo import Photos
 
 
 @login_required
 def photos(request: HttpRequest) -> HttpResponse:
+    if request.user.map_tiles:
+        map_server = request.user.map_tiles.server
+    else:
+        map_server = MapTiles.objects.all().first().server
+
     form, continents, years, countries, regions = advanced_search(request)
     value = {'form': form,
              'continents': continents,
@@ -20,7 +26,7 @@ def photos(request: HttpRequest) -> HttpResponse:
              'regions': regions}
 
     table, total_results = advanced_search_result_map(request, form)
-    value.update({'table': table, 'total_results': total_results, 'page': "photos"})
+    value.update({'table': table, 'total_results': total_results, 'page': "photos", 'map_server' : map_server})
 
     return render(request, 'photos/module.html', value)
 
@@ -33,7 +39,13 @@ def annotate_queryset(queryset):
 
 
 def advanced_search_result_map(request, form):
-    queryset = Photos.objects.select_related('specie').all()
+    if request.user.current_collection:
+        collection = request.user.current_collection
+    else:
+        collection = request.user.collections.all().first()
+
+    queryset = Photos.objects.select_related('specie').filter(collection=collection)
+
     filter_mappings = {
         'latin_name': 'specie__latin_name',
         'genus': 'specie__genus',

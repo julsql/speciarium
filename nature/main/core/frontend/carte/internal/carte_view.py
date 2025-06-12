@@ -5,6 +5,7 @@ from django.shortcuts import render
 
 from main.core.frontend.advanced_search.internal.advanced_search_view import advanced_search
 from main.core.frontend.advanced_search_result.internal.advanced_search_result_view import filter_queryset
+from main.models.map_tiles import MapTiles
 from main.models.photo import Photos
 
 
@@ -17,8 +18,14 @@ def carte(request: HttpRequest) -> HttpResponse:
              'countries': countries,
              'regions': regions}
 
-    results, total_results = advanced_search_result_map(form)
-    value.update({'results': results, 'total_results': total_results, 'page': "photos"})
+    results, total_results = advanced_search_result_map(form, request)
+
+    if request.user.map_tiles:
+        map_server = request.user.map_tiles.server
+    else:
+        map_server = MapTiles.objects.all().first().server
+
+    value.update({'results': results, 'total_results': total_results, 'page': "photos", 'map_server': map_server})
 
     return render(request, 'carte/module.html', value)
 
@@ -30,8 +37,13 @@ def annotate_queryset(queryset):
         'continent', 'country', 'region', 'latitude', 'longitude', 'thumbnail', 'photo')
 
 
-def advanced_search_result_map(form):
-    queryset = Photos.objects.select_related('specie').all()
+def advanced_search_result_map(form, request):
+    if request.user.current_collection:
+        collection = request.user.current_collection
+    else:
+        collection = request.user.collections.all().first()
+
+    queryset = Photos.objects.select_related('specie').filter(collection=collection)
     filter_mappings = {
         'latin_name': 'specie__latin_name',
         'genus': 'specie__genus',

@@ -10,34 +10,34 @@ from main.models.photo import Photos
 from main.models.species import Species
 
 
-def clean_database(request: HttpRequest):
+def clean_database(request: HttpRequest, collection_id):
     if request.method == 'GET':
-        photo_row_delete, file_delete = compare_file_to_database()
-        delete_photos(set(photo_row_delete + file_delete))
+        photo_row_delete, file_delete = compare_file_to_database(collection_id)
+        delete_photos(set(photo_row_delete + file_delete), collection_id)
 
         return JsonResponse({"keys": ""})
     return HttpResponseBadRequest("Requête GET demandée")
 
-def get_file_path():
-    all_thumbnails_path = images_in_folder(VIGNETTE_ROOT)
-    all_small_path = images_in_folder(SMALL_ROOT)
+def get_file_path(collection_id):
+    all_thumbnails_path = images_in_folder(VIGNETTE_ROOT(collection_id))
+    all_small_path = images_in_folder(SMALL_ROOT(collection_id))
 
-    all_thumbnails_path = rm_basepath(all_thumbnails_path, VIGNETTE_ROOT)
-    all_small_path = rm_basepath(all_small_path, SMALL_ROOT)
+    all_thumbnails_path = rm_basepath(all_thumbnails_path, VIGNETTE_ROOT(collection_id))
+    all_small_path = rm_basepath(all_small_path, SMALL_ROOT(collection_id))
     return all_thumbnails_path, all_small_path
 
-def get_database_path():
+def get_database_path(collection_id):
     all_path = list(Photos.objects.values_list('photo', flat=True))
 
-    all_path = rm_basepath(all_path, os.path.join(MEDIA_URL, SMALL_PATH))
+    all_path = rm_basepath(all_path, os.path.join(MEDIA_URL, SMALL_PATH(collection_id)))
     return all_path
 
 def rm_basepath(paths, rm_root):
     return [replace_root(path, str(rm_root), "") for path in paths]
 
-def compare_file_to_database():
-    file_thumbnails_path, file_small_path = get_file_path()
-    database_path = get_database_path()
+def compare_file_to_database(collection_id):
+    file_thumbnails_path, file_small_path = get_file_path(collection_id)
+    database_path = get_database_path(collection_id)
 
     photo_row_to_delete = []
     file_to_delete = list(set(file_thumbnails_path) ^ set(file_small_path))
@@ -56,12 +56,12 @@ def compare_file_to_database():
 
     return photo_row_to_delete, file_to_delete
 
-def delete_photos(photo_to_delete):
+def delete_photos(photo_to_delete, collection_id):
     for photo_path in photo_to_delete:
-        delete_photo(photo_path.lstrip("/"))
+        delete_photo(photo_path.lstrip("/"), collection_id)
 
-def delete_photo(path):
-    thumbnail_path = str(Path(MEDIA_URL) / VIGNETTE_PATH / path)
+def delete_photo(path, collection_id):
+    thumbnail_path = str(Path(MEDIA_URL) / VIGNETTE_PATH(collection_id) / path)
     latin_name = get_latin_name(path)
 
     Photos.objects.filter(thumbnail=thumbnail_path).delete()
@@ -69,7 +69,7 @@ def delete_photo(path):
     if specie_id and not Photos.objects.filter(specie_id=specie_id).exists():
         Species.objects.filter(id=specie_id).delete()
 
-    image_small = str(Path(SMALL_ROOT) / path)
-    image_vignette = str(Path(VIGNETTE_ROOT) / path)
+    image_small = str(Path(SMALL_ROOT(collection_id)) / path)
+    image_vignette = str(Path(VIGNETTE_ROOT(collection_id)) / path)
     delete_file_with_permission_check(image_small)
     delete_file_with_permission_check(image_vignette)

@@ -29,6 +29,7 @@ from main.core.frontend.home.internal.home_view import home
 from main.core.frontend.errors.internal.errors_view import error_500_view, error_404_view
 from main.core.frontend.login.internal.login_view import login_view
 from main.core.frontend.photos.internal.photos_view import photos
+from main.core.frontend.profile.profile import profile_view, change_collection_view, change_map_tiles_view
 
 handler500 = error_500_view
 handler404 = error_404_view
@@ -39,11 +40,14 @@ urlpatterns = [
     path('accounts/logout/', auth_views.LogoutView.as_view(), name='logout'),
     path('accounts/', include('django.contrib.auth.urls')),
     path('', home, name='home'),
+    path('profile', profile_view, name='profile'),
+    path('change-collection/<int:collection_id>/', change_collection_view, name='change_collection'),
+    path('change-map-tiles/<int:map_tiles_id>/', change_map_tiles_view, name='change_map_tiles'),
     path('carte/', carte, name='carte'),
     path('photos/', photos, name='photos'),
-    path('upload-images/', upload_images, name='upload'),
-    path('hash/', get_hash, name='hash'),
-    path('clean/', clean_database, name='hash'),
+    path('upload-images/<int:collection_id>/', upload_images, name='upload'),
+    path('hash/<int:collection_id>/', get_hash, name='hash'),
+    path('clean/<int:collection_id>/', clean_database, name='hash'),
 ]
 
 if settings.DEBUG:

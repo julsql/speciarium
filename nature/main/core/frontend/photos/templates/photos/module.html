@@ -65,6 +65,7 @@
 {% block javascript %}
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
+<script>const mapTiles = "{{ map_server|escapejs }}";</script>
 <script src="{% static 'main/assets/scripts/mini_map.js' %}"></script>
 <script src="{% static 'main/assets/scripts/image_popup.js' %}"></script>
 {% endblock %}

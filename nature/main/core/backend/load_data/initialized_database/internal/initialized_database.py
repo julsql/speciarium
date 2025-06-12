@@ -4,8 +4,9 @@ from main.core.backend.load_data.initialized_database.internal.get_all_values im
 
 
 def initialized_database() -> None:
-    info_photo = get_dataset_on_each_image()
+    collection_id = 1
+    info_photo = get_dataset_on_each_image(collection_id)
     latin_name_list = list({value['latin_name'] for value in info_photo})
     info_species = get_all_species_data(latin_name_list)
     add_species(info_species)
-    add_photos(info_photo)
+    add_photos(info_photo, collection_id)

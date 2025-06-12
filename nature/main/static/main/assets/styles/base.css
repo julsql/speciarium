@@ -13,6 +13,16 @@ h1 {
     color: white;
 }
 
+h2 {
+    font-size: 20px;
+    color: white;
+}
+
+h3 {
+    font-size: 18px;
+    color: black;
+}
+
 header a {
     text-decoration: none;
     width: 100%;
@@ -153,7 +163,7 @@ header {
 
     .logout button, .upload-button {
         height: 40px;
-        min-width: 40px;
+        width: 40px;
     }
 
     #logout-label {
@@ -166,4 +176,68 @@ header {
     header a {
         display: none;
     }
+}
+
+/* Header */
+.user-container {
+    display: flex;
+    position: relative;
+}
+
+.user-button {
+    background-color: transparent;
+    color: white;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    margin-top: 8px;
+}
+
+
+.user-button:hover {
+    background-color: transparent;
+}
+
+.user-icon {
+    height: 40px;
+    width: 40px;
+    fill: white;
+}
+
+.logout-button {
+    all: unset !important;
+}
+
+.user-container:hover .dropdown-content {
+    display: block;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: white;
+    min-width: 160px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    border-radius: 5px;
+    z-index: 1;
+    right: 0;
+    top: 45px;
+}
+
+.dropdown-content a {
+    color: black;
+    padding: 10px 16px;
+    text-decoration: none;
+    display: block;
+    text-shadow: none;
+    left: unset;
+}
+
+.dropdown-content a:hover {
+    background-color: #f1f1f1;
+}
+
+.logout {
+    margin: auto 0;
 }

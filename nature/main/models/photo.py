@@ -1,5 +1,6 @@
 from django.db import models
 
+from main.models.collection import Collection
 from main.models.species import Species
 
 
@@ -16,6 +17,7 @@ class Photos(models.Model):
     thumbnail = models.CharField(max_length=255, verbose_name="Vignette")
     hash = models.CharField(max_length=255, verbose_name="Hash")
     details = models.TextField(verbose_name="Détails", blank=True)
+    collection = models.ForeignKey(Collection, on_delete=models.CASCADE, related_name='rows')
 
     def __str__(self):
         return self.photo

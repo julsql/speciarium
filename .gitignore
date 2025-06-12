@@ -4,7 +4,7 @@ nature/database/old
 nature/originales/
 etetoolkit/
 
-nature/main/migrations/0003_create_users.py
+nature/main/core/frontend/create_user.py
 
 # ide
 .idea/

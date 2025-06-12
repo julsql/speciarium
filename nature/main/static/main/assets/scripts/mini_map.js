@@ -12,7 +12,7 @@ function showMiniMap(lat, lon) {
                 zoomControl: false
             }).setView([lat, lon], 10);
 
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            L.tileLayer(mapTiles ?? 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '&copy; OpenStreetMap contributors'
             }).addTo(miniMap);
 
