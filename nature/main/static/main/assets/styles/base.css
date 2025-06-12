@@ -173,7 +173,7 @@ header {
 
 
 @media (max-width: 400px) {
-    header a {
+    header .title {
         display: none;
     }
 }

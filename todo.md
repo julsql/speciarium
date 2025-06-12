@@ -1,2 +1,4 @@
+- vraie interface administrateur
+- pouvoir changer de mot de passe/nom d'utilisateur/... via l'appli
 - modification des espèces dans l'appli
 - formulaire avec multiples valeurs
