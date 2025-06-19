@@ -22,16 +22,16 @@ class SpeciesSearchForm(forms.Form):
     latitude = forms.FloatField(min_value=-90, max_value=90, required=False, label="Latitude")
     longitude = forms.FloatField(min_value=-180, max_value=180, required=False, label="Longitude")
 
-    continents = Photos.objects.values_list('continent', flat=True).distinct().order_by('continent')
-    years = Photos.objects.values_list('year', flat=True).distinct().order_by('year')
-    countries = Photos.objects.values_list('country', flat=True).distinct().order_by('country')
-    regions = Photos.objects.values_list('region', flat=True).distinct().order_by('region')
-    kingdoms = Species.objects.values_list('kingdom', flat=True).distinct().order_by('kingdom')
-    classes = Species.objects.values_list('class_field', flat=True).distinct().order_by('class_field')
-    orders = Species.objects.values_list('order_field', flat=True).distinct().order_by('order_field')
+    continents = []
+    years = []
+    countries = []
+    regions = []
+    kingdoms = []
+    classes = []
+    orders = []
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def __init__(self, form, collection_id, *args, **kwargs):
+        super().__init__(form, *args, **kwargs)
 
         # Récupération dynamique des valeurs
         self.fields['continent'].widget.attrs['list'] = 'continent-list'
@@ -42,13 +42,16 @@ class SpeciesSearchForm(forms.Form):
         self.fields['class_field'].widget.attrs['list'] = 'class-list'
         self.fields['order_field'].widget.attrs['list'] = 'order-list'
 
-        self.continents = Photos.objects.values_list('continent', flat=True).distinct().order_by('continent')
-        self.years = Photos.objects.values_list('year', flat=True).distinct().order_by('year')
-        self.countries = Photos.objects.values_list('country', flat=True).distinct().order_by('country')
-        self.regions = Photos.objects.values_list('region', flat=True).distinct().order_by('region')
-        self.kingdoms = Species.objects.values_list('kingdom', flat=True).distinct().order_by('kingdom')
-        self.classes = Species.objects.values_list('class_field', flat=True).distinct().order_by('class_field')
-        self.orders = Species.objects.values_list('order_field', flat=True).distinct().order_by('order_field')
+        self.continents = Photos.objects.filter(collection_id=collection_id).values_list('continent', flat=True).distinct().order_by('continent')
+        self.years = Photos.objects.filter(collection_id=collection_id).values_list('year', flat=True).distinct().order_by('year')
+        self.countries = Photos.objects.filter(collection_id=collection_id).values_list('country', flat=True).distinct().order_by('country')
+        self.regions = Photos.objects.filter(collection_id=collection_id).values_list('region', flat=True).distinct().order_by('region')
+
+        specie_ids_of_collection = Photos.objects.filter(collection_id=collection_id).values_list('specie_id', flat=True)
+
+        self.kingdoms = Species.objects.filter(id__in=specie_ids_of_collection).values_list('kingdom', flat=True).distinct().order_by('kingdom')
+        self.classes = Species.objects.filter(id__in=specie_ids_of_collection).values_list('class_field', flat=True).distinct().order_by('class_field')
+        self.orders = Species.objects.filter(id__in=specie_ids_of_collection).values_list('order_field', flat=True).distinct().order_by('order_field')
 
 
     def clean_continent(self):

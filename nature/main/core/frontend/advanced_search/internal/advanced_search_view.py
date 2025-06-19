@@ -2,7 +2,14 @@ from main.core.frontend.advanced_search.internal.forms import SpeciesSearchForm
 
 
 def advanced_search(request):
-    form = SpeciesSearchForm(request.GET or None)
+    user = request.user
+    collections = user.collections.all()
+    current_collection = user.current_collection
+    if current_collection:
+        current_collection_id = current_collection.id
+    else:
+        current_collection_id = collections[0].id
+    form = SpeciesSearchForm(request.GET or None, current_collection_id)
     continents = form.continents
     years = form.years
     countries = form.countries
