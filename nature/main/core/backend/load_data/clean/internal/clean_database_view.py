@@ -14,8 +14,7 @@ def clean_database(request: HttpRequest, collection_id):
     if request.method == 'GET':
         photo_row_delete, file_delete = compare_file_to_database(collection_id)
         delete_photos(set(photo_row_delete + file_delete), collection_id)
-
-        return JsonResponse({"keys": ""})
+        return JsonResponse({"photo_row_delete": len(photo_row_delete), "file_delete": len(file_delete)})
     return HttpResponseBadRequest("Requête GET demandée")
 
 def get_file_path(collection_id):
@@ -27,7 +26,7 @@ def get_file_path(collection_id):
     return all_thumbnails_path, all_small_path
 
 def get_database_path(collection_id):
-    all_path = list(Photos.objects.values_list('photo', flat=True))
+    all_path = list(Photos.objects.filter(collection_id=collection_id).values_list('photo', flat=True))
 
     all_path = rm_basepath(all_path, os.path.join(MEDIA_URL, SMALL_PATH(collection_id)))
     return all_path

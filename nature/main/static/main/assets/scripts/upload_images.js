@@ -29,9 +29,9 @@ function getCoordinates(file) {
             if (lat && lon) {
                 const latitude = convertToDecimal(lat, EXIF.getTag(this, 'GPSLatitudeRef'));
                 const longitude = convertToDecimal(lon, EXIF.getTag(this, 'GPSLongitudeRef'));
-                resolve({ latitude, longitude });
+                resolve({latitude, longitude});
             } else {
-                resolve({ latitude: null, longitude: null });
+                resolve({latitude: null, longitude: null});
             }
         });
     });
@@ -118,14 +118,16 @@ async function resizeImage(file, maxWidth, maxHeight) {
         const img = new Image();
         const reader = new FileReader();
 
-        reader.onload = (e) => { img.src = e.target.result; };
+        reader.onload = (e) => {
+            img.src = e.target.result;
+        };
         reader.readAsDataURL(file);
 
         img.onload = () => {
             const canvas = document.createElement("canvas");
             const ctx = canvas.getContext("2d");
 
-            let { width, height } = img;
+            let {width, height} = img;
 
             if (width > height && width > maxWidth) {
                 height = (maxWidth / width) * height;
@@ -140,7 +142,7 @@ async function resizeImage(file, maxWidth, maxHeight) {
             ctx.drawImage(img, 0, 0, width, height);
 
             canvas.toBlob(blob => {
-                resolve(new File([blob], file.name, { type: file.type }));
+                resolve(new File([blob], file.name, {type: file.type}));
             }, file.type, 0.9);
         };
 
@@ -152,17 +154,19 @@ async function resizeImage(file, maxWidth, maxHeight) {
 
 const folderInput = document.getElementById("folderInput");
 
+const CHUNK_SIZE = 100;
+const MAX_DATA_SIZE_UPLOAD = 209715200;
+
 folderInput.addEventListener("click", () => {
     folderInput.value = "";
 });
 
 folderInput.addEventListener("change", async (event) => {
-    const files = event.target.files;
     const info = document.getElementById("upload-info");
     const infoContainer = document.getElementById("upload-info-container");
     const loading = document.getElementById("loading");
-    const progressBar = document.getElementById("progress-bar");
-    const progressBarContainer = document.getElementById("progress-bar-container");
+    const progressBar = document.getElementById('progress-bar');
+    const progressBarContainer = document.getElementById('progress-bar-container');
 
     loading.style.display = "block";
     infoContainer.style.display = "flex";
@@ -172,39 +176,48 @@ folderInput.addEventListener("change", async (event) => {
     await cleanDatabase();
     const remoteKeys = await getKeys();
 
-    const formData = new FormData();
+    const files = event.target.files;
     const localKeys = [];
     const metadata = [];
+    const resizedFiles = [];
     const species = new Set();
-    let hasFilesToUpload = false;
 
-    const MAX_UPLOAD_IMAGES = 100;
-    const MAX_DATA_SIZE_UPLOAD = 209715200;
-
+    let i = 0;
     for (const file of files) {
+        loading.style.display = "none";
+        progressBarContainer.style.display = "block";
+        info.style.display = "block";
+        info.style.width = "130px";
+        info.innerHTML = `prétraitement<br>${i + 1}/${files.length}`;
+        const progress = ((i+1) / files.length) * 100;
+        progressBar.style.width = progress + '%';
+
+        i += 1;
+
         try {
-            if (metadata.length >= MAX_UPLOAD_IMAGES) break;
-
             const ext = file.name.split('.').pop().toLowerCase();
-            if (file.name[0] === "." || !["jpg", "jpeg", "png", "gif", "bmp", "webp"].includes(ext)) continue;
+            if (file.name[0] !== "." && ["jpg", "jpeg", "png", "gif", "bmp", "webp"].includes(ext)) {
+                const filePath = normaliserUnicode(file.webkitRelativePath).split('/');
+                const cleanedPath = filePath.slice(1).join('/');
+                const hash = await calculateHash(file);
+                const key = `${cleanedPath}:${hash}`;
+                localKeys.push(key);
 
-            const pathParts = normaliserUnicode(file.webkitRelativePath).split('/');
-            const cleanedPath = pathParts.slice(1).join('/');
-            const hash = await calculateHash(file);
-            const key = `${cleanedPath}:${hash}`;
-            localKeys.push(key);
-
-            if (!remoteKeys.includes(key)) {
-                species.add(pathParts.at(-1));
-                const resized = await resizeImage(file, 1000, 1000);
-                formData.append('images', resized);
-                metadata.push({
-                    filepath: cleanedPath,
-                    hash: hash,
-                    datetime: await getTimestamp(file),
-                    ...await getCoordinates(file),
-                });
-                hasFilesToUpload = true;
+                if (!remoteKeys.includes(key)) {
+                    console.log(key);
+                    species.add(filePath[filePath.length - 1]);
+                    const resized = await resizeImage(file, 1000, 1000);
+                    resizedFiles.push(resized);
+                    const timestamp = await getTimestamp(file);
+                    const coordinates = await getCoordinates(file);
+                    metadata.push({
+                        filepath: cleanedPath,
+                        hash,
+                        datetime: timestamp,
+                        latitude: coordinates.latitude,
+                        longitude: coordinates.longitude,
+                    });
+                }
             }
         } catch (e) {
             console.error(e);
@@ -212,76 +225,107 @@ folderInput.addEventListener("change", async (event) => {
         }
     }
 
-    formData.append("metadata", JSON.stringify(metadata));
     const imageToDelete = getImageToDelete(remoteKeys, localKeys);
-    formData.append("imageToDelete", JSON.stringify(imageToDelete));
 
-    const size = await getFormDataSize(formData);
-
-    if (size > MAX_DATA_SIZE_UPLOAD) {
-        info.textContent = "Quantité de données trop lourde";
-        loading.style.display = "none";
-        return;
-    }
-
-    if (imageToDelete.length === 0 && !hasFilesToUpload) {
+    if (imageToDelete.length === 0 && metadata.length === 0) {
         info.textContent = "Aucune image n'a changé";
+        loading.style.display = "none";
         info.style.display = "block";
         info.style.width = "200px";
-        loading.style.display = "none";
         return;
     }
 
-    const confirmMessage = `Envoyer ${metadata.length} ${metadata.length > 1 ? 'photos' : 'photo'} et supprimer ${imageToDelete.length} ${imageToDelete.length > 1 ? 'photos' : 'photo'} ?${metadata.length >= MAX_UPLOAD_IMAGES ? ` (Maximum ${MAX_UPLOAD_IMAGES})` : ''}`;
-    if (!window.confirm(confirmMessage)) {
-        loading.style.display = "none";
-        return;
+    let confirmText;
+    if (metadata.length > 1) {
+        confirmText = `Envoyer ${metadata.length} photos et en supprimer ${imageToDelete.length} ?`;
+    } else {
+        confirmText = `Envoyer ${metadata.length} photo et en supprimer ${imageToDelete.length} ?`;
     }
 
-    const socket = new WebSocket(`${getWsRequest()}/ws/progress/`);
-    socket.onmessage = (event) => {
-        const data = JSON.parse(event.data);
-        if (data.progress === "Done") {
-            socket.close();
-        } else if (Number.isInteger(Number(data.progress))) {
-            loading.style.display = "none";
-            info.style.display = "block";
-            info.style.width = "50px";
-            progressBarContainer.style.display = "block";
-            info.textContent = `${data.progress}/${species.size}`;
-            progressBar.style.width = `${(parseInt(data.progress) / species.size) * 100}%`;
-        }
-    };
+    const upload = window.confirm(confirmText);
 
-    socket.onerror = () => {
-        info.textContent = "Erreur lors du traitement des images";
-        progressBar.style.width = '0';
+    if (!upload) {
+        loading.style.display = "none";
         progressBarContainer.style.display = "none";
-        info.style.width = "auto";
-    };
-
-    socket.onclose = () => {
-        info.textContent = "Images ajoutées";
-        progressBar.style.width = '0';
-        progressBarContainer.style.display = "none";
-        info.style.width = "auto";
-    };
+        info.style.display = "none";
+        return;
+    }
 
     const csrfToken = getCsrfToken();
     const headers = new Headers();
     if (csrfToken) headers.append("X-CSRFToken", csrfToken);
+    i = 0;
 
-    const response = await fetch(`/upload-images/${currentCollectionId}/`, {
-        method: "POST",
-        headers,
-        body: formData,
-    });
+    const socket = new WebSocket(`${getWsRequest()}/ws/progress/`);
+    let currentIndex = 0;
 
-    if (!response.ok) {
-        loading.style.display = "none";
-        info.textContent = response.status === 413
-            ? "Quantité de données trop lourde"
-            : "Erreur lors de l'envoi des images";
+    socket.onmessage = function (event) {
+        const data = JSON.parse(event.data);
+        if (data.progress === "Done" && currentIndex >= resizedFiles.length) {
+            socket.close();
+        } else if (!isNaN(data.progress)) {
+            loading.style.display = "none";
+            progressBarContainer.style.display = "block";
+            info.style.display = "block";
+            info.style.width = "130px";
+            currentIndex = parseInt(data.progress) + i
+            info.innerHTML = `Ajout des images<br>${currentIndex}/${species.size}`;
+            const progress = ((currentIndex) / species.size) * 100;
+            progressBar.style.width = progress + '%';
+        }
+    };
+
+    socket.onerror = function () {
+        info.textContent = "Erreur lors du traitement des images";
+        progressBar.style.width = '0';
+        progressBarContainer.style.display = "none";
+    };
+
+    socket.onclose = function () {
+        info.textContent = `Images ajoutées`;
+        progressBar.style.width = '0';
+        progressBarContainer.style.display = "none";
+        location.reload();
+    };
+
+    loading.style.display = "block";
+    info.style.display = "none";
+    progressBarContainer.style.display = "none";
+
+    try {
+        for (i; i < resizedFiles.length; i += CHUNK_SIZE) {
+            const chunkFiles = resizedFiles.slice(i, i + CHUNK_SIZE);
+            const chunkMetadata = metadata.slice(i, i + CHUNK_SIZE);
+            if (chunkMetadata.length >= MAX_DATA_SIZE_UPLOAD) {
+                throw new Error("Trop d'images dans un seul lot");
+            }
+            const formData = new FormData();
+
+            for (const file of chunkFiles) {
+                formData.append("images", file);
+            }
+
+            formData.append("metadata", JSON.stringify(chunkMetadata));
+
+            if (i === 0) {
+                formData.append("imageToDelete", JSON.stringify(imageToDelete));
+            }
+
+            const response = await fetch(`/upload-images/${currentCollectionId}/`, {
+                method: "POST",
+                headers,
+                body: formData,
+            });
+
+            if (!response.ok) {
+                throw new Error("Erreur durant l'envoi d'un lot d'images");
+            }
+        }
+    } catch (error) {
+        console.error(error);
+        info.textContent = "Erreur lors de l'envoi des images";
+        info.style.display = "block";
+        info.style.width = "200px";
     }
 
     loading.style.display = "none";

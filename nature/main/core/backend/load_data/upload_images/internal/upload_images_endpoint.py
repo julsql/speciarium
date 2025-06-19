@@ -37,7 +37,7 @@ async def process_images(request, collection_id):
     images = []
     if "images" in request.FILES:
         images = request.FILES.getlist("images")
-    image_to_delete = json.loads(request.POST.get("imageToDelete"))
+    image_to_delete = json.loads(request.POST.get("imageToDelete", "[]"))
     await send_progress("Début de la suppression des images")
     await sync_to_async(delete_images)(image_to_delete, collection_id)
 
