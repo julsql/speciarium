@@ -1,5 +1,7 @@
 import django_tables2 as tables
+
 from main.models.species import Species
+
 
 def create_thumbnail_column(image_number):
     template = f'''
@@ -14,17 +16,21 @@ def create_thumbnail_column(image_number):
     return tables.TemplateColumn(
         orderable=False,
         template_code=template,
-        verbose_name=f"Photo {image_number+1}"
+        verbose_name=f"Photo {image_number + 1}"
     )
 
-italic = {"style": "font-style: italic;"}
+
+italic = "font-style: italic;"
+width = "max-width: 130px;"
+
 
 class SpeciesTable(tables.Table):
-    specie__latin_name = tables.Column(verbose_name="Nom latin", attrs={"td": italic})
-    specie__french_name = tables.Column(verbose_name="Nom vernaculaire")
-    specie__class_field = tables.Column(verbose_name="Classe", attrs={"td": italic})
-    specie__order_field = tables.Column(verbose_name="Ordre", attrs={"td": italic})
-    specie__family = tables.Column(verbose_name="Famille", attrs={"td": italic})
+    specie__latin_name = tables.Column(verbose_name="Nom latin", attrs={"td": {"style": italic + width}})
+    specie__french_name = tables.Column(verbose_name="Nom vernaculaire", attrs={"td": {"style": width}})
+    specie__kingdom = tables.Column(verbose_name="Règne", attrs={"td": {"style": italic}})
+    specie__class_field = tables.Column(verbose_name="Classe", attrs={"td": {"style": italic}})
+    specie__order_field = tables.Column(verbose_name="Ordre", attrs={"td": {"style": italic}})
+    specie__family = tables.Column(verbose_name="Famille", attrs={"td": {"style": italic}})
     min_year = tables.Column(verbose_name="Année")
     first_continent = tables.Column(visible=False)
     continent_list = tables.TemplateColumn(
@@ -82,9 +88,9 @@ class SpeciesTable(tables.Table):
     )
 
     class Meta:
-            model = Species
-            template_name = "table/module.html"
-            fields = ("specie__latin_name", "specie__french_name", "specie__class_field",
-                      "specie__order_field", "specie__family", "min_year",
-                      "continent_list", "country_list", "region_list",
-                      "thumbnail1", "thumbnail2", "thumbnail3")
+        model = Species
+        template_name = "table/module.html"
+        fields = ("specie__latin_name", "specie__french_name", "specie__kingdom",
+                  "specie__class_field", "specie__order_field", "specie__family",
+                  "min_year", "continent_list", "country_list", "region_list",
+                  "thumbnail1", "thumbnail2", "thumbnail3")

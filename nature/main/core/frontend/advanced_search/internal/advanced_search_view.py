@@ -7,4 +7,7 @@ def advanced_search(request):
     years = form.years
     countries = form.countries
     regions = form.regions
-    return form, continents, years, countries, regions
+    kingdoms = form.kingdoms
+    classes = form.classes
+    orders = form.orders
+    return form, continents, years, countries, regions, kingdoms, classes, orders

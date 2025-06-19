@@ -18,12 +18,15 @@ def photos(request: HttpRequest) -> HttpResponse:
     else:
         map_server = MapTiles.objects.all().first().server
 
-    form, continents, years, countries, regions = advanced_search(request)
+    form, continents, years, countries, regions, kingdoms, classes, orders = advanced_search(request)
     value = {'form': form,
              'continents': continents,
              'years': years,
              'countries': countries,
-             'regions': regions}
+             'regions': regions,
+             'kingdoms': kingdoms,
+             'classes': classes,
+             'orders': orders}
 
     table, total_results = advanced_search_result_map(request, form)
     value.update({'table': table, 'total_results': total_results, 'page': "photos", 'map_server' : map_server})
@@ -34,8 +37,9 @@ def photos(request: HttpRequest) -> HttpResponse:
 def annotate_queryset(queryset):
     return queryset.values(
         'specie__latin_name', 'specie__genus', 'specie__species', 'specie__french_name',
-        'specie__class_field', 'specie__order_field', 'specie__family', 'year', "date",
-        'continent', 'country', 'region', 'latitude', 'longitude', 'thumbnail', 'photo')
+        'specie__kingdom', 'specie__class_field', 'specie__order_field', 'specie__family',
+        'year', "date", 'continent', 'country', 'region', 'latitude', 'longitude',
+        'thumbnail', 'photo')
 
 
 def advanced_search_result_map(request, form):
@@ -51,6 +55,7 @@ def advanced_search_result_map(request, form):
         'genus': 'specie__genus',
         'species': 'specie__species',
         'french_name': 'specie__french_name',
+        'kingdom': 'specie__kingdom',
         'class_field': 'specie__class_field',
         'order_field': 'specie__order_field',
         'family': 'specie__family',

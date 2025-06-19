@@ -1,13 +1,15 @@
 from django import forms
 
 from main.models.photo import Photos
+from main.models.species import Species
 
 
 class SpeciesSearchForm(forms.Form):
     latin_name = forms.CharField(max_length=255, required=False, label="Nom latin", widget=forms.TextInput(attrs={"class": "italic-field"}))
     french_name = forms.CharField(max_length=255, required=False, label="Nom vernaculaire")
-    class_field = forms.CharField(max_length=255, required=False, label="Classe", widget=forms.TextInput(attrs={"class": "italic-field"}))
-    order_field = forms.CharField(max_length=255, required=False, label="Ordre", widget=forms.TextInput(attrs={"class": "italic-field"}))
+    kingdom = forms.CharField(max_length=255, required=False, label="Règne", widget=forms.TextInput(attrs={"class": "italic-field", 'list': 'kingdom-list'}))
+    class_field = forms.CharField(max_length=255, required=False, label="Classe", widget=forms.TextInput(attrs={"class": "italic-field", 'list': 'class-list'}))
+    order_field = forms.CharField(max_length=255, required=False, label="Ordre", widget=forms.TextInput(attrs={"class": "italic-field", 'list': 'order-list'}))
     family = forms.CharField(max_length=255, required=False, label="Famille")
     year = forms.IntegerField(required=False, label="Année", widget=forms.TextInput(attrs={'list': 'year-list'}))
     start_date = forms.DateField(required=False, label='Date de la prise de vue', widget=forms.DateInput(attrs={"type": "date"}))
@@ -24,6 +26,9 @@ class SpeciesSearchForm(forms.Form):
     years = Photos.objects.values_list('year', flat=True).distinct().order_by('year')
     countries = Photos.objects.values_list('country', flat=True).distinct().order_by('country')
     regions = Photos.objects.values_list('region', flat=True).distinct().order_by('region')
+    kingdoms = Species.objects.values_list('kingdom', flat=True).distinct().order_by('kingdom')
+    classes = Species.objects.values_list('class_field', flat=True).distinct().order_by('class_field')
+    orders = Species.objects.values_list('order_field', flat=True).distinct().order_by('order_field')
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -33,11 +38,17 @@ class SpeciesSearchForm(forms.Form):
         self.fields['year'].widget.attrs['list'] = 'year-list'
         self.fields['country'].widget.attrs['list'] = 'country-list'
         self.fields['region'].widget.attrs['list'] = 'region-list'
+        self.fields['kingdom'].widget.attrs['list'] = 'kingdom-list'
+        self.fields['class_field'].widget.attrs['list'] = 'class-list'
+        self.fields['order_field'].widget.attrs['list'] = 'order-list'
 
         self.continents = Photos.objects.values_list('continent', flat=True).distinct().order_by('continent')
         self.years = Photos.objects.values_list('year', flat=True).distinct().order_by('year')
         self.countries = Photos.objects.values_list('country', flat=True).distinct().order_by('country')
         self.regions = Photos.objects.values_list('region', flat=True).distinct().order_by('region')
+        self.kingdoms = Species.objects.values_list('kingdom', flat=True).distinct().order_by('kingdom')
+        self.classes = Species.objects.values_list('class_field', flat=True).distinct().order_by('class_field')
+        self.orders = Species.objects.values_list('order_field', flat=True).distinct().order_by('order_field')
 
 
     def clean_continent(self):
@@ -54,4 +65,16 @@ class SpeciesSearchForm(forms.Form):
 
     def clean_region(self):
         data = self.cleaned_data.get('region')
+        return data
+
+    def clean_kingdom(self):
+        data = self.cleaned_data.get('kingdom')
+        return data
+
+    def clean_order(self):
+        data = self.cleaned_data.get('order_field')
+        return data
+
+    def clean_class(self):
+        data = self.cleaned_data.get('class_field')
         return data

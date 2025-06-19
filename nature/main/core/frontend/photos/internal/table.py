@@ -1,9 +1,6 @@
 import django_tables2 as tables
 
 from main.models.photo import Photos
-from main.models.species import Species
-
-italic = {"style": "font-style: italic;"}
 
 
 def create_thumbnail_column():
@@ -22,12 +19,17 @@ def create_thumbnail_column():
     )
 
 
+italic = "font-style: italic;"
+width = "max-width: 130px;"
+
+
 class PhotosTable(tables.Table):
-    specie__latin_name = tables.Column(verbose_name="Nom latin", attrs={"td": italic})
-    specie__french_name = tables.Column(verbose_name="Nom vernaculaire")
-    specie__class_field = tables.Column(verbose_name="Classe", attrs={"td": italic})
-    specie__order_field = tables.Column(verbose_name="Ordre", attrs={"td": italic})
-    specie__family = tables.Column(verbose_name="Famille", attrs={"td": italic})
+    specie__latin_name = tables.Column(verbose_name="Nom latin", attrs={"td": {"style": italic + width}})
+    specie__french_name = tables.Column(verbose_name="Nom vernaculaire", attrs={"td": {"style": width}})
+    specie__kingdom = tables.Column(verbose_name="Règne", attrs={"td": {"style": italic}})
+    specie__class_field = tables.Column(verbose_name="Classe", attrs={"td": {"style": italic}})
+    specie__order_field = tables.Column(verbose_name="Ordre", attrs={"td": {"style": italic}})
+    specie__family = tables.Column(verbose_name="Famille", attrs={"td": {"style": italic}})
     date = tables.Column(verbose_name="Date")
     continent = tables.Column(verbose_name="Continent")
     country = tables.Column(verbose_name="Pays")
@@ -55,7 +57,7 @@ class PhotosTable(tables.Table):
     class Meta:
         model = Photos
         template_name = "table/module.html"
-        fields = ("specie__latin_name", "specie__french_name", "specie__class_field",
-                  "specie__order_field", "specie__family", "date",
-                  "continent", "country", "region",
+        fields = ("specie__latin_name", "specie__french_name", "specie__kingdom",
+                  "specie__class_field", "specie__order_field", "specie__family",
+                  "date", "continent", "country", "region",
                   "coordinates", 'thumbnail')

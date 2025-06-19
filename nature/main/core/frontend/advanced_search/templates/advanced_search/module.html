@@ -25,6 +25,13 @@
                         <span class="clear-btn">&#x2715;</span>
                     </div>
                 </div>
+                <div class="col-md-4">
+                    <p>{{ form.kingdom.label }}</p>
+                    <div class="input-container">
+                        {{ form.kingdom }}
+                        <span class="clear-btn">&#x2715;</span>
+                    </div>
+                </div>
             </div>
             <div class="row">
                 <div class="col-md-4">
@@ -181,6 +188,24 @@
 <datalist id="region-list">
     {% for region in regions %}
     <option value="{{ region }}">
+        {% endfor %}
+</datalist>
+
+<datalist id="kingdom-list">
+    {% for kingdom in kingdoms %}
+    <option value="{{ kingdom }}">
+        {% endfor %}
+</datalist>
+
+<datalist id="class-list">
+    {% for class in classes %}
+    <option value="{{ class }}">
+        {% endfor %}
+</datalist>
+
+<datalist id="order-list">
+    {% for order in orders %}
+    <option value="{{ order }}">
         {% endfor %}
 </datalist>
 

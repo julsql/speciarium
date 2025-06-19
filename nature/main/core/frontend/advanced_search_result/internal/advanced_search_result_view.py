@@ -35,7 +35,7 @@ def filter_queryset(queryset, form, filter_mappings):
 def annotate_queryset(queryset):
     return queryset.values(
         'specie__latin_name', 'specie__genus', 'specie__species', 'specie__french_name',
-        'specie__class_field', 'specie__order_field', 'specie__family'
+        'specie__kingdom', 'specie__class_field', 'specie__order_field', 'specie__family'
     ).annotate(
         min_year=Min('year'),
 
@@ -142,6 +142,7 @@ def advanced_search_result(request, form):
         'genus': 'specie__genus',
         'species': 'specie__species',
         'french_name': 'specie__french_name',
+        'kingdom': 'specie__kingdom',
         'class_field': 'specie__class_field',
         'order_field': 'specie__order_field',
         'family': 'specie__family',
