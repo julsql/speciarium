@@ -52,6 +52,9 @@
                 </a>
                 <div class="dropdown-content">
                     <a href="{% url 'profile' %}">Voir mon profil</a>
+                    {% if user.is_superuser and user.is_staff %}
+                    <a href="{% url 'admin:index' %}">Mode administrateur</a>
+                    {% endif %}
                     <a href="{% url 'logout' %}">
                         <form action="{% url 'logout' %}" method="post">
                             {% csrf_token %}

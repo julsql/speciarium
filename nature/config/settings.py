@@ -69,6 +69,7 @@ TEMPLATES = [
             BASE_DIR / 'main/core/frontend/carte/templates',
             BASE_DIR / 'main/core/frontend/photos/templates',
             BASE_DIR / 'main/core/frontend/profile/templates',
+            BASE_DIR / 'main/core/frontend/auth/templates',
         ],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -84,8 +85,9 @@ TEMPLATES = [
 
 ASGI_APPLICATION = 'config.asgi.application'
 
+ENV = config('DJANGO_ENV')
 # Configurer le Channel Layer en fonction de l'environnement
-if config('DJANGO_ENV') == 'production':
+if ENV == 'production':
     CHANNEL_LAYERS = {
         "default": {
             "BACKEND": "channels_redis.core.RedisChannelLayer",
@@ -149,12 +151,14 @@ CSRF_TRUSTED_ORIGINS = [
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'fr'
+
+LOCALE_PATHS = [BASE_DIR / 'locale']
 
 TIME_ZONE = 'UTC'
 
 USE_I18N = True
-
+USE_L10N = True
 USE_TZ = True
 
 APPEND_SLASH = True
@@ -196,3 +200,15 @@ CSRF_USE_SESSIONS = False  # Le cookie CSRF doit être envoyé séparément, pas
 CSRF_COOKIE_NAME = 'csrftoken'  # Nom du cookie (par défaut : 'csrftoken')
 CSRF_COOKIE_HTTPONLY = False  # Le cookie doit être accessible par le client (Postman)
 CSRF_COOKIE_SECURE = False  # Mettez `True` uniquement si vous utilisez HTTPS
+
+DEFAULT_FROM_EMAIL = config('EMAIL_HOST_USER')
+
+if ENV == 'production':
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+    EMAIL_HOST = 'smtp.gmail.com'
+    EMAIL_PORT = 587
+    EMAIL_USE_TLS = True
+    EMAIL_HOST_USER = config('EMAIL_HOST_USER')
+    EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
+else:
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

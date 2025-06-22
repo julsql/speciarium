@@ -2,6 +2,10 @@
 {% load static %}
 
 {% block body %}
+
+{% if user.is_authenticated %}
+<meta http-equiv="refresh" content="0; url='{% url 'home' %}'" />
+{% else %}
 <div class="login">
     <h1>Connexion</h1>
     <form method="post">
@@ -25,9 +29,14 @@
                 <label for="id_password">Mot de Passe :</label>
                 {{ form.password }}
             </div>
+
+            <p style="margin-top: 1rem; text-align: center;">
+                <a href="{% url 'password_reset' %}">Mot de passe oublié ?</a>
+            </p>
         <button type="submit">Connexion</button>
     </form>
 </div>
+{% endif %}
 {% endblock %}
 
 {% block style %}
