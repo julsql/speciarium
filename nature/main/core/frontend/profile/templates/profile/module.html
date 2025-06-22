@@ -7,6 +7,7 @@
         <h3>{{ first_name }}</h3>
     <div>
         <p>Nom d'utilisateur : {{ username }}</p>
+        <p>Email : {{ email }}</p>
     </div>
     <div class="profile-section">
         <h4>Mes collections</h4>
@@ -47,8 +48,63 @@
     </form>
 </div>
 
+
+<div class="section">
+        <h2>Paramètres du compte</h2>
+        <h3>Changer l'email associé au compte</h3>
+        <!-- Formulaire pour mettre à jour l'email -->
+        <form method="post" action="">
+            {% csrf_token %}
+            <div class="form-group">
+                {{ email_form.email.label_tag }}
+                {{ email_form.email }}
+            </div>
+            <button type="submit" name="update_email" class="button-large">Mettre à jour l'email</button>
+        </form>
+
+        <br/>
+        <br/>
+
+        <h3>Changer son mot de passe</h3>
+        <!-- Formulaire pour changer le mot de passe -->
+        <form method="post" class="password-reset-form">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label for="id_old_password">Ancien mot de passe&nbsp;:</label>
+                {{ password_form.old_password }}
+            </div>
+
+            <div class="form-group">
+                <label for="id_new_password1">Nouveau mot de passe&nbsp;:</label>
+                {{ password_form.new_password1 }}
+            </div>
+
+            <div class="form-group">
+                <label for="id_new_password2">Confirmation du mot de passe&nbsp;:</label>
+                {{ password_form.new_password2 }}
+            </div>
+
+            {% if password_form.errors %}
+            <div class="form-errors">
+                {% for field in password_form %}
+                {% for error in field.errors %}
+                <p>{{ error }}</p>
+                {% endfor %}
+                {% endfor %}
+                {% for error in password_form.non_field_errors %}
+                <p>{{ error }}</p>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <button type="submit" name="change_password" class="button-large">Changer le mot de passe</button>
+        </form>
+</div>
+
 {% endblock %}
 
 {% block style %}
 <link rel="stylesheet" href="{% static 'main/assets/styles/profile.css' %}" />
+<link rel="stylesheet" href="{% static 'main/assets/styles/login.css' %}" />
 {% endblock %}

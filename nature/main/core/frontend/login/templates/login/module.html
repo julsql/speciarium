@@ -7,8 +7,9 @@
 <meta http-equiv="refresh" content="0; url='{% url 'home' %}'" />
 {% else %}
 <div class="login">
+    <div>
     <h1>Connexion</h1>
-    <form method="post">
+    <form method="post" id="login-form">
         {% csrf_token %}
             <!-- Affichage des erreurs globales -->
             {% if form.non_field_errors %}
@@ -35,6 +36,7 @@
             </p>
         <button type="submit">Connexion</button>
     </form>
+    </div>
 </div>
 {% endif %}
 {% endblock %}

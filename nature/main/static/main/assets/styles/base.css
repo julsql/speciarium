@@ -185,13 +185,13 @@ header {
 }
 
 .user-button {
+    display: flex;
     background-color: transparent;
     color: white;
     font-size: 16px;
     border: none;
     cursor: pointer;
     border-radius: 5px;
-    margin-top: 8px;
 }
 
 

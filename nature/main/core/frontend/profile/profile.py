@@ -1,7 +1,12 @@
+from django.contrib import messages
+from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.forms import PasswordChangeForm
 from django.http import HttpRequest, HttpResponse
-from django.shortcuts import render, get_object_or_404, redirect
+from django.shortcuts import redirect
+from django.shortcuts import render, get_object_or_404
 
+from main.core.frontend.profile.forms import EmailUpdateForm
 from main.models.collection import Collection
 from main.models.map_tiles import MapTiles
 
@@ -16,23 +21,46 @@ class ProfileView:
         if current_collection:
             current_collection_id = current_collection.id
         else:
-            current_collection_id = collections[0].id
+            current_collection_id = collections[0].id if collections else None
 
         if request.user.map_tiles:
             map_server_id = request.user.map_tiles.id
         else:
             map_server_id = all_map_tiles.first().id
 
-        return render(request, 'profile/module.html',
-                      {'username': user.username,
-                       'first_name': user.first_name,
-                       'last_name': user.last_name,
-                       'email': user.email,
-                       'current_collection_id': current_collection_id,
-                       'collections': [(collection.id, collection.title) for collection in collections],
-                       'current_map_tiles_id': map_server_id,
-                       'map_tiles': [(map_tiles.id, map_tiles.description) for map_tiles in list(all_map_tiles)]
-                       })
+        if request.method == "POST":
+            if "update_email" in request.POST:
+                email_form = EmailUpdateForm(request.POST)
+                if email_form.is_valid():
+                    user.email = email_form.cleaned_data['email']
+                    user.save()
+                    messages.success(request, "Email mis à jour avec succès.")
+                    return redirect('profile')
+                password_form = PasswordChangeForm(user)
+            elif "change_password" in request.POST:
+                password_form = PasswordChangeForm(user, request.POST)
+                if password_form.is_valid():
+                    user = password_form.save()
+                    update_session_auth_hash(request, user)  # Important pour garder la session
+                    messages.success(request, "Mot de passe mis à jour avec succès.")
+                    return redirect('profile')
+                email_form = EmailUpdateForm(initial={'email': user.email})
+        else:
+            email_form = EmailUpdateForm(initial={'email': user.email})
+            password_form = PasswordChangeForm(user)
+
+        return render(request, 'profile/module.html', {
+            'username': user.username,
+            'first_name': user.first_name,
+            'last_name': user.last_name,
+            'email': user.email,
+            'current_collection_id': current_collection_id,
+            'collections': [(collection.id, collection.title) for collection in collections],
+            'current_map_tiles_id': map_server_id,
+            'map_tiles': [(map_tiles.id, map_tiles.description) for map_tiles in list(all_map_tiles)],
+            'email_form': email_form,
+            'password_form': password_form,
+        })
 
     def change_collection(self, request: HttpRequest, collection_id: int) -> HttpResponse:
         collection = get_object_or_404(Collection, id=collection_id, accounts=request.user)

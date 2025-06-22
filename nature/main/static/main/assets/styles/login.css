@@ -1,6 +1,6 @@
-.container {
-    display: flex;
+.login {
     justify-content: center;
+    display: flex;
 }
 
 .login h1 {
@@ -24,18 +24,20 @@
 
 .container form {
     position: relative;
-    margin: 20px auto 0 auto;
     background-color: #fff;
     overflow: hidden;
     border-radius: 7px;
-    padding: 20px;
     transition: 0.3s ease;
+}
+
+#login-form {
+    padding: 20px;
+    margin-top: 20px;
 }
 
 button, input, optgroup, select, textarea {
     font-size: inherit;
 }
-
 
 .container form form.second {
     opacity: 0;
@@ -93,8 +95,11 @@ form input, form select {
     box-shadow: 0 0 5px lightgrey;
     padding: 0 5px;
     height: 30px;
-    width: 100%;
     margin: 3px 0;
+}
+
+#login-form input, #login-form select {
+    width: 100%;
 }
 
 form input :focus,

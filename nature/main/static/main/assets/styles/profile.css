@@ -6,6 +6,7 @@
     overflow: hidden;
     border-radius: 7px;
     padding: 40px;
+    margin-bottom: 20px;
 }
 
 .section h2 {
@@ -22,7 +23,7 @@ h4 {
     margin-left: 20px
 }
 
-.logout-btn, .list a {
+.logout-btn, .list a, button {
     display: flex;
     align-items: center;
     justify-content: center;
