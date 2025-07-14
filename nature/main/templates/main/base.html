@@ -11,12 +11,14 @@
 </head>
 <body>
 <header>
-    <a href="/" class="title">
-        <h1>Recherche avancée d’espèce</h1>
-        {% if user.is_authenticated %}
-        <h2>{{ user.current_collection.title }}</h2>
-        {% endif %}
-    </a>
+    <div class="title">
+        <a href="/">
+            <h1>Recherche avancée d’espèce</h1>
+            {% if user.is_authenticated %}
+            <h2>{{ user.current_collection.title }}</h2>
+            {% endif %}
+        </a>
+    </div>
     {% if user.is_authenticated %}
     <div class="tab">
         <div class="onglet">

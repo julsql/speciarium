@@ -25,7 +25,23 @@ h3 {
 
 header a {
     text-decoration: none;
+}
+
+.title {
     width: 100%;
+}
+
+.title a h1, .title a h2 {
+    transition: color 0.1s ease-in-out
+}
+
+.title a {
+    display: inline-block;
+}
+
+.title a:hover h1,
+.title a:hover h2 {
+    color: #ffc107;
 }
 
 .mt-5 {
