@@ -17,20 +17,7 @@
 
 
 {% if total_results > 0 %}
-<span id="data-carte" data-images='[
-{% for image in results %}
-    {
-        "full": "{{ image.photo }}",
-        "thumbnail": "{{ image.thumbnail }}",
-        "title": "{% if image.specie__french_name %}{{ image.specie__french_name }} - {% endif %}<i>{{ image.specie__latin_name }}</i>",
-        "latitude": {{ image.latitude }},
-        "longitude": {{ image.longitude }},
-        "info": "Photo prise {% if image.date %}le {{ image.date }} {% endif %}en {{ image.country }}{% if image.region %} ({{ image.region }}){% endif %}{% if image.details %}. {{ image.details }}{% endif %}"
-    }
-    {% if not forloop.last %},{% endif %}
-{% endfor %}
-]' hidden>
-</span>
+<span id="data-carte" data-images='{{ json_results | safe }}' hidden></span>
 <div id="carte"></div>
 {% endif %}
 

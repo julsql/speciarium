@@ -1,3 +1,5 @@
+import json
+
 from django.contrib.auth.decorators import login_required
 from django.db.models.functions import Round
 from django.http import HttpResponse, HttpRequest
@@ -28,7 +30,14 @@ def carte(request: HttpRequest) -> HttpResponse:
     else:
         map_server = MapTiles.objects.all().first().server
 
-    value.update({'results': results, 'total_results': total_results, 'page': "photos", 'map_server': map_server})
+    json_results = json.dumps(results)
+
+    value.update({
+        'json_results': json_results,
+        'total_results': total_results,
+        'page': "photos",
+        'map_server': map_server
+    })
 
     return render(request, 'carte/module.html', value)
 
@@ -91,9 +100,9 @@ def advanced_search_result_map(form, request):
 
     queryset = annotate_queryset(queryset)
     total_results = queryset.count()
-    queryset = process_queryset(queryset)
+    result_list = process_queryset(queryset)
 
-    return queryset, total_results
+    return result_list, total_results
 
 
 def convert_date_format(date):
@@ -111,15 +120,15 @@ def convert_coordinates(longitude, latitude):
 
 
 def process_queryset(queryset):
-    queryset = list(queryset)
-    for entry in queryset:
+    result_list = list(queryset)
+    for entry in result_list:
         transform_entry(entry)
-    return queryset
+    return result_list
 
 
 def transform_entry(entry):
     entry['date'] = convert_date_format(entry['date'])
     entry['coordinates'] = convert_coordinates(entry['latitude'], entry['longitude'])
-    entry['latitude'] = entry['latitude'] if entry['latitude'] else '""'
-    entry['longitude'] = entry['longitude'] if entry['longitude'] else '""'
+    entry['latitude'] = (f"{entry['latitude']:.6f}" if entry['latitude'] is not None else 'null')
+    entry['longitude'] = (f"{entry['longitude']:.6f}" if entry['longitude'] is not None else 'null')
     return entry
