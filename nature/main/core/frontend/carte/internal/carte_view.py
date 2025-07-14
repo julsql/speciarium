@@ -1,3 +1,4 @@
+import html
 import json
 
 from django.contrib.auth.decorators import login_required
@@ -30,7 +31,7 @@ def carte(request: HttpRequest) -> HttpResponse:
     else:
         map_server = MapTiles.objects.all().first().server
 
-    json_results = json.dumps(results)
+    json_results = to_json(results)
 
     value.update({
         'json_results': json_results,
@@ -40,6 +41,28 @@ def carte(request: HttpRequest) -> HttpResponse:
     })
 
     return render(request, 'carte/module.html', value)
+
+
+def to_json(results):
+    images_data = []
+    for image in results:
+        if image.get('specie__french_name'):
+            title = f"{image['specie__french_name']} - <i>{image['specie__latin_name']}</i>"
+        else:
+            title = f"<i>{image['specie__latin_name']}</i>"
+
+        info = f"Photo prise le {image['date']} en {image['country']}" + (f" ({image['region']})" if image.get('region') else "") + (f". {image['details']}" if image.get('details') else "")
+
+        images_data.append({
+            "full": html.escape(image['photo']),
+            "thumbnail": html.escape(image['thumbnail']),
+            "title": html.escape(title),
+            "latitude": float(image['latitude']) if image.get('latitude') else None,
+            "longitude": float(image['longitude']) if image.get('longitude') else None,
+            "info": html.escape(info)
+        })
+
+    return json.dumps(images_data, ensure_ascii=False)
 
 
 def annotate_queryset(queryset):
