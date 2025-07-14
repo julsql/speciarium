@@ -88,6 +88,7 @@ header a {
     display: flex;
     justify-content: right;
     gap: 10px;
+    margin-left: 10px;
 }
 
 .loading {
@@ -233,7 +234,6 @@ header a {
 
     .tab {
         flex-direction: column;
-        margin-right: 10px;
     }
 
     .tab a {

@@ -57,8 +57,8 @@ def to_json(results):
             "full": html.escape(image['photo']),
             "thumbnail": html.escape(image['thumbnail']),
             "title": html.escape(title),
-            "latitude": float(image['latitude']) if image.get('latitude') else None,
-            "longitude": float(image['longitude']) if image.get('longitude') else None,
+            "latitude": float(image['latitude']) if image.get('latitude') and image['latitude'] != 'null' else None,
+            "longitude": float(image['longitude']) if image.get('longitude') and image['longitude'] != 'null' else None,
             "info": html.escape(info)
         })
 
