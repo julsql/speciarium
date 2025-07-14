@@ -62,7 +62,7 @@ form.secActive form.first {
     font-size: 14px;
     font-weight: 500;
     margin: 6px 0 8px 0;
-    color: #333;
+    color: var(--primary);
 }
 
 .container form .fields {
@@ -79,20 +79,14 @@ form .fields input {
     margin: 4px 0;
 }
 
-input label {
-    font-size: 12px;
-    font-weight: 500;
-    color: #2e2e2e;
-}
-
 form input, form select {
     outline: none;
     font-size: 14px;
     font-weight: 400;
-    color: #333;
+    color: #000;
     border-radius: 5px;
     border: none;
-    box-shadow: 0 0 5px lightgrey;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
     padding: 0 5px;
     height: 30px;
     margin: 3px 0;
@@ -104,7 +98,7 @@ form input, form select {
 
 form input :focus,
 form input select:focus {
-    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.13);
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
 }
 
 form input select,
@@ -113,7 +107,7 @@ form input[type="date"] {
 }
 
 form input[type="date"]:valid {
-    color: #333;
+    color: #000;
 }
 
 .container form button, .backBtn {
@@ -130,7 +124,7 @@ form input[type="date"]:valid {
     margin-right: auto;
     margin-left: auto;
     margin-top: 10px;
-    background-color: rgb(55, 55, 55);
+    background-color: var(--primary);
     transition: all 0.3s linear;
     cursor: pointer;
 }
@@ -141,7 +135,8 @@ form input[type="date"]:valid {
 }
 
 .container form button:hover {
-    background-color: rgb(70, 70, 70);
+    color: #000;
+    background-color: var(--secondary);
 }
 
 form button i,

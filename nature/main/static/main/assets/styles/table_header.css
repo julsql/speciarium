@@ -23,7 +23,7 @@ select option {
     font-size: 12px;
     text-align: center;
     font-weight: normal;
-    color: rgb(55, 55, 55);
+    color: var(--primary);
 }
 
 /* Améliorer les performances sur mobile */
@@ -44,7 +44,7 @@ select option {
 
 #total-species p {
     font-size: 16px;
-    color: white;
+    color: #fff;
 }
 
 select {
@@ -52,11 +52,10 @@ select {
     padding: 10px 15px;
     font-size: 14px;
     font-weight: bold;
-    color: rgb(55, 55, 55);
     background-color: #fff;
     border: 1px solid #dee2e6;
     border-radius: 5px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
     transition: all 0.2s ease-in-out;
     appearance: none;
     -webkit-appearance: none;
@@ -74,16 +73,16 @@ select {
 
 /* Style au survol */
 select:hover {
-    color: #fff;
-    background-color: rgb(55, 55, 55);
-    border-color: rgb(55, 55, 55);
+    border-color: var(--secondary);
+    background-color: var(--secondary);
+    color: #000;
 }
 
 /* Style lors de la sélection (focus) */
 select:focus {
     outline: none;
-    box-shadow: 0 0 3px rgb(70, 70, 70);
-    border-color: rgb(70, 70, 70);
+    box-shadow: 0 0 3px rgba(0, 0, 0, 0.2);
+    border-color: transparent;
 }
 
 /* Style désactivé */

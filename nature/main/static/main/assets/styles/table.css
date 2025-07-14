@@ -2,6 +2,7 @@
     vertical-align: top;
     border-color: #dee2e6;
     width: 100%;
+    margin-bottom: 0;
 }
 
 .table > thead {
@@ -41,21 +42,19 @@ table {
     border-radius: 7px;
     margin-bottom: 20px;
 }
-.table {
-    margin-bottom: 0;
-}
+
 .table thead {
-    background-color: rgb(55, 55, 55);
-    color: white
+    background-color: var(--primary);
+    color: #fff;
 }
 .table .even {
-    background-color: white;
+    background-color: #fff;
 }
 .table .odd {
-    background-color: rgb(240, 240, 240);
+    background-color: #F0F0F0FF;
 }
 .table thead a {
-    color: white;
+    color: #fff;
     text-decoration: none;
 }
 .table thead a:hover {

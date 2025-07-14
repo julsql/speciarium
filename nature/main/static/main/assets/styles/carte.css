@@ -1,9 +1,9 @@
 #carte {
-    background-color: white;
+    background-color: #fff;
     height: calc(100vh - 40px);
     width: 100%;
 }
 
 #pagination-header {
-    display: none!important;
+    display: none !important;
 }

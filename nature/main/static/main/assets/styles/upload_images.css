@@ -13,6 +13,6 @@
 #progress-bar {
     height: 100%;
     width: 0;
-    background-color: rgb(55, 55, 55);
+    background-color: var(--primary);
     border-radius: 5px;
 }
