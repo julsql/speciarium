@@ -39,16 +39,8 @@ class PhotosTable(tables.Table):
 
     all_images = tables.TemplateColumn(
         template_code="""
-                <span class="all-images" data-images='[
-                        {
-                            "full": "{{ record.photo }}",
-                            "thumbnail": "{{ record.thumbnail }}",
-                            "title": "{% if record.specie__french_name %}{{ record.specie__french_name }} - {% endif %}<i>{{ record.specie__latin_name }}</i>",
-                            "latitude": {{ record.latitude }},
-                            "longitude": {{ record.longitude }},
-                            "info": "Photo {{ record.number_picture }} prise {% if record.date %}le {{ record.date }} {% endif %}en {{ record.country }} {% if record.region %} ({{ record.region }}){% endif %}{% if record.details %}. {{ record.details }}{% endif %}"
-                        }
-                ]' hidden></span>
+                {% load json_filters %}
+                <span class="all-images" data-images='{{ record|get_images_json }}' hidden></span>
                 """,
         verbose_name="",
         orderable=False
