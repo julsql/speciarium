@@ -13,6 +13,7 @@
 .popup {
     display: none;
     position: fixed;
+    flex-direction: column;
     top: 0;
     left: 0;
     width: 100%;
@@ -23,17 +24,25 @@
     z-index: 1000;
 }
 
-.popup-content {
+.popup-container {
     position: relative;
     background: rgba(0, 0, 0, 0.7);
+    border-radius: 7px;
     color: #fff;
     max-width: 90%;
-    border-radius: 7px;
     display: flex;
-    flex-direction: column;
+    flex-direction: column-reverse;
     align-items: center;
     justify-content: center;
     overflow: visible;
+}
+
+.popup-content {
+    position: relative;
+}
+
+#legend {
+    width: 100%;
 }
 
 #popup-img {
@@ -43,6 +52,15 @@
     width: auto;
     object-fit: contain;
     border-radius: 0 0 7px 7px;
+    margin-bottom: -7px;
+}
+
+#image-name {
+    position: absolute;
+    font-size: 15px;
+    bottom: 0;
+    left: 2px;
+    z-index: 1;
 }
 
 #image-title {
@@ -65,17 +83,9 @@
     word-wrap: break-word;
     font-size: 16px;
     max-width: 100%;
-    margin: auto 10px;
+    margin: auto 10px 10px 10px;
     padding-right: 10px;
     padding-left: 10px;
-}
-
-h2 {
-    font-size: 20px;
-}
-
-h2 i {
-    font-size: 18px;
 }
 
 .popup_button {
@@ -102,9 +112,13 @@ button:hover {
 #close-popup {
     position: absolute;
     background-color: transparent;
-    top: 20px;
+    top: 15px;
     right: 0;
     font-size: 30px;
+}
+
+#close-icon, #next-icon, #prev-icon {
+    fill: #fff;
 }
 
 .prev {
@@ -129,6 +143,10 @@ button:hover {
     }
 
     #image-title {
+        font-size: 12px;
+    }
+
+    #image-name {
         font-size: 12px;
     }
 

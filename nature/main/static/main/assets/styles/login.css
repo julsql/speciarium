@@ -1,6 +1,12 @@
 .login {
     justify-content: center;
     display: flex;
+    max-width: 800px;
+    overflow: hidden;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 7px;
+    margin: auto;
 }
 
 .login h1 {
@@ -24,9 +30,7 @@
 
 .container form {
     position: relative;
-    background-color: #fff;
     overflow: hidden;
-    border-radius: 7px;
     transition: 0.3s ease;
 }
 
@@ -135,7 +139,6 @@ form input[type="date"]:valid {
 }
 
 .container form button:hover {
-    color: #000;
     background-color: var(--secondary);
 }
 

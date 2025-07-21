@@ -10,48 +10,57 @@
 </div>
 
 {% if total_results > 0 %}
-    {% load render_table from django_tables2 %}
-    {% render_table table %}
+{% load render_table from django_tables2 %}
+{% render_table table %}
 {% endif %}
 
 <div class="popup" id="popup">
-    <div class="popup-content">
-        <div id="image-title"></div>
-        <div id="image-info"></div>
-
-        <img id="popup-img" src="" alt="Animal"/>
+    <div class="popup-container">
         <button class="popup_button close" id="close-popup">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="white">
-                <path d="M18 6L12 12L6 6L4.59 7.41L10.59 13.41L4.59 19.41L6 21L12 15L18 21L19.41 19.41L13.41 13.41L19.41 7.41L18 6Z" />
+            <svg id="close-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+                <path d="M18 6L12 12L6 6L4.59 7.41L10.59 13.41L4.59 19.41L6 21L12 15L18 21L19.41 19.41L13.41 13.41L19.41 7.41L18 6Z"/>
             </svg>
         </button>
-        <button class="popup_button prev" id="prev-image">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="white">
-                <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
+        <div id="image-name"></div>
+        <div class="popup-border">
+            <div class="popup-content">
+                <img id="popup-img" src="" alt="Animal"/>
+                <button class="popup_button prev" id="prev-image">
+                    <svg id="prev-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+                        <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
+                    </svg>
+                </button>
+                <button class="popup_button next" id="next-image">
+                    <svg id="next-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+                        <path d="M8.59 16.59L10 18l6-6-6-6-1.41 1.41L13.17 12z"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <div id="legend">
+            <div id="image-title"></div>
+            <div id="image-info"></div>
+        </div>
+    </div>
+
+
+    <div id="mini-map-container">
+        <button id="toggle-map-size">
+            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#373737">
+                <path class="toggle-icon"
+                      d="M120-120v-320h80v184l504-504H520v-80h320v320h-80v-184L256-200h184v80H120Z"/>
             </svg>
         </button>
-        <button class="popup_button next" id="next-image">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="white">
-                <path d="M8.59 16.59L10 18l6-6-6-6-1.41 1.41L13.17 12z"/>
-            </svg>
-        </button>
+        <div id="mini-map"></div>
     </div>
 </div>
 
-<div id="mini-map">
-    <button id="toggle-map-size">
-            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#373737" >
-                <path d="M120-120v-320h80v184l504-504H520v-80h320v320h-80v-184L256-200h184v80H120Z"/>
-            </svg>
-    </button>
-</div>
-
 {% block style %}
-<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
 
-<link rel="stylesheet" href="{% static 'main/assets/styles/image_popup.css' %}" />
-<link rel="stylesheet" href="{% static 'main/assets/styles/mini_map.css' %}" />
-<link rel="stylesheet" href="{% static 'main/assets/styles/table.css' %}" />
+<link rel="stylesheet" href="{% static 'main/assets/styles/image_popup.css' %}"/>
+<link rel="stylesheet" href="{% static 'main/assets/styles/mini_map.css' %}"/>
+<link rel="stylesheet" href="{% static 'main/assets/styles/table.css' %}"/>
 
 {% endblock %}
 

@@ -5,6 +5,7 @@ const nextImageButton = document.getElementById('next-image');
 const prevImageButton = document.getElementById('prev-image');
 const imageInfo = document.getElementById('image-info');
 const imageTitle = document.getElementById('image-title');
+const imageName = document.getElementById('image-name');
 const closePopupButton = document.getElementById('close-popup');
 
 let currentGroup = [];
@@ -49,6 +50,7 @@ function showImage() {
         popupImg.src = img.full;
         imageInfo.innerHTML = img.info;
         imageTitle.innerHTML = img.title;
+        imageName.innerHTML = img.name;
         showMiniMap(img.latitude, img.longitude)
     }
 }

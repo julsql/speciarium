@@ -130,7 +130,6 @@ th {
 
 .container .formulaire .btn:hover {
     background-color: var(--secondary);
-    color: #000;
 }
 
 .formulaire .btn i,
@@ -182,7 +181,7 @@ th {
     right: 10px;
     transform: translateY(-50%);
     cursor: pointer;
-    color: #999;
+    color: var(--primary);
     font-size: 14px;
     display: none;
     transition: color 0.2s ease-in-out;
@@ -197,14 +196,14 @@ th {
     right: 20px;
     top: 20px;
     cursor: pointer;
-    color: #999;
+    color: var(--primary);
     font-size: 14px;
     transition: color 0.2s ease-in-out;
     user-select: none;
 }
 
 .clear-all:hover {
-    color: var(--primary);
+    color: #000;
 }
 
 .hidden {

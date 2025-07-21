@@ -1,4 +1,4 @@
-const miniMapContainer = document.getElementById("mini-map");
+const miniMapContainer = document.getElementById("mini-map-container");
 let miniMap;
 
 function showMiniMap(lat, lon) {

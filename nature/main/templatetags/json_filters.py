@@ -23,7 +23,8 @@ def get_images_json(record):
         "title": html.escape(title),
         "latitude": float(record['latitude']) if record.get('latitude') and record['latitude'] != 'null' else None,
         "longitude": float(record['longitude']) if record.get('longitude') and record['longitude'] != 'null' else None,
-        "info": html.escape(info)
+        "info": html.escape(info),
+        "name": html.escape(record["number_picture"])
     }
 
     return mark_safe(json.dumps([data]))
