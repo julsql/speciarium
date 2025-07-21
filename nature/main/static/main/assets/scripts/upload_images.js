@@ -83,8 +83,8 @@ function getCsrfToken() {
 }
 
 function getWsRequest() {
-    return window.location.hostname === "especes.julsql.fr"
-        ? "wss://especes.julsql.fr"
+    return window.location.hostname === "speciarium.julsql.fr"
+        ? "wss://speciarium.julsql.fr"
         : "ws://localhost:8000";
 }
 

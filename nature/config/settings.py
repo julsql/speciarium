@@ -26,7 +26,7 @@ SECRET_KEY = config('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', cast=bool)
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0', '***REMOVED***', 'especes.julsql.fr', 'nature']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0', '***REMOVED***', 'speciarium.julsql.fr', 'www.speciarium.julsql.fr', 'nature']
 
 # Application definition
 
@@ -145,7 +145,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 CSRF_TRUSTED_ORIGINS = [
-    'https://especes.julsql.fr',  # Remplacez par votre domaine de production
+    'https://speciarium.julsql.fr',  # Remplacez par votre domaine de production
 ]
 
 # Internationalization
