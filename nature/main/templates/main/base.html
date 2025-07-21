@@ -12,6 +12,10 @@
 <body>
 <header>
     <a href="/" class="title_logo">
+        <img src="{% static 'main/images/papillon.png' %}"
+             class="logo"
+             alt="papillon"
+        >
         <div class="title">
             <h1>Speciarium</h1>
             {% if user.is_authenticated %}
@@ -24,17 +28,29 @@
         <div class="tab">
             <div class="onglet">
                 <a href="{% url 'home' %}?latin_name={{ request.GET.latin_name }}&french_name={{ request.GET.french_name }}&class_field={{ request.GET.class_field }}&order_field={{ request.GET.order_field }}&family={{ request.GET.family }}&continent={{ request.GET.continent }}&country={{ request.GET.country }}&region={{ request.GET.region }}&year={{ request.GET.year }}&start_date={{ request.GET.start_date }}&end_date={{ request.GET.end_date }}">
+                    <img src="{% static 'main/images/oiseau.png' %}"
+                         class="icon_tab"
+                         alt="oiseau"
+                    >
                     <p>Mes espèces</p>
                 </a>
             </div>
             <div class="onglet">
                 <a href="{% url 'photos' %}?latin_name={{ request.GET.latin_name }}&french_name={{ request.GET.french_name }}&class_field={{ request.GET.class_field }}&order_field={{ request.GET.order_field }}&family={{ request.GET.family }}&continent={{ request.GET.continent }}&country={{ request.GET.country }}&region={{ request.GET.region }}&year={{ request.GET.year }}&start_date={{ request.GET.start_date }}&end_date={{ request.GET.end_date }}">
+                    <img src="{% static 'main/images/camera.png' %}"
+                         class="icon_tab"
+                         alt="appareil photo"
+                    >
                     <p>Mes photos</p>
                 </a>
             </div>
             <div class="onglet">
                 <a href="{% url 'carte' %}?latin_name={{ request.GET.latin_name }}&french_name={{ request.GET.french_name }}&class_field={{ request.GET.class_field }}&order_field={{ request.GET.order_field }}&family={{ request.GET.family }}&continent={{ request.GET.continent }}&country={{ request.GET.country }}&region={{ request.GET.region }}&year={{ request.GET.year }}&start_date={{ request.GET.start_date }}&end_date={{ request.GET.end_date }}">
-                    <p>Ma carte</p>
+                    <img src="{% static 'main/images/compas.png' %}"
+                         class="icon_tab"
+                         alt="boussole"
+                    >
+                    <p>La carte</p>
                 </a>
             </div>
         </div>
