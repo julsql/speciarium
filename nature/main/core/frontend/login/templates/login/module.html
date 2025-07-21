@@ -9,7 +9,7 @@
 <div class="login">
     <div>
     <h1>Connexion</h1>
-    <form method="post" id="login-form">
+    <form method="post" class="login-form" id="login-form">
         {% csrf_token %}
             <!-- Affichage des erreurs globales -->
             {% if form.non_field_errors %}
@@ -39,8 +39,4 @@
     </div>
 </div>
 {% endif %}
-{% endblock %}
-
-{% block style %}
-<link rel="stylesheet" href="{% static 'main/assets/styles/login.css' %}" />
 {% endblock %}

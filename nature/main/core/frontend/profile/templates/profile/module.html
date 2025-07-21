@@ -40,7 +40,7 @@
         </div>
     </div>
     <br/>
-    <form action="{% url 'logout' %}" method="post">
+    <form action="{% url 'logout' %}" class="login-form" method="post">
         {% csrf_token %}
         <button type="submit" class="logout-btn">
             Se déconnecter
@@ -53,7 +53,7 @@
         <h2>Paramètres du compte</h2>
         <h3>Changer l'email associé au compte</h3>
         <!-- Formulaire pour mettre à jour l'email -->
-        <form method="post" action="">
+        <form method="post" action="" class="login-form">
             {% csrf_token %}
             <div class="form-group">
                 {{ email_form.email.label_tag }}
@@ -67,7 +67,7 @@
 
         <h3>Changer son mot de passe</h3>
         <!-- Formulaire pour changer le mot de passe -->
-        <form method="post" class="password-reset-form">
+        <form method="post" class="login-form">
             {% csrf_token %}
 
             <div class="form-group">
@@ -104,7 +104,3 @@
 
 {% endblock %}
 
-{% block style %}
-<link rel="stylesheet" href="{% static 'main/assets/styles/profile.css' %}" />
-<link rel="stylesheet" href="{% static 'main/assets/styles/login.css' %}" />
-{% endblock %}

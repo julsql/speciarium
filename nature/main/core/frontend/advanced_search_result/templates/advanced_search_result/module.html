@@ -37,6 +37,10 @@
                 </button>
             </div>
         </div>
+        <img src="{% static 'main/images/buffon.png' %}"
+             class="seal"
+             alt="buffon signature"
+        >
         <div id="legend">
             <div id="image-title"></div>
             <div id="image-info"></div>
@@ -54,15 +58,6 @@
         <div id="mini-map"></div>
     </div>
 </div>
-
-{% block style %}
-<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
-
-<link rel="stylesheet" href="{% static 'main/assets/styles/image_popup.css' %}"/>
-<link rel="stylesheet" href="{% static 'main/assets/styles/mini_map.css' %}"/>
-<link rel="stylesheet" href="{% static 'main/assets/styles/table.css' %}"/>
-
-{% endblock %}
 
 {% block javascript %}
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>

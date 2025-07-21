@@ -1,8 +1,0 @@
-#carte {
-    background-color: #fff;
-    height: calc(100vh - 40px);
-}
-
-#pagination-header {
-    display: none !important;
-}

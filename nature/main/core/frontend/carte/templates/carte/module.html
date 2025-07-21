@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block body %}
-{% include 'advanced_search/module.html' %}
+{% include 'advanced_search/module.html' with origine='carte' %}
 
 <div id="total-species">
     {% if total_results > 1 %}
@@ -19,14 +19,6 @@
 
 <div id="carte"></div>
 {% endif %}
-
-{% endblock %}
-
-{% block style %}
-<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
-
-<link rel="stylesheet" href="{% static 'main/assets/styles/carte.css' %}"/>
-
 {% endblock %}
 
 {% block javascript %}

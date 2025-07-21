@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block body %}
-{% include 'advanced_search/module.html' %}
+{% include 'advanced_search/module.html' with origine='photo' %}
 
 <div id="total-species">
     {% if total_results > 1 %}
@@ -26,9 +26,7 @@
                 <path d="M18 6L12 12L6 6L4.59 7.41L10.59 13.41L4.59 19.41L6 21L12 15L18 21L19.41 19.41L13.41 13.41L19.41 7.41L18 6Z"/>
             </svg>
         </button>
-        <div id="image-name">
-            p1234
-        </div>
+        <div id="image-name"></div>
         <div class="popup-border">
             <div class="popup-content">
                 <img id="popup-img" src="" alt="Animal"/>
@@ -60,22 +58,14 @@
         </button>
         <div id="mini-map"></div>
     </div>
+</div>
 
-    {% endblock %}
+{% endblock %}
 
-    {% block style %}
-    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+{% block javascript %}
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
-    <link rel="stylesheet" href="{% static 'main/assets/styles/image_popup.css' %}"/>
-    <link rel="stylesheet" href="{% static 'main/assets/styles/mini_map.css' %}"/>
-    <link rel="stylesheet" href="{% static 'main/assets/styles/table.css' %}"/>
-
-    {% endblock %}
-
-    {% block javascript %}
-    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-
-    <script>const mapTiles = "{{ map_server|escapejs }}";</script>
-    <script src="{% static 'main/assets/scripts/mini_map.js' %}"></script>
-    <script src="{% static 'main/assets/scripts/image_popup.js' %}"></script>
-    {% endblock %}
+<script>const mapTiles = "{{ map_server|escapejs }}";</script>
+<script src="{% static 'main/assets/scripts/mini_map.js' %}"></script>
+<script src="{% static 'main/assets/scripts/image_popup.js' %}"></script>
+{% endblock %}

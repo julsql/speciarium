@@ -152,8 +152,7 @@
     </div>
 
     {% if total_results > 10 %}
-    <div id="pagination-header">
-
+    <div id="pagination-header" data-origine="{{ origine }}">
         <select name="per_page" id="per_page" onchange="this.form.submit()">
             <option value="10" {% if request.GET.per_page == '10' %}selected{% endif %}>10</option>
             <option value="25" {% if request.GET.per_page == '25' or not request.GET.per_page %}selected{% endif %}>25</option>
@@ -208,12 +207,6 @@
     <option value="{{ order }}">
         {% endfor %}
 </datalist>
-
-{% block style %}
-<link rel="stylesheet" href="{% static 'main/assets/styles/form.css' %}"/>
-<link rel="stylesheet" href="{% static 'main/assets/styles/pagination.css' %}"/>
-<link rel="stylesheet" href="{% static 'main/assets/styles/table_header.css' %}"/>
-{% endblock %}
 
 {% block javascript %}
 <script src="{% static 'main/assets/scripts/form.js' %}"></script>
