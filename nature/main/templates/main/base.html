@@ -6,11 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Speciarium</title>
     <link rel="shortcut icon" type="image/png" href="{% static 'favicon.ico' %}"/>
-    {% if user.is_authenticated %}
-    <link rel="stylesheet" href="{% static 'main/assets/styles/main-' %}{{ user.theme.name|default:'modern' }}.css">
-    {% else %}
-    <link rel="stylesheet" href="{% static 'main/assets/styles/main-modern.css' %}">
-    {% endif %}
+    <link rel="stylesheet" href="{% static 'main/assets/styles/main-' %}{{ user.theme.name|default:'old' }}.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
 </head>
 <body>

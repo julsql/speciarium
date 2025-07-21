@@ -1,14 +1,14 @@
 from django.contrib import messages
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.forms import PasswordChangeForm
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import redirect
 from django.shortcuts import render, get_object_or_404
 
-from main.core.frontend.profile.forms import EmailUpdateForm
+from main.core.frontend.profile.forms import EmailUpdateForm, CustomPasswordChangeForm
 from main.models.collection import Collection
 from main.models.map_tiles import MapTiles
+from main.models.theme import Theme
 
 
 class ProfileView:
@@ -16,6 +16,7 @@ class ProfileView:
         user = request.user
         collections = user.collections.all()
         all_map_tiles = MapTiles.objects.all()
+        all_themes = Theme.objects.all()
 
         current_collection = user.current_collection
         if current_collection:
@@ -28,6 +29,11 @@ class ProfileView:
         else:
             map_server_id = all_map_tiles.first().id
 
+        if request.user.theme:
+            theme_id = request.user.theme.id
+        else:
+            theme_id = all_themes.first().id
+
         if request.method == "POST":
             if "update_email" in request.POST:
                 email_form = EmailUpdateForm(request.POST)
@@ -36,9 +42,9 @@ class ProfileView:
                     user.save()
                     messages.success(request, "Email mis à jour avec succès.")
                     return redirect('profile')
-                password_form = PasswordChangeForm(user)
+                password_form = CustomPasswordChangeForm(user)
             elif "change_password" in request.POST:
-                password_form = PasswordChangeForm(user, request.POST)
+                password_form = CustomPasswordChangeForm(user, request.POST)
                 if password_form.is_valid():
                     user = password_form.save()
                     update_session_auth_hash(request, user)  # Important pour garder la session
@@ -47,7 +53,7 @@ class ProfileView:
                 email_form = EmailUpdateForm(initial={'email': user.email})
         else:
             email_form = EmailUpdateForm(initial={'email': user.email})
-            password_form = PasswordChangeForm(user)
+            password_form = CustomPasswordChangeForm(user)
 
         return render(request, 'profile/module.html', {
             'username': user.username,
@@ -57,7 +63,9 @@ class ProfileView:
             'current_collection_id': current_collection_id,
             'collections': [(collection.id, collection.title) for collection in collections],
             'current_map_tiles_id': map_server_id,
-            'map_tiles': [(map_tiles.id, map_tiles.description) for map_tiles in list(all_map_tiles)],
+            'map_tiles': [(map_tiles.id, map_tiles.description) for map_tiles in all_map_tiles],
+            'current_theme_id': theme_id,
+            'themes': [(theme.id, theme.description) for theme in all_themes],
             'email_form': email_form,
             'password_form': password_form,
         })
@@ -71,6 +79,12 @@ class ProfileView:
     def change_map_tiles(self, request: HttpRequest, map_tiles_id: int) -> HttpResponse:
         map_tiles = get_object_or_404(MapTiles, id=map_tiles_id)
         request.user.map_tiles = map_tiles
+        request.user.save()
+        return redirect('profile')
+
+    def change_themes(self, request: HttpRequest, theme_id: int) -> HttpResponse:
+        theme = get_object_or_404(Theme, id=theme_id)
+        request.user.theme = theme
         request.user.save()
         return redirect('profile')
 
@@ -91,3 +105,8 @@ def change_collection_view(request, collection_id):
 def change_map_tiles_view(request, map_tiles_id):
     view = ProfileView()
     return view.change_map_tiles(request, map_tiles_id)
+
+@login_required
+def change_theme_view(request, theme_id):
+    view = ProfileView()
+    return view.change_themes(request, theme_id)
