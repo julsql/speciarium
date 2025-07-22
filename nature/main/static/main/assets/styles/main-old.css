@@ -5,6 +5,7 @@
     --primary: #615447;
     --secondary: #2f4634;
     --text: #000;
+    --background: #fbe1b4;
 }
 
 /* Appliquer un reset global */
@@ -25,7 +26,7 @@ html, body {
 body {
     justify-content: center;
     background-image: url('../../images/asfalt-dark.png');
-    background-color: #fbe1b4;
+    background-color: var(--background);
     background-repeat: repeat;
     background-size: 100px 100px;
     color: var(--text);
@@ -246,7 +247,7 @@ header a {
     position: absolute;
     margin-top: 2px;
     background-image: url('../../images/asfalt-dark.png');
-    background-color: #fbe1b4;
+    background-color: var(--background);
     background-repeat: repeat;
     background-size: 100px 100px;
     border: 1px solid var(--primary);
@@ -598,7 +599,7 @@ th {
 .popup-container {
     position: relative;
     background-image: url('../../images/asfalt-dark.png');
-    background-color: #fbe1b4;
+    background-color: var(--background);
     background-repeat: repeat;
     background-size: 100px 100px;
     max-width: 90%;
@@ -625,7 +626,7 @@ th {
 
 #legend {
     background-image: url('../../images/asfalt-dark.png');
-    background-color: #fbe1b4;
+    background-color: var(--background);
     background-repeat: repeat;
     background-size: 100px 100px;
     width: 100%;
@@ -914,8 +915,8 @@ form .buttons button, .backBtn {
     right: 10px;
     z-index: 1000;
     aspect-ratio: 767/947;
-    height: 30vw;
-    max-height: 230px;
+    height: 40vw;
+    max-height: 212px;
     background-image: url("../../images/globe.png");
     background-repeat: no-repeat;
     background-size: contain;
@@ -924,8 +925,8 @@ form .buttons button, .backBtn {
 
 #mini-map {
     position: absolute;
-    width: 23vw;
-    max-height: 175px;
+    width: 30vw;
+    max-height: 160px;
     aspect-ratio: 1 / 1;
     border-radius: 50%;
     background-color: rgba(255, 255, 255, 0.6);
@@ -936,25 +937,30 @@ form .buttons button, .backBtn {
 }
 
 #mini-map-container.expanded {
-    width: 60%;
-    max-width: 400px;
+    height: 65vw;
+    max-height: 515px;
 }
 
 #mini-map-container.expanded #mini-map {
-    width: 60%; /* ajusté automatiquement via transform */
+    width: 50vw;
+    max-height: 400px;
 }
 
 #toggle-map-size {
     position: absolute;
-    display: none;
-    top: 5px;
-    left: 5px;
-    background-color: transparent;
+    bottom: 0;
+    right: 0;
+    background-image: url('../../images/asfalt-dark.png');
+    background-color: var(--background);
+    background-size: 100px 100px;
+    border-radius: 50%;
     border: none;
-    width: 25px;
-    height: 25px;
+    width: 35px;
+    height: 35px;
+    padding: 5px;
     cursor: pointer;
-    z-index: 3;
+    z-index: 1001;
+    transform: rotate(90deg);
 }
 
 /* PAGINATION */
