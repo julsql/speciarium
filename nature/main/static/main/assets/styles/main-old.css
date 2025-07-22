@@ -4,7 +4,7 @@
 :root {
     --primary: #615447;
     --secondary: #2f4634;
-    --text: #2c2b27;
+    --text: #000;
 }
 
 /* Appliquer un reset global */
@@ -13,7 +13,7 @@
     padding: 0;
     box-sizing: border-box;
     font-family: 'EB Garamond', sans-serif;
-    font-size: 16px;
+    font-size: 20px;
 }
 
 /* BASE : Corps de page */
@@ -50,15 +50,17 @@ h1, h2, h3 {
 h1 {
     font-family: "Great Vibes", cursive;
     font-size: 70px;
+    font-weight: bold;
 }
 
 h2 {
-    font-size: 24px;
+    font-size: 30px;
+    font-weight: bold;
 }
 
 h3 {
-    font-size: 18px;
-    color: var(--secondary);
+    font-size: 24px;
+    font-weight: 100;
 }
 
 /* LIENS INTERACTIFS (DANS TITRES) */
@@ -97,15 +99,15 @@ header {
     margin: 20px;
 }
 
-header h2, header h3 {
+header .title h2, header .title h3 {
     text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
 }
 
-header h1 {
+header .title h1 {
     text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
 }
 
-header h2 {
+header .title h2 {
     margin-top: -25px;
     margin-left: 85px;
 }
@@ -198,10 +200,6 @@ header a {
     cursor: pointer;
     padding: 10px;
     height: 50px;
-}
-
-.tab a p {
-    font-size: 24px;
 }
 
 .icon_tab {
@@ -992,7 +990,7 @@ nav[aria-label="Table navigation"] {
     text-decoration: none;
     padding: 10px 15px;
     border: 1px solid var(--primary);
-    font-size: 12px;
+    font-size: 16px;
     font-weight: bold;
     transition: all 0.2s ease-in-out;
     color: var(--primary);
@@ -1177,14 +1175,11 @@ select option {
     margin-top: -60px;
 }
 
-#total-species p {
-    font-size: 18px;
-}
-
 select {
     display: inline-block;
     padding: 10px 15px;
-    font-size: 14px;
+    text-align-last: center;
+    font-size: 16px;
     font-weight: bold;
     border-radius: 5px;
     border: 1px solid var(--primary);
@@ -1199,7 +1194,6 @@ select {
     background-size: 10px;
     cursor: pointer;
     height: 45px;
-    text-indent: 3px;
     text-align: center;
     margin: auto 20px;
 }
