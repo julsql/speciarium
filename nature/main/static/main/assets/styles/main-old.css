@@ -1250,9 +1250,16 @@ select:disabled {
     border: 1px solid #ccc;
     border-radius: 5px;
     margin-top: auto;
-    margin-left: 10px;
     margin-bottom: auto;
     display: none;
+}
+
+#upload-info-container {
+    flex-direction: column;
+}
+
+#upload-info {
+    margin: auto;
 }
 
 #progress-bar {
