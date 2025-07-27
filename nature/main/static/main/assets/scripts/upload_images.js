@@ -260,6 +260,9 @@ folderInput.addEventListener("change", async (event) => {
     let currentIndex = 0;
 
     socket.onmessage = function (event) {
+        console.log(event.data)
+        console.log(currentIndex)
+        console.log(resizedFiles.length)
         const data = JSON.parse(event.data);
         if (data.progress === "Done" && currentIndex >= resizedFiles.length) {
             socket.close();
@@ -285,7 +288,7 @@ folderInput.addEventListener("change", async (event) => {
         info.textContent = `Images ajoutées`;
         progressBar.style.width = '0';
         progressBarContainer.style.display = "none";
-        location.reload();
+        // location.reload();
     };
 
     loading.style.display = "block";
