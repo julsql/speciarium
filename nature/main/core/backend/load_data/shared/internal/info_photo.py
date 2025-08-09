@@ -141,14 +141,14 @@ def extraire_informations(path):
     title = os.path.basename(path).split('.')[0]
     title = title.replace('  ', ' ')
     value = title.split(' ')
+    if len(value) < 2:
+        raise ValueError(f"{title} ne correspond pas au format attendu Genre espèce (détails) identifiant")
     latin = f"{value[0]} {value[1]}"
     if len(value) == 2 or len(value) == 3:
         return latin, ''
     elif len(value) > 3:
         return latin, ' '.join(value[2:-1])
-    else:
-        raise ValueError(f"{title} ne correspond pas au format attendu Genre espèce (détails) identifiant")
-
+    return None
 
 def get_hash(image_path, image_hash):
     if image_hash:

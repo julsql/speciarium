@@ -66,7 +66,10 @@ def convert_date_format(date):
 
 
 def get_number(thumbnail_path):
-    return thumbnail_path.split(" ")[-1]
+    picture_name = thumbnail_path.split("/")[-1].split(" ")
+    if len(picture_name) > 2:
+        return picture_name[2]
+    return ''
 
 def transform_entry(entry):
     images = []
