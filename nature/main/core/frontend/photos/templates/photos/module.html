@@ -42,10 +42,7 @@
                 </button>
             </div>
         </div>
-        <img src="{% static 'main/images/buffon.png' %}"
-             class="seal"
-             alt="buffon signature"
-        >
+        <p class="seal">{{ user.current_collection.owner.first_name }}</p>
         <div id="legend">
             <div id="image-title"></div>
             <div id="image-info"></div>
