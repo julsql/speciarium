@@ -1,13 +1,21 @@
 // ==== UTILITAIRES EXIF ====
 
 function getTimestamp(file) {
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
         const reader = new FileReader();
 
         reader.onload = (e) => {
             try {
                 const tags = ExifReader.load(e.target.result);
-                resolve(tags.DateTimeOriginal?.description || null);
+
+                // On teste plusieurs tags
+                const date =
+                    tags.DateTimeOriginal?.description ||
+                    tags.DateTimeDigitized?.description ||
+                    tags.DateTime?.description ||
+                    null;
+
+                resolve(date);
             } catch (error) {
                 console.error("Erreur lors de la lecture des métadonnées EXIF :", error);
                 resolve(null);
@@ -46,31 +54,6 @@ function convertToDecimal([deg, min, sec], ref) {
 
 function normaliserUnicode(text) {
     return text.normalize("NFC");
-}
-
-async function getFormDataSize(formData) {
-    const entries = Array.from(formData.entries());
-    const boundary = "----WebKitFormBoundary" + Math.random().toString(16);
-    let body = "";
-
-    for (const [key, value] of entries) {
-        body += `--${boundary}\r\n`;
-
-        if (value instanceof File) {
-            const fileContent = await value.arrayBuffer().then(buf => new Uint8Array(buf));
-            body += `Content-Disposition: form-data; name="${key}"; filename="${value.name}"\r\n`;
-            body += `Content-Type: ${value.type || "application/octet-stream"}\r\n\r\n`;
-            body += new TextDecoder().decode(fileContent);
-        } else {
-            body += `Content-Disposition: form-data; name="${key}"\r\n\r\n${value}`;
-        }
-
-        body += "\r\n";
-    }
-
-    body += `--${boundary}--\r\n`;
-
-    return new Blob([body]).size;
 }
 
 function getImageToDelete(remoteKeys, localKeys) {

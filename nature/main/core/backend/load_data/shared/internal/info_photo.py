@@ -179,6 +179,23 @@ def vignette_path(image_path, rm_path, collection_id):
     return replace_root(image_path, rm_path, VIGNETTE_ROOT(collection_id))
 
 
+def parse_exif_date(timestamp: str):
+    formats = [
+        "%Y:%m:%d %H:%M:%S",     # ex: 2023:06:03 13:17:05
+        "%Y-%m-%dT%H:%M:%SZ",    # ex: 2018-04-28T12:09:10Z
+        "%Y-%m-%dT%H:%M:%S%z",   # ex: 2006-01-16T10:00:53+01:00
+        "%Y-%m-%d %H:%M:%S",     # ex: 2018-04-28 12:09:10
+        "%Y/%m/%d %H:%M:%S",     # ex: 2018/04/28 12:09:10
+    ]
+
+    for fmt in formats:
+        try:
+            return datetime.strptime(timestamp, fmt)
+        except ValueError:
+            continue
+
+    raise ValueError("Format de la date de l'image non reconnu")
+
 def get_date_taken(image_path, timestamp):
     if timestamp is None:
         exif = Image.open(image_path)._getexif()
@@ -188,8 +205,7 @@ def get_date_taken(image_path, timestamp):
             raise ValueError(f"Impossible de récupérer la date de l'image {image_path}")
     if timestamp == "":
         raise ValueError("Date de l'image vide (non transmis)")
-
-    date_taken = datetime.strptime(timestamp, "%Y:%m:%d %H:%M:%S")
+    date_taken = parse_exif_date(timestamp)
     return date_taken.strftime("%Y-%m-%d"), date_taken.strftime("%Y")
 
 

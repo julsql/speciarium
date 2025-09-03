@@ -22,7 +22,6 @@ async def get_specie_data(latin_name: str) -> dict[str, str] | None:
     if latin_name not in species_already_added:
         try:
             specie = get_species_data(latin_name)
-            print(f"espèce : {latin_name}")
             logger.info(f"espèce : {latin_name}")
             return specie
         except Exception as e:
