@@ -93,6 +93,7 @@ def advanced_search_result_map(request, form):
                 rounded_longitude=Round('longitude', decimal_coordinates)
             ).filter(rounded_longitude=round(longitude, decimal_coordinates))
 
+    queryset = queryset.order_by('-id')
     queryset = annotate_queryset(queryset)
     total_results = queryset.count()
     queryset = process_queryset(queryset)

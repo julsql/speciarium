@@ -40,8 +40,14 @@ def annotate_queryset(queryset):
         min_year=Min('year'),
 
         # Concaténation de valeurs sous PostgreSQL
-        year_list=StringAgg(Coalesce(Cast(F('year'), TextField()), Value('')), delimiter=','),
-        date_list=StringAgg(Coalesce(Cast(F('date'), TextField()), Value('')), delimiter=','),
+        year_list=StringAgg(
+            Coalesce(Cast(F('year'), TextField()), Value('')),
+            delimiter=',',
+            ordering=F('date').desc()),
+        date_list=StringAgg(
+            Coalesce(Cast(F('date'), TextField()), Value('')),
+            delimiter=',',
+            ordering=F('date').desc()),
         continent_list=StringAgg(Coalesce(F('continent'), Value('')), delimiter=','),
         first_continent=Min('continent'),
         country_list=StringAgg(Coalesce(F('country'), Value('')), delimiter=','),
@@ -183,6 +189,7 @@ def advanced_search_result(request, form):
                 rounded_longitude=Round('longitude', decimal_coordinates)
             ).filter(rounded_longitude=round(longitude, decimal_coordinates))
 
+    queryset = queryset.order_by('-specie__id')
     queryset = annotate_queryset(queryset)
     total_results = queryset.count()
     queryset = process_queryset(queryset)
