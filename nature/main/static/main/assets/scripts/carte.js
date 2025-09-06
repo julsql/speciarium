@@ -1,4 +1,6 @@
 const images = document.getElementById("data-carte");
+const errorDiv = document.getElementById("error-carte");
+const carteDiv = document.getElementById("carte");
 
 window.onload = function () {
     const allImagesData = images?.dataset?.images;
@@ -10,6 +12,18 @@ window.onload = function () {
 }
 
 function showMap(data) {
+    if (typeof L === 'undefined' || !L) {
+        console.error("Leaflet.js n'est pas chargé. Impossible d'afficher la carte.");
+        carteDiv.style.display = "none";
+        errorDiv.style.display = "block";
+        errorDiv.innerText = "Le fond de carte n'a pas pu être chargé. Veuillez réessayer plus tard."
+        return;
+    }
+
+    carteDiv.style.display = "block";
+    errorDiv.style.display = "none";
+    errorDiv.innerText = "";
+
     const carte = L.map('carte', {
         attributionControl: false,
         zoomControl: false
@@ -25,6 +39,7 @@ function showMap(data) {
     data.forEach(image => {
         const lat = image.latitude;
         const lon = image.longitude;
+        console.log(lat, lon)
 
         if (!isNaN(lat) && !isNaN(lon)) {
             const key = `${lat},${lon}`;

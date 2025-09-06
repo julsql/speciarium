@@ -279,6 +279,11 @@ header a {
     height: calc(100vh - 40px);
 }
 
+#error-carte {
+    display: none;
+    color: white;
+}
+
 /* FORMULAIRE */
 
 .container .formulaire {

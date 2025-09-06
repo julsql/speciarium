@@ -286,6 +286,11 @@ header a {
     margin: auto 10px 50px 10px
 }
 
+#error-carte {
+    display: none;
+    margin-bottom: 40px;
+}
+
 #pagination-header {
     display: flex;
     flex-wrap: wrap;
