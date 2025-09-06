@@ -23,6 +23,12 @@ italic = "font-style: italic;"
 width = "max-width: 130px;"
 
 
+class FormattedDateColumn(tables.Column):
+    def render(self, value):
+        if value:
+            return value.strftime("%d/%m/%Y")
+        return ""
+
 class PhotosTable(tables.Table):
     specie__latin_name = tables.Column(verbose_name="Nom latin", attrs={"td": {"style": italic + width}})
     specie__french_name = tables.Column(verbose_name="Nom vernaculaire", attrs={"td": {"style": width}})
@@ -30,7 +36,7 @@ class PhotosTable(tables.Table):
     specie__class_field = tables.Column(verbose_name="Classe", attrs={"td": {"style": italic}})
     specie__order_field = tables.Column(verbose_name="Ordre", attrs={"td": {"style": italic}})
     specie__family = tables.Column(verbose_name="Famille", attrs={"td": {"style": italic}})
-    date = tables.Column(verbose_name="Date")
+    date = FormattedDateColumn(verbose_name="Date")
     continent = tables.Column(verbose_name="Continent")
     country = tables.Column(verbose_name="Pays")
     region = tables.Column(verbose_name="Région")
