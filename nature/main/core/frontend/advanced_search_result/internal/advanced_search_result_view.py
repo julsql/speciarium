@@ -100,6 +100,7 @@ def transform_entry(entry):
         })
 
     entry['all_photos'] = images
+    entry['number_picture'] = len(photo_list)
 
     if entry['continent_list']:
         entry['continent_list'] = set(continent_list)

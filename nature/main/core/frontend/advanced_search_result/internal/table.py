@@ -63,6 +63,7 @@ class SpeciesTable(tables.Table):
         order_by="first_region"
     )
 
+    number_picture = tables.Column(verbose_name="N")
     thumbnail1 = create_thumbnail_column(0)
     thumbnail2 = create_thumbnail_column(1)
     thumbnail3 = create_thumbnail_column(2)
@@ -94,4 +95,4 @@ class SpeciesTable(tables.Table):
         fields = ("specie__latin_name", "specie__french_name", "specie__kingdom",
                   "specie__class_field", "specie__order_field", "specie__family",
                   "min_year", "continent_list", "country_list", "region_list",
-                  "thumbnail1", "thumbnail2", "thumbnail3")
+                  "number_picture", "thumbnail1", "thumbnail2", "thumbnail3")
