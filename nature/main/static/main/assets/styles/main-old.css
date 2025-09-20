@@ -283,7 +283,7 @@ header a {
     border: 1px solid var(--primary);
     outline: 2px solid var(--primary);
     outline-offset: 10px;
-    margin: auto 10px 50px 10px
+    margin: auto 10px 0 10px
 }
 
 #error-carte {
