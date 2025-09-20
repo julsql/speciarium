@@ -70,21 +70,9 @@ class SpeciesTable(tables.Table):
 
     all_images = tables.TemplateColumn(
         template_code="""
-            <span class="all-images" data-images='[
-                {% for image in record.all_photos %}
-                    {
-                        "full": "{{ image.photo }}",
-                        "thumbnail": "{{ image.thumbnail }}",
-                        "title": "{% if record.specie__french_name %}{{ record.specie__french_name }} - {% endif %}<i>{{ record.specie__latin_name }}</i>",
-                        "latitude": {{ image.latitude }},
-                        "longitude": {{ image.longitude }},
-                        "info": "Photo prise {% if image.date %}le {{ image.date }} {% endif %}en {{ image.country }}{% if image.region %} ({{ image.region }}){% endif %}{% if image.details %}. {{ image.details }}{% endif %}",
-                        "name": "{{ image.number_picture }}"
-                    }
-                    {% if not forloop.last %},{% endif %}
-                {% endfor %}
-            ]' hidden></span>
-            """,
+            {% load json_filters %}
+            <span class="all-images" data-images='{{ record|get_all_images_json }}' hidden></span>
+        """,
         verbose_name="",
         orderable=False
     )

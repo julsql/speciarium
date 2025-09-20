@@ -51,15 +51,10 @@ def to_json(results):
         else:
             title = f"<i>{image['specie__latin_name']}</i>"
 
-        info = f"Photo prise le {image['date']} en {image['country']}" + (f" ({image['region']})" if image.get('region') else "") + (f". {image['details']}" if image.get('details') else "")
-
         images_data.append({
-            "full": html.escape(image['photo']),
-            "thumbnail": html.escape(image['thumbnail']),
             "title": html.escape(title),
             "latitude": float(image['latitude']) if image.get('latitude') and image['latitude'] != 'null' else None,
             "longitude": float(image['longitude']) if image.get('longitude') and image['longitude'] != 'null' else None,
-            "info": html.escape(info)
         })
 
     return json.dumps(images_data, ensure_ascii=False)
