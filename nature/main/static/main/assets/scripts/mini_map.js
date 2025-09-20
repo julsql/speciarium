@@ -1,11 +1,14 @@
 const miniMapContainer = document.getElementById("mini-map-container");
 let miniMap;
 
-function showMiniMap(lat, lon) {
+function showMiniMap(latitude, longitude) {
     if (typeof L === 'undefined' || !L) {
         console.error("Leaflet.js n'est pas chargé. Impossible d'afficher la carte.");
         return;
     }
+
+    const lat = Number(latitude);
+    const lon = Number(longitude);
 
     miniMapContainer.classList.remove("expanded");
     if (lat && lon && !isNaN(lat) && !isNaN(lon)) {

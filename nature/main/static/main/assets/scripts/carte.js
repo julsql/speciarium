@@ -37,11 +37,11 @@ function showMap(data) {
     let groupedData = {};
 
     data.forEach(image => {
-        const lat = image.latitude;
-        const lon = image.longitude;
+        const lat = Number(image.latitude);
+        const lon = Number(image.longitude);
         console.log(lat, lon)
 
-        if (!isNaN(lat) && !isNaN(lon)) {
+        if (!isNaN(lat) && !isNaN(lon) || (lat !== 0 && lon !== 0)) {
             const key = `${lat},${lon}`;
             if (!groupedData[key]) {
                 groupedData[key] = { lat, lon, labels: [] };
