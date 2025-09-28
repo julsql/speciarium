@@ -3,13 +3,12 @@ name: Deploy
 on:
   push:
     branches:
-      - '**'
+      - main
 
 # Définir les jobs
 jobs:
   deploy:
     name: Deploy to server
-    if: github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
     steps:
       - name: Deploy over SSH
@@ -22,5 +21,6 @@ jobs:
             cd /home/debian/websites/nature
             git pull
             docker-compose down
-            docker image rm nature-django:latest
+            docker-compose build --no-cache
             docker-compose up -d
+            docker image prune -f
