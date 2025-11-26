@@ -1,17 +1,17 @@
 services:
   postgres:
     image: postgres:15
-    container_name: postgres_species
+    container_name: postgres_speciarium
     restart: always
     environment:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
-      POSTGRES_DB: species_db
+      POSTGRES_DB: speciarium
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./nature/database/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./src/database/init.sql:/docker-entrypoint-initdb.d/init.sql
 
 volumes:
   postgres_data:

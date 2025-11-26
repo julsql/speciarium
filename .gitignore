@@ -1,10 +1,10 @@
-nature/media/
-nature/database/old
+src/media/
+src/database/old
 **/.env
-nature/originales/
+src/originales/
 etetoolkit/
 
-nature/main/core/frontend/create_user.py
+src/main/core/frontend/create_user.py
 
 # ide
 .idea/

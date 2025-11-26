@@ -4,14 +4,14 @@ services:
   django:
     build:
       context: .
-    container_name: nature
+    container_name: speciarium
     ports:
       - "8000:8000"
     volumes:
-      - ./nature/media:/app/nature/media
-      - ./nature/database:/app/nature/database
+      - ./src/media:/app/src/media
+      - ./src/database:/app/src/database
       - ./etetoolkit:/root/.etetoolkit/
     environment:
       - DEBUG=True
       - DJANGO_ENV=development
-    command: python nature/manage.py runserver 0.0.0.0:8000
+    command: python src/manage.py runserver 0.0.0.0:8000

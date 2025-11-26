@@ -26,7 +26,7 @@ SECRET_KEY = config('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', cast=bool)
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0', '51.222.136.185', 'speciarium.julsql.fr', 'www.speciarium.julsql.fr', 'nature']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0', '51.222.136.185', 'speciarium.julsql.fr', 'www.speciarium.julsql.fr', 'speciarium']
 
 # Application definition
 
