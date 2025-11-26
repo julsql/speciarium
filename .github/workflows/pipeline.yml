@@ -18,7 +18,7 @@ jobs:
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
           script: |
-            cd /home/debian/websites/nature
+            cd /home/debian/websites/speciarium
             git pull
             docker-compose down
             docker-compose build --no-cache

@@ -4,22 +4,22 @@ services:
   django:
     build:
       context: .
-    container_name: nature
+    container_name: speciarium
     ports:
       - "8003:8000"
     volumes:
-      - ./nature/media:/app/nature/media
-      - ./nature/database:/app/nature/database
+      - ./src/media:/app/src/media
+      - ./src/database:/app/src/database
       - ./etetoolkit:/root/.etetoolkit/
     environment:
       - DEBUG=False
       - DJANGO_ENV=production
-    working_dir: /app/nature
+    working_dir: /app/src
     command: daphne -b 0.0.0.0 -p 8000 config.asgi:application
     depends_on:
       - postgres
     networks:
-      - nature_network
+      - speciarium_network
 
   redis:
     image: redis:latest
@@ -27,11 +27,11 @@ services:
     ports:
       - "6379:6379"
     networks:
-      - nature_network
+      - speciarium_network
 
   postgres:
     image: postgres:15
-    container_name: postgres_species
+    container_name: postgres_speciarium
     restart: always
     env_file:
       - .env
@@ -39,12 +39,12 @@ services:
       - "5433:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - .nature/database/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./src/database/init.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
-      - nature_network
+      - speciarium_network
 
 volumes:
   postgres_data:
 
 networks:
-  nature_network:
+  speciarium_network:

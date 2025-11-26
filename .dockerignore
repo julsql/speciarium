@@ -28,6 +28,6 @@ README.md
 .vscode
 TODO.md
 originales
-nature/media
+src/media
 etetoolkit
-nature/database
+src/database
