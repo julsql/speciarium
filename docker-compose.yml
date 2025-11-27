@@ -15,11 +15,15 @@ services:
       - DEBUG=False
       - DJANGO_ENV=production
     working_dir: /app/src
-    command: daphne -b 0.0.0.0 -p 8000 config.asgi:application
+    command: >
+      sh -c "
+      python manage.py migrate --noinput &&
+      daphne -b 0.0.0.0 -p 8000 config.asgi:application
+      "
     depends_on:
       - postgres
     networks:
-      - speciarium_network
+      - local_network
 
   redis:
     image: redis:latest
@@ -27,7 +31,7 @@ services:
     ports:
       - "6379:6379"
     networks:
-      - speciarium_network
+      - local_network
 
   postgres:
     image: postgres:15
@@ -41,10 +45,10 @@ services:
       - postgres_data:/var/lib/postgresql/data
       - ./src/database/init.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
-      - speciarium_network
+      - local_network
 
 volumes:
   postgres_data:
 
 networks:
-  speciarium_network:
+  local_network:
