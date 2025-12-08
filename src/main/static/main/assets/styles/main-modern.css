@@ -1224,6 +1224,10 @@ select:disabled {
     #pagination-header {
         margin-bottom: 0;
     }
+
+    #total-species {
+        margin-top: 0px;
+    }
 }
 
 /* TÉLÉCHARGEMENT D'IMAGE */
