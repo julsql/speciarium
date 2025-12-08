@@ -39,7 +39,6 @@ function showMap(data) {
     data.forEach(image => {
         const lat = Number(image.latitude);
         const lon = Number(image.longitude);
-        console.log(lat, lon)
 
         if (!isNaN(lat) && !isNaN(lon) || (lat !== 0 && lon !== 0)) {
             const key = `${lat},${lon}`;
