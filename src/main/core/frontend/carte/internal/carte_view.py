@@ -73,7 +73,9 @@ def advanced_search_result_map(form, request):
     else:
         collection = request.user.collections.all().first()
 
-    queryset = Photos.objects.select_related('specie').filter(collection=collection)
+    queryset = Photos.objects.select_related('specie').filter(collection=collection,
+                                                              latitude__isnull=False,
+                                                              longitude__isnull=False)
     filter_mappings = {
         'latin_name': 'specie__latin_name',
         'genus': 'specie__genus',
