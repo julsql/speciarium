@@ -10,6 +10,8 @@ from main.core.backend.logger.logger import logger
 ## ncbi = NCBITaxa()
 ## ncbi.update_taxonomy_database()
 
+ncbi = NCBITaxa()
+
 
 def get_species_data(latin_name: str) -> dict:
     infos_specie = {}
@@ -67,7 +69,6 @@ def get_species_details_2(latin_name):
     family = ''
     kingdom = ''
 
-    ncbi = NCBITaxa()
     tax = ncbi.get_name_translator([latin_name])
     if latin_name in tax and len(tax[latin_name]) > 0:
         taxid = tax[latin_name][0]
