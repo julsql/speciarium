@@ -935,8 +935,8 @@ form .buttons button, .backBtn {
 
 #mini-map {
     position: absolute;
-    width: 30vw;
     max-height: 160px;
+    width: 160px;
     aspect-ratio: 1 / 1;
     border-radius: 50%;
     background-color: rgba(255, 255, 255, 0.6);
@@ -952,7 +952,7 @@ form .buttons button, .backBtn {
 }
 
 #mini-map-container.expanded #mini-map {
-    width: 50vw;
+    width: 387px;
     max-height: 400px;
 }
 
