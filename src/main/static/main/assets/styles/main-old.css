@@ -1074,6 +1074,10 @@ h4 {
     margin-left: 20px
 }
 
+.collection {
+    gap: 10px;
+}
+
 .profile-section .list a {
     display: flex;
     align-items: center;
