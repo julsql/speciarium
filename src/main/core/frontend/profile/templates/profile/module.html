@@ -3,8 +3,8 @@
 
 {% block body %}
 <div class="section">
-        <h2>Mes informations</h2>
-        <h3>{{ first_name }}</h3>
+    <h2>Mes informations</h2>
+    <h3>{{ first_name }}</h3>
     <div>
         <p>Nom d'utilisateur : {{ username }}</p>
         <p>Email : {{ email }}</p>
@@ -13,13 +13,18 @@
         <h4>Mes collections</h4>
         <div class="list">
             <ul>
-                {% for collection_id, collection_title in collections %}
-                {% if collection_id == current_collection_id %}
-                <li class="current_collection">{{ collection_title }}</li>
-                {% else %}
-                <li class="unselected_collection">{{ collection_title }} <a
-                        href="{% url 'change_collection' collection_id %}">Sélectionner</a></li>
-                {% endif %}
+                {% for collection_id, collection_title, collection_owner_id in collections %}
+                <li class="collection">
+                    {% if collection_owner_id == request.user.id %}
+                    <span title="Vous êtes le propriétaire" class="owner">👑&nbsp;</span>
+                    {% endif %}
+                    {% if collection_id == current_collection_id %}
+                    {{ collection_title }}
+                    {% else %}
+                    {{ collection_title }} <a
+                            href="{% url 'change_collection' collection_id %}">Sélectionner</a>
+                    {% endif %}
+                </li>
                 {% endfor %}
             </ul>
         </div>
@@ -66,91 +71,91 @@
 
 
 <div class="section">
-        <h2>Paramètres du compte</h2>
-        <h3>Changer son nom d'utilisateur</h3>
-        <!-- Formulaire pour mettre à jour l'email -->
-        <form method="post" action="" class="login-form">
-            {% csrf_token %}
-            <div class="form-group">
-                {{ username_form.username.label_tag }}
-                {{ username_form.username }}
-            </div>
-            {% if username_form.errors %}
-            <div class="form-errors">
-                {% for field in username_form %}
-                {% for error in field.errors %}
-                <p>{{ error }}</p>
-                {% endfor %}
-                {% endfor %}
-                {% for error in username_form.non_field_errors %}
-                <p>{{ error }}</p>
-                {% endfor %}
-            </div>
-            {% endif %}
-            <button type="submit" name="update_username" class="button-large">Mettre à jour le nom d'utilisateur</button>
-        </form>
+    <h2>Paramètres du compte</h2>
+    <h3>Changer son nom d'utilisateur</h3>
+    <!-- Formulaire pour mettre à jour l'email -->
+    <form method="post" action="" class="login-form">
+        {% csrf_token %}
+        <div class="form-group">
+            {{ username_form.username.label_tag }}
+            {{ username_form.username }}
+        </div>
+        {% if username_form.errors %}
+        <div class="form-errors">
+            {% for field in username_form %}
+            {% for error in field.errors %}
+            <p>{{ error }}</p>
+            {% endfor %}
+            {% endfor %}
+            {% for error in username_form.non_field_errors %}
+            <p>{{ error }}</p>
+            {% endfor %}
+        </div>
+        {% endif %}
+        <button type="submit" name="update_username" class="button-large">Mettre à jour le nom d'utilisateur</button>
+    </form>
 
-        <h3>Changer l'email associé au compte</h3>
-        <!-- Formulaire pour mettre à jour l'email -->
-        <form method="post" action="" class="login-form">
-            {% csrf_token %}
-            <div class="form-group">
-                {{ email_form.email.label_tag }}
-                {{ email_form.email }}
-            </div>
-            {% if email_form.errors %}
-            <div class="form-errors">
-                {% for field in email_form %}
-                {% for error in field.errors %}
-                <p>{{ error }}</p>
-                {% endfor %}
-                {% endfor %}
-                {% for error in email_form.non_field_errors %}
-                <p>{{ error }}</p>
-                {% endfor %}
-            </div>
-            {% endif %}
-            <button type="submit" name="update_email" class="button-large">Mettre à jour l'email</button>
-        </form>
+    <h3>Changer l'email associé au compte</h3>
+    <!-- Formulaire pour mettre à jour l'email -->
+    <form method="post" action="" class="login-form">
+        {% csrf_token %}
+        <div class="form-group">
+            {{ email_form.email.label_tag }}
+            {{ email_form.email }}
+        </div>
+        {% if email_form.errors %}
+        <div class="form-errors">
+            {% for field in email_form %}
+            {% for error in field.errors %}
+            <p>{{ error }}</p>
+            {% endfor %}
+            {% endfor %}
+            {% for error in email_form.non_field_errors %}
+            <p>{{ error }}</p>
+            {% endfor %}
+        </div>
+        {% endif %}
+        <button type="submit" name="update_email" class="button-large">Mettre à jour l'email</button>
+    </form>
 
-        <br/>
-        <br/>
+    <br/>
+    <br/>
 
-        <h3>Changer son mot de passe</h3>
-        <!-- Formulaire pour changer le mot de passe -->
-        <form method="post" class="login-form">
-            {% csrf_token %}
+    <h3>Changer son mot de passe</h3>
+    <!-- Formulaire pour changer le mot de passe -->
+    <form method="post" class="login-form">
+        {% csrf_token %}
 
-            <div class="form-group">
-                <label for="id_old_password">Ancien mot de passe&nbsp;:</label>
-                {{ password_form.old_password }}
-            </div>
+        <div class="form-group">
+            <label for="id_old_password">Ancien mot de passe&nbsp;:</label>
+            {{ password_form.old_password }}
+        </div>
 
-            <div class="form-group">
-                <label for="id_new_password1">Nouveau mot de passe&nbsp;:</label>
-                {{ password_form.new_password1 }}
-            </div>
+        <div class="form-group">
+            <label for="id_new_password1">Nouveau mot de passe&nbsp;:</label>
+            {{ password_form.new_password1 }}
+        </div>
 
-            <div class="form-group">
-                <label for="id_new_password2">Confirmation du mot de passe&nbsp;:</label>
-                {{ password_form.new_password2 }}
-            </div>
+        <div class="form-group">
+            <label for="id_new_password2">Confirmation du mot de passe&nbsp;:</label>
+            {{ password_form.new_password2 }}
+        </div>
 
-            {% if password_form.errors %}
-            <div class="form-errors">
-                {% for field in password_form %}
-                {% for error in field.errors %}
-                <p>{{ error }}</p>
-                {% endfor %}
-                {% endfor %}
-                {% for error in password_form.non_field_errors %}
-                <p>{{ error }}</p>
-                {% endfor %}
-            </div>
-            {% endif %}
+        {% if password_form.errors %}
+        <div class="form-errors">
+            {% for field in password_form %}
+            {% for error in field.errors %}
+            <p>{{ error }}</p>
+            {% endfor %}
+            {% endfor %}
+            {% for error in password_form.non_field_errors %}
+            <p>{{ error }}</p>
+            {% endfor %}
+        </div>
+        {% endif %}
 
-            <button type="submit" name="change_password" class="button-large">Changer le mot de passe</button>
-        </form>
+        <button type="submit" name="change_password" class="button-large">Changer le mot de passe</button>
+    </form>
 </div>
 
 {% endblock %}
