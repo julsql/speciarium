@@ -5,7 +5,7 @@ from django.http import HttpRequest, HttpResponse
 from django.shortcuts import redirect
 from django.shortcuts import render, get_object_or_404
 
-from main.core.frontend.profile.forms import EmailUpdateForm, CustomPasswordChangeForm
+from main.core.frontend.profile.forms import EmailUpdateForm, CustomPasswordChangeForm, UsernameUpdateForm
 from main.models.collection import Collection
 from main.models.map_tiles import MapTiles
 from main.models.theme import Theme
@@ -34,15 +34,25 @@ class ProfileView:
         else:
             theme_id = all_themes.first().id
 
+        username_form = UsernameUpdateForm(initial={'username': user.username})
+        email_form = EmailUpdateForm(initial={'email': user.email})
+        password_form = CustomPasswordChangeForm(user)
+
         if request.method == "POST":
+            if "update_username" in request.POST:
+                username_form = UsernameUpdateForm(request.POST, user=request.user)
+                if username_form.is_valid():
+                    user.username = username_form.cleaned_data["username"]
+                    user.save()
+                    messages.success(request, "Nom d'utilisateur mis à jour.")
+                    return redirect("profile")
             if "update_email" in request.POST:
-                email_form = EmailUpdateForm(request.POST)
+                email_form = EmailUpdateForm(request.POST, user=request.user)
                 if email_form.is_valid():
                     user.email = email_form.cleaned_data['email']
                     user.save()
                     messages.success(request, "Email mis à jour avec succès.")
                     return redirect('profile')
-                password_form = CustomPasswordChangeForm(user)
             elif "change_password" in request.POST:
                 password_form = CustomPasswordChangeForm(user, request.POST)
                 if password_form.is_valid():
@@ -50,10 +60,6 @@ class ProfileView:
                     update_session_auth_hash(request, user)  # Important pour garder la session
                     messages.success(request, "Mot de passe mis à jour avec succès.")
                     return redirect('profile')
-                email_form = EmailUpdateForm(initial={'email': user.email})
-        else:
-            email_form = EmailUpdateForm(initial={'email': user.email})
-            password_form = CustomPasswordChangeForm(user)
 
         return render(request, 'profile/module.html', {
             'username': user.username,
@@ -67,6 +73,7 @@ class ProfileView:
             'current_theme_id': theme_id,
             'themes': [(theme.id, theme.description) for theme in all_themes],
             'email_form': email_form,
+            'username_form': username_form,
             'password_form': password_form,
         })
 
