@@ -1,7 +1,9 @@
+import json
+
 from django.contrib import messages
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.decorators import login_required
-from django.http import HttpRequest, HttpResponse
+from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.shortcuts import redirect
 from django.shortcuts import render, get_object_or_404
 
@@ -14,7 +16,7 @@ from main.models.theme import Theme
 class ProfileView:
     def handle_request(self, request: HttpRequest) -> HttpResponse:
         user = request.user
-        collections = user.collections.all()
+        collections = user.collections.all().order_by('id')
         all_map_tiles = MapTiles.objects.all()
         all_themes = Theme.objects.all()
 
@@ -117,3 +119,20 @@ def change_map_tiles_view(request, map_tiles_id):
 def change_theme_view(request, theme_id):
     view = ProfileView()
     return view.change_themes(request, theme_id)
+
+@login_required
+def update_collection_name(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        collection_id = data.get("collection_id")
+        new_title = data.get("new_title")
+
+        try:
+            collection = Collection.objects.get(id=collection_id, owner=request.user)
+            collection.title = new_title
+            collection.save()
+            return JsonResponse({"success": True})
+        except Collection.DoesNotExist:
+            return JsonResponse({"success": False, "error": "Collection non trouvée"})
+
+    return JsonResponse({"success": False, "error": "Méthode non autorisée"})

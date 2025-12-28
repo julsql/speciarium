@@ -1029,10 +1029,6 @@ h4 {
     margin-bottom: 10px;
 }
 
-.list {
-    margin-left: 20px
-}
-
 .collection {
     gap: 10px;
 }
@@ -1062,6 +1058,13 @@ h4 {
     margin-bottom: 5px;
     min-height: 25px;
     align-items: center;
+    padding-left: 30px;
+    position: relative;
+}
+
+.crown-icon {
+    position: absolute;
+    left: 0;
 }
 
 .profile-section .list a:hover {
