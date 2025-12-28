@@ -1,15 +1,17 @@
 import json
 
 from django.contrib import messages
-from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth import update_session_auth_hash, get_user_model
 from django.contrib.auth.decorators import login_required
 from django.db.models import Case, When, IntegerField
 from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.shortcuts import redirect
 from django.shortcuts import render, get_object_or_404
+from django.views.decorators.http import require_POST
 
 from main.core.frontend.profile.forms import EmailUpdateForm, CustomPasswordChangeForm, UsernameUpdateForm
 from main.models.collection import Collection
+from main.models.collection_accounts import CollectionAccounts
 from main.models.map_tiles import MapTiles
 from main.models.theme import Theme
 
@@ -152,18 +154,67 @@ def change_theme_view(request, theme_id):
 
 
 @login_required
+@require_POST
 def update_collection_name(request):
-    if request.method == "POST":
-        data = json.loads(request.body)
-        collection_id = data.get("collection_id")
-        new_title = data.get("new_title")
+    data = json.loads(request.body)
+    collection_id = data.get("collection_id")
+    new_title = data.get("new_title")
 
-        try:
-            collection = Collection.objects.get(id=collection_id, owner=request.user)
-            collection.title = new_title
-            collection.save()
-            return JsonResponse({"success": True})
-        except Collection.DoesNotExist:
-            return JsonResponse({"success": False, "error": "Collection non trouvée"})
+    try:
+        collection = Collection.objects.get(id=collection_id, owner=request.user)
+        collection.title = new_title
+        collection.save()
+        return JsonResponse({"success": True})
+    except Collection.DoesNotExist:
+        return JsonResponse({"success": False, "error": "Collection non trouvée"})
 
-    return JsonResponse({"success": False, "error": "Méthode non autorisée"})
+
+User = get_user_model()
+
+@require_POST
+@login_required
+def add_user_to_collection(request):
+    data = json.loads(request.body)
+    username = data.get("username")
+    collection_id = data.get("collection_id")
+
+    try:
+        user = User.objects.get(username=username)
+    except User.DoesNotExist:
+        return JsonResponse({"success": False, "error": "Utilisateur inexistant"})
+
+    try:
+        print(collection_id)
+        collection = Collection.objects.get(id=collection_id)
+    except Collection.DoesNotExist:
+        return JsonResponse({"success": False, "error": "Collection inconnue"})
+
+    # éviter doublon
+    if CollectionAccounts.objects.filter(user=user, collection=collection).exists():
+        return JsonResponse({"success": False, "error": "Utilisateur déjà ajouté"})
+
+    CollectionAccounts.objects.create(
+        user=user,
+        collection=collection
+    )
+
+    return JsonResponse({"success": True})
+
+@require_POST
+@login_required
+def remove_user_from_collection(request):
+    data = json.loads(request.body)
+    username = data.get("username")
+    collection_id = data.get("collection_id")
+
+    try:
+        user = User.objects.get(username=username)
+    except User.DoesNotExist:
+        return JsonResponse({"success": False, "error": "Utilisateur inexistant"})
+
+    CollectionAccounts.objects.filter(
+        collection_id=collection_id,
+        user=user
+    ).delete()
+
+    return JsonResponse({"success": True})
