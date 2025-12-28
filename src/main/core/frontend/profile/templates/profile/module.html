@@ -3,38 +3,9 @@
 
 {% block body %}
 <div class="section">
-    <h2>Mes informations</h2>
-    <h3>{{ first_name }}</h3>
+    <h2>{{ first_name }}</h2>
     <div>
-        <p>Nom d'utilisateur : {{ username }}</p>
-        <p>Email : {{ email }}</p>
-    </div>
-    <div class="profile-section">
-        <h4>Mes collections</h4>
-        <div class="list">
-            <ul>
-                {% for collection_id, collection_title, collection_owner_id in collections %}
-                <li class="collection" data-collection-id="{{ collection_id }}">
-                    {% if collection_owner_id == request.user.id %}
-                    <img src="{% static 'main/images/crown.svg' %}"
-                         alt="couronne"
-                         class="collection-icon crown-icon"
-                    >
-                    {% endif %}
-                    <span class="collection-title">{{ collection_title }}</span>
-                    {% if collection_owner_id == request.user.id %}
-                    <div class="edit-btn collection-icon">
-                        <img src="{% static 'main/images/edit.svg' %}" alt="edit">
-                    </div>
-
-                    {% endif %}
-                    {% if collection_id != current_collection_id %}
-                    <a href="{% url 'change_collection' collection_id %}">Sélectionner</a>
-                    {% endif %}
-                </li>
-                {% endfor %}
-            </ul>
-        </div>
+        @{{ username }} - {{ email }}
     </div>
     <div class="profile-section">
         <h4>Changer de fond de carte</h4>
@@ -67,15 +38,35 @@
             </ul>
         </div>
     </div>
-    <br/>
-    <form action="{% url 'logout' %}" class="login-form" method="post">
-        {% csrf_token %}
-        <button type="submit" class="logout-btn">
-            Se déconnecter
-        </button>
-    </form>
 </div>
 
+<div class="section">
+    <h2>Mes collections</h2>
+    <div class="list">
+        <ul>
+            {% for collection_id, collection_title, collection_owner_id in collections %}
+            <li class="collection" data-collection-id="{{ collection_id }}">
+                {% if collection_owner_id == request.user.id %}
+                <img src="{% static 'main/images/crown.svg' %}"
+                     alt="couronne"
+                     class="collection-icon crown-icon"
+                >
+                {% endif %}
+                <span class="collection-title">{{ collection_title }}</span>
+                {% if collection_owner_id == request.user.id %}
+                <div class="edit-btn collection-icon">
+                    <img src="{% static 'main/images/edit.svg' %}" alt="edit">
+                </div>
+
+                {% endif %}
+                {% if collection_id != current_collection_id %}
+                <a href="{% url 'change_collection' collection_id %}">Sélectionner</a>
+                {% endif %}
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
 
 <div class="section">
     <h2>Paramètres du compte</h2>
@@ -165,86 +156,20 @@
     </form>
 </div>
 
+<form action="{% url 'logout' %}" class="login-form" method="post">
+    {% csrf_token %}
+    <button type="submit" class="logout-btn">
+        Se déconnecter
+    </button>
+</form>
+
 {% endblock %}
 
 {% block javascript %}
 <script>
-    document.addEventListener("DOMContentLoaded", () => {
-
-    function enableEdit(button) {
-        button.addEventListener("click", () => {
-            const li = button.closest("li");
-            const titleSpan = li.querySelector(".collection-title");
-            const collectionId = li.dataset.collectionId;
-            const currentTitle = titleSpan.textContent.trim();
-
-            // Créer l'input
-            const input = document.createElement("input");
-            input.type = "text";
-            input.value = currentTitle;
-            input.className = "edit-title";
-
-            // Créer bouton "Sauvegarder"
-            const saveBtn = document.createElement("div");
-            saveBtn.innerHTML = '<img src="{% static "main/images/check.svg" %}" alt="save">';
-            saveBtn.className = "save-btn collection-icon";
-
-            // Remplacer le span par l'input
-            titleSpan.replaceWith(input);
-            button.replaceWith(saveBtn);
-
-            input.focus();
-
-            saveBtn.addEventListener("click", () => {
-                const newTitle = input.value.trim();
-                if (!newTitle) return;
-
-                // Replacer le span
-                const newSpan = document.createElement("span");
-                newSpan.className = "collection-title";
-                newSpan.textContent = newTitle;
-                input.replaceWith(newSpan);
-
-                // Replacer le bouton "Modifier"
-                const newEditBtn = document.createElement("div");
-                newEditBtn.innerHTML = '<img src="{% static "main/images/edit.svg" %}" alt="edit">';
-                newEditBtn.className = "edit-btn collection-icon";
-                saveBtn.replaceWith(newEditBtn);
-
-                // Réattacher l'événement au nouveau bouton
-                enableEdit(newEditBtn);
-
-                // Envoi au serveur via fetch
-                console.log(collectionId);
-                if (newTitle === currentTitle) return;
-                fetch("{% url 'update_collection_name' %}", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "X-CSRFToken": "{{ csrf_token }}"
-                    },
-                    body: JSON.stringify({
-                        collection_id: collectionId,
-                        new_title: newTitle
-                    })
-                })
-                .then(res => res.json())
-                .then(data => {
-                    if (data.success) {
-                        // Tout s'est bien passé → reload la page
-                        location.reload();
-                    } else {
-                        alert("Erreur lors de la mise à jour : " + (data.error || "unknown"));
-                    }
-                })
-                .catch(err => console.error(err));
-            });
-        });
-    }
-
-    // Initialisation pour tous les boutons existants
-    document.querySelectorAll(".edit-btn").forEach(enableEdit);
-});
-
+    const updateCollectionNameUrl = "{% url 'update_collection_name' %}";
+    const checkIconPath = "{% static "main/images/check.svg" %}";
+    const csrfToken = "{{ csrf_token }}";
 </script>
+<script src="{% static 'main/assets/scripts/edit-collection.js' %}"></script>
 {% endblock %}

@@ -4,6 +4,7 @@ from django.utils.html import format_html
 
 from main.models import AppUser
 from main.models.collection import Collection
+from main.models.collection_accounts import CollectionAccounts
 from main.models.map_tiles import MapTiles
 from main.models.photo import Photos
 from main.models.species import Species
@@ -26,12 +27,14 @@ class PhotosAdmin(admin.ModelAdmin):
         if obj.image:
             return format_html('<img src="{}" style="height:80px;"/>', obj.photo)
         return "-"
+
     photo_preview.short_description = "Aperçu photo"
 
     def thumbnail_preview(self, obj):
         if obj.image:
             return format_html('<img src="{}" style="height:80px;"/>', obj.thumbnail)
         return "-"
+
     thumbnail_preview.short_description = "Aperçu vignette"
 
     def collection_link(self, obj):
@@ -51,12 +54,18 @@ class SpeciesAdmin(admin.ModelAdmin):
                      'order_field', 'family')
 
 
+class CollectionAccountInline(admin.TabularInline):
+    model = CollectionAccounts
+    extra = 1
+    readonly_fields = ('created_at',)
+
+
 @admin.register(Collection)
 class CollectionAdmin(admin.ModelAdmin):
     list_display = ('title', 'owner', 'account_count')
-    search_fields = ('title', 'owner')
-    filter_horizontal = ('accounts',)
+    search_fields = ('title', 'owner__username')
     list_select_related = ('owner',)
+    inlines = [CollectionAccountInline]
 
     def account_count(self, obj):
         return obj.accounts.count()

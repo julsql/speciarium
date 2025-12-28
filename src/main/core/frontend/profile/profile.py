@@ -3,6 +3,7 @@ import json
 from django.contrib import messages
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.decorators import login_required
+from django.db.models import Case, When, IntegerField
 from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.shortcuts import redirect
 from django.shortcuts import render, get_object_or_404
@@ -16,7 +17,13 @@ from main.models.theme import Theme
 class ProfileView:
     def handle_request(self, request: HttpRequest) -> HttpResponse:
         user = request.user
-        collections = user.collections.all().order_by('id')
+        collections = user.collections.annotate(
+            special_order=Case(
+                When(owner=user, then=0),  # les collections "spéciales" viennent en premier
+                default=1,
+                output_field=IntegerField(),
+            )
+        ).order_by('special_order', 'created_at')
         all_map_tiles = MapTiles.objects.all()
         all_themes = Theme.objects.all()
 
@@ -115,10 +122,12 @@ def change_map_tiles_view(request, map_tiles_id):
     view = ProfileView()
     return view.change_map_tiles(request, map_tiles_id)
 
+
 @login_required
 def change_theme_view(request, theme_id):
     view = ProfileView()
     return view.change_themes(request, theme_id)
+
 
 @login_required
 def update_collection_name(request):

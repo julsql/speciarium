@@ -1033,7 +1033,7 @@ h4 {
     gap: 10px;
 }
 
-.profile-section .list a {
+.section .list a {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1053,7 +1053,7 @@ h4 {
     min-height: 25px;
 }
 
-.profile-section .list li {
+.section .list li {
     display: flex;
     margin-bottom: 5px;
     min-height: 25px;
@@ -1067,7 +1067,7 @@ h4 {
     left: 0;
 }
 
-.profile-section .list a:hover {
+.section .list a:hover {
     color: #000;
     background-color: var(--secondary);
 }
