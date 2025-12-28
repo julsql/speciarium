@@ -1070,10 +1070,6 @@ h4 {
     margin-bottom: 10px;
 }
 
-.collection {
-    gap: 10px;
-}
-
 .section .list a {
     display: flex;
     align-items: center;
@@ -1101,11 +1097,28 @@ h4 {
     align-items: center;
     padding-left: 30px;
     position: relative;
+    gap: 10px;
+}
+
+.collection {
+    display: block !important;
 }
 
 .crown-icon {
     position: absolute;
     left: 0;
+}
+
+.collection-row {
+    display: flex;
+}
+
+.collection-icon {
+    cursor: pointer;
+}
+
+.myself {
+    font-style: italic;
 }
 
 .section .list a:hover {

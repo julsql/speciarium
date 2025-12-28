@@ -44,23 +44,34 @@
     <h2>Mes collections</h2>
     <div class="list">
         <ul>
-            {% for collection_id, collection_title, collection_owner_id in collections %}
+            {% for collection_id, collection_title, collection_owner_id, users_allowed in collections %}
             <li class="collection" data-collection-id="{{ collection_id }}">
-                {% if collection_owner_id == request.user.id %}
-                <img src="{% static 'main/images/crown.svg' %}"
-                     alt="couronne"
-                     class="collection-icon crown-icon"
-                >
-                {% endif %}
-                <span class="collection-title">{{ collection_title }}</span>
-                {% if collection_owner_id == request.user.id %}
-                <div class="edit-btn collection-icon">
-                    <img src="{% static 'main/images/edit.svg' %}" alt="edit">
+                <div class="collection-row">
+                    {% if collection_owner_id == request.user.id %}
+                    <img src="{% static 'main/images/crown.svg' %}"
+                         alt="couronne"
+                         class="crown-icon"
+                    >
+                    {% endif %}
+                    <span class="collection-title">{{ collection_title }}</span>
+                    {% if collection_owner_id == request.user.id %}
+                    <div class="edit-btn collection-icon">
+                        <img src="{% static 'main/images/edit.svg' %}" alt="edit">
+                    </div>
+                    {% endif %}
+                    {% if collection_id != current_collection_id %}
+                    <a href="{% url 'change_collection' collection_id %}">Sélectionner</a>
+                    {% endif %}
                 </div>
+                {% if collection_owner_id == request.user.id %}
+                <ul class="user-allowed-list">
+                    {% for allowed_username in users_allowed %}
 
-                {% endif %}
-                {% if collection_id != current_collection_id %}
-                <a href="{% url 'change_collection' collection_id %}">Sélectionner</a>
+                    <li class="{% if allowed_username == username %}myself{% endif %}">
+                        @{{ allowed_username }}
+                    </li>
+                    {% endfor %}
+                </ul>
                 {% endif %}
             </li>
             {% endfor %}

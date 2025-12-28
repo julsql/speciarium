@@ -70,13 +70,35 @@ class ProfileView:
                     messages.success(request, "Mot de passe mis à jour avec succès.")
                     return redirect('profile')
 
+        all_collections = [
+            (
+                collection.id,
+                collection.title,
+                collection.owner_id,
+                collection.accounts
+                .annotate(
+                    is_me=Case(
+                        When(collectionaccounts__user=request.user, then=0),
+                        default=1,
+                        output_field=IntegerField(),
+                    )
+                )
+                .order_by(
+                    'is_me',
+                    'collectionaccounts__created_at'
+                )
+                .values_list('username', flat=True)
+            )
+            for collection in collections
+        ]
+
         return render(request, 'profile/module.html', {
             'username': user.username,
             'first_name': user.first_name,
             'last_name': user.last_name,
             'email': user.email,
             'current_collection_id': current_collection_id,
-            'collections': [(collection.id, collection.title, collection.owner_id) for collection in collections],
+            'collections': all_collections,
             'current_map_tiles_id': map_server_id,
             'map_tiles': [(map_tiles.id, map_tiles.description) for map_tiles in all_map_tiles],
             'current_theme_id': theme_id,
