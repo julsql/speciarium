@@ -64,13 +64,18 @@
                     {% endif %}
                 </div>
                 {% if collection_owner_id == request.user.id %}
-                <ul class="user-allowed-list">
+                <ul class="user-allowed-list" data-collection-id="{{ collection_id }}">
                     {% for allowed_username in users_allowed %}
-
-                    <li class="{% if allowed_username == username %}myself{% endif %}">
-                        @{{ allowed_username }}
-                    </li>
+                        <li class="user-allow{% if allowed_username == username %} myself{% endif %}">
+                            <span>@{{ allowed_username }}</span>
+                            {% if allowed_username != username %}
+                            <div class="collection-icon remove-user-btn" data-username="{{ allowed_username }}">−</div>
+                            {% endif %}
+                        </li>
                     {% endfor %}
+                    <li class="add-user">
+                        <div class="collection-icon add-user-btn">+</div>
+                    </li>
                 </ul>
                 {% endif %}
             </li>
@@ -179,8 +184,14 @@
 {% block javascript %}
 <script>
     const updateCollectionNameUrl = "{% url 'update_collection_name' %}";
+    const addUserToCollectionUrl = "{% url 'add_user_to_collection' %}";
+    const removeUserToCollectionUrl = "{% url 'remove_user_from_collection' %}";
     const checkIconPath = "{% static "main/images/check.svg" %}";
     const csrfToken = "{{ csrf_token }}";
 </script>
 <script src="{% static 'main/assets/scripts/edit-collection.js' %}"></script>
+<script>
+
+</script>
+
 {% endblock %}
