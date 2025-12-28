@@ -25,5 +25,7 @@ class AppUser(AbstractUser):
     current_collection = models.ForeignKey(
         'main.Collection',
         on_delete=models.PROTECT,
-        related_name='current_users'
+        related_name='current_users',
+        null=True,
+        blank=True
     )

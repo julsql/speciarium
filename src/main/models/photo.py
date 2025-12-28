@@ -18,6 +18,7 @@ class Photos(models.Model):
     hash = models.CharField(max_length=255, verbose_name="Hash")
     details = models.TextField(verbose_name="Détails", blank=True)
     collection = models.ForeignKey(Collection, on_delete=models.CASCADE, related_name='rows')
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.photo
