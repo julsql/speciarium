@@ -21,8 +21,8 @@ def insert_map_tiles():
 
 
 def insert_themes():
-    theme_1 = Theme.objects.create(name="old", description="Thème encyclopédique")
-    theme_2 = Theme.objects.create(name="modern", description="Thème moderne")
+    theme_1 = Theme.objects.create(name="default", description="Thème encyclopédique", sheet="main-old")
+    theme_2 = Theme.objects.create(name="modern", description="Thème moderne", sheet="main-modern")
     theme_1.save()
     theme_2.save()
 
