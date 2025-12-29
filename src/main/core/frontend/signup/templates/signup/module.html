@@ -1,0 +1,71 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block body %}
+
+{% if user.is_authenticated %}
+<meta http-equiv="refresh" content="0; url='{% url 'home' %}'"/>
+{% else %}
+<div class="login">
+    <div>
+        <h1>Créer un compte</h1>
+        <form method="post" class="login-form" id="login-form">
+            {% csrf_token %}
+            <!-- Affichage des erreurs globales -->
+            {% if form.non_field_errors %}
+            <div class="alert">
+                {% for error in form.non_field_errors %}
+                <p>{{ error }}</p>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <!-- Affichage des champs avec labels personnalisés sans les deux-points -->
+            <div class="form-group">
+                <label for="id_email">Adresse mail :</label>
+                {{ form.email }}
+            </div>
+
+            <div class="form-group">
+                <label for="id_username">Nom d'utilisateur :</label>
+                {{ form.username }}
+            </div>
+
+            <div class="form-group">
+                <label for="id_first_name">Prénom :</label>
+                {{ form.first_name }}
+            </div>
+
+            <div class="form-group">
+                <label for="id_last_name">Nom de famille :</label>
+                {{ form.last_name }}
+            </div>
+
+            <div class="form-group">
+                <label for="id_password1">Mot de Passe :</label>
+                {{ form.password1 }}
+            </div>
+
+            <div class="form-group">
+                <label for="id_password2">Confirmation du mot de Passe :</label>
+                {{ form.password2 }}
+            </div>
+
+            {% if form.errors %}
+            <div class="form-errors">
+                {% for field in form %}
+                {% for error in field.errors %}
+                <p>{{ error }}</p>
+                {% endfor %}
+                {% endfor %}
+                {% for error in form.non_field_errors %}
+                <p>{{ error }}</p>
+                {% endfor %}
+            </div>
+            {% endif %}
+            <button type="submit">Créer</button>
+        </form>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

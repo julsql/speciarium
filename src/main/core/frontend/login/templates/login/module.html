@@ -4,13 +4,13 @@
 {% block body %}
 
 {% if user.is_authenticated %}
-<meta http-equiv="refresh" content="0; url='{% url 'home' %}'" />
+<meta http-equiv="refresh" content="0; url='{% url 'home' %}'"/>
 {% else %}
 <div class="login">
     <div>
-    <h1>Connexion</h1>
-    <form method="post" class="login-form" id="login-form">
-        {% csrf_token %}
+        <h1>Connexion</h1>
+        <form method="post" class="login-form" id="login-form">
+            {% csrf_token %}
             <!-- Affichage des erreurs globales -->
             {% if form.non_field_errors %}
             <div class="alert">
@@ -34,8 +34,12 @@
             <p style="margin-top: 1rem; text-align: center;">
                 <a href="{% url 'password_reset' %}">Mot de passe oublié ?</a>
             </p>
-        <button type="submit">Connexion</button>
-    </form>
+
+            <button type="submit">Connexion</button>
+            <p>
+                Pas de compte ? <a href="{% url 'signup' %}">En créer un</a>
+            </p>
+        </form>
     </div>
 </div>
 {% endif %}

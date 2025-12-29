@@ -31,6 +31,7 @@ from main.core.frontend.login.internal.login_view import login_view
 from main.core.frontend.photos.internal.photos_view import photos
 from main.core.frontend.profile.profile import profile_view, change_collection_view, change_map_tiles_view, \
     change_theme_view, update_collection_name, add_user_to_collection, remove_user_from_collection, create_collection
+from main.core.frontend.signup.internal.signup_view import signup_view
 
 handler500 = error_500_view
 handler404 = error_404_view
@@ -38,6 +39,7 @@ handler404 = error_404_view
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/login/', login_view, name='login'),
+    path('accounts/signup/', signup_view, name='signup'),
     path('accounts/logout/', auth_views.LogoutView.as_view(), name='logout'),
     path('accounts/', include('django.contrib.auth.urls')),
 

@@ -46,6 +46,7 @@ class Migration(migrations.Migration):
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('name', models.CharField(max_length=50, unique=True)),
                 ('description', models.CharField(max_length=500)),
+                ('sheet', models.CharField(max_length=128)),
             ],
         ),
         migrations.CreateModel(

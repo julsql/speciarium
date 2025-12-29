@@ -63,6 +63,7 @@ TEMPLATES = [
             BASE_DIR / 'main/core/frontend/advanced_search_result/templates',
             BASE_DIR / 'main/core/frontend/table/templates',
             BASE_DIR / 'main/core/frontend/login/templates',
+            BASE_DIR / 'main/core/frontend/signup/templates',
             BASE_DIR / 'main/core/frontend/home/templates',
             BASE_DIR / 'main/core/frontend/errors/templates',
             BASE_DIR / 'main/core/frontend/upload_images/templates',
@@ -135,6 +136,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
     {
         'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        'OPTIONS': {'min_length': 8},
     },
     {
         'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
