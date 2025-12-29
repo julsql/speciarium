@@ -73,18 +73,16 @@
                     </div>
                 </a>
                 <div class="dropdown-content">
-                    <a href="{% url 'profile' %}">Voir mon profil</a>
+                    <a class="onglet_header" href="{% url 'profile' %}">Voir mon profil</a>
                     {% if user.is_superuser and user.is_staff %}
-                    <a href="{% url 'admin:index' %}">Mode administrateur</a>
+                    <a class="onglet_header" href="{% url 'admin:index' %}">Mode administrateur</a>
                     {% endif %}
-                    <a href="{% url 'logout' %}">
-                        <form action="{% url 'logout' %}" method="post">
-                            {% csrf_token %}
-                            <button type="submit" class="logout-button">
-                                Se déconnecter
-                            </button>
-                        </form>
-                    </a>
+                    <form class="onglet_header" action="{% url 'logout' %}" method="post">
+                        {% csrf_token %}
+                        <button type="submit" class="logout-button">
+                            Se déconnecter
+                        </button>
+                    </form>
                 </div>
             </div>
             {% endif %}
