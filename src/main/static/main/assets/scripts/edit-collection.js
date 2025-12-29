@@ -195,4 +195,60 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         });
     });
+
+    /* ==================== */
+    /* AJOUT DE COLLECTIONS */
+    /* ==================== */
+
+    const addCollectionBtn = document.querySelector("#collection-title .select-button");
+
+    addCollectionBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+
+        const ul = document.querySelector("#collections-list");
+
+        if (ul.querySelector(".new-collection-input")) return;
+
+        const li = document.createElement("li");
+        li.classList.add("new-collection-input");
+        li.innerHTML = `
+            <input type="text" placeholder="Nom de la collection" class="collection-name-input">
+            <img src="${checkIconPath}" alt="save" class="validate-collection-btn collection-icon">
+        `;
+
+        ul.appendChild(li);
+
+        const input = li.querySelector(".collection-name-input");
+        const validateBtn = li.querySelector(".validate-collection-btn");
+        input.focus();
+
+        const createCollection = () => {
+            const newTitle = input.value.trim();
+            if (!newTitle) return;
+
+            fetch(createCollectionUrl, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": csrfToken
+                },
+                body: JSON.stringify({ title: newTitle })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                } else {
+                    alert(data.error || "Erreur lors de la création");
+                }
+            })
+            .catch(err => console.error(err));
+        };
+
+        validateBtn.addEventListener("click", createCollection);
+
+        input.addEventListener("keypress", e => {
+            if (e.key === "Enter") createCollection();
+        });
+    });
 });
