@@ -218,3 +218,24 @@ def remove_user_from_collection(request):
     ).delete()
 
     return JsonResponse({"success": True})
+
+@login_required
+@require_POST
+def create_collection(request):
+    try:
+        data = json.loads(request.body)
+        title = data.get('title', '').strip()
+
+        if not title:
+            return JsonResponse({'success': False, 'error': 'Le titre est requis.'})
+
+        if Collection.objects.filter(owner=request.user, title=title).exists():
+            return JsonResponse({'success': False, 'error': 'Vous avez déjà une collection avec ce titre.'})
+
+        collection = Collection.objects.create(title=title, owner=request.user)
+        collection.accounts.add(request.user)
+
+        return JsonResponse({'success': True, 'collection_id': collection.id, 'title': collection.title})
+
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)})

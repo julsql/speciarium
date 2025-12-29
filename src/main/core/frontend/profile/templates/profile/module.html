@@ -15,8 +15,11 @@
                 {% if map_tiles_id == current_map_tiles_id %}
                 <li class="current_object">{{ map_tiles_title }}</li>
                 {% else %}
-                <li class="unselected_object">{{ map_tiles_title }} <a
-                        href="{% url 'change_map_tiles' map_tiles_id %}">Sélectionner</a></li>
+                <li class="unselected_object">{{ map_tiles_title }}
+                    <a href="{% url 'change_map_tiles' map_tiles_id %}" class="select-button" >
+                        Sélectionner
+                    </a>
+                </li>
                 {% endif %}
                 {% endfor %}
             </ul>
@@ -31,8 +34,11 @@
                 {% if theme_id == current_theme_id %}
                 <li class="current_object">{{ theme_title }}</li>
                 {% else %}
-                <li class="unselected_object">{{ theme_title }} <a
-                        href="{% url 'change_theme' theme_id %}">Sélectionner</a></li>
+                <li class="unselected_object">{{ theme_title }}
+                    <a href="{% url 'change_theme' theme_id %}" class="select-button">
+                        Sélectionner
+                    </a>
+                </li>
                 {% endif %}
                 {% endfor %}
             </ul>
@@ -41,9 +47,9 @@
 </div>
 
 <div class="section">
-    <h2>Mes collections</h2>
+    <div id="collection-title"><h2>Mes collections</h2> <a class="select-button" href="">Ajouter</a></div>
     <div class="list">
-        <ul>
+        <ul id="collections-list">
             {% for collection_id, collection_title, collection_owner_id, users_allowed in collections %}
             <li class="collection" data-collection-id="{{ collection_id }}">
                 <div class="collection-row">
@@ -60,7 +66,7 @@
                     </div>
                     {% endif %}
                     {% if collection_id != current_collection_id %}
-                    <a href="{% url 'change_collection' collection_id %}">Sélectionner</a>
+                    <a class="select-button" href="{% url 'change_collection' collection_id %}">Sélectionner</a>
                     {% endif %}
                 </div>
                 {% if collection_owner_id == request.user.id %}
@@ -186,12 +192,10 @@
     const updateCollectionNameUrl = "{% url 'update_collection_name' %}";
     const addUserToCollectionUrl = "{% url 'add_user_to_collection' %}";
     const removeUserToCollectionUrl = "{% url 'remove_user_from_collection' %}";
+    const createCollectionUrl = "{% url 'create_collection' %}";
     const checkIconPath = "{% static "main/images/check.svg" %}";
     const csrfToken = "{{ csrf_token }}";
 </script>
 <script src="{% static 'main/assets/scripts/edit-collection.js' %}"></script>
-<script>
-
-</script>
 
 {% endblock %}

@@ -1070,7 +1070,7 @@ h4 {
     margin-bottom: 10px;
 }
 
-.section .list a {
+.select-button {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1086,8 +1086,21 @@ h4 {
     cursor: pointer;
     text-decoration: none;
     margin-left: 20px;
-    height: auto;
+    height: 30px;
     min-height: 25px;
+}
+
+#collection-title {
+    display: flex;
+    margin-bottom: 20px;
+}
+
+#collection-title h2 {
+    margin-bottom: 0;
+}
+
+#collection-title .select-button {
+    margin: auto 10px;
 }
 
 .section .list li {
