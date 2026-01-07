@@ -30,7 +30,8 @@ from main.core.frontend.errors.internal.errors_view import error_500_view, error
 from main.core.frontend.login.internal.login_view import login_view
 from main.core.frontend.photos.internal.photos_view import photos
 from main.core.frontend.profile.profile import profile_view, change_collection_view, change_map_tiles_view, \
-    change_theme_view, update_collection_name, add_user_to_collection, remove_user_from_collection, create_collection
+    change_theme_view, update_collection_name_view, add_user_to_collection_view, remove_user_from_collection_view, create_collection_view, \
+    delete_collection_view
 from main.core.frontend.signup.internal.signup_view import signup_view
 
 handler500 = error_500_view
@@ -62,10 +63,11 @@ urlpatterns = [
     path('change-collection/<int:collection_id>/', change_collection_view, name='change_collection'),
     path('change-map-tiles/<int:map_tiles_id>/', change_map_tiles_view, name='change_map_tiles'),
     path('change-themes/<int:theme_id>/', change_theme_view, name='change_theme'),
-    path('update-collection-name/', update_collection_name, name='update_collection_name'),
-    path("collections/add-user/", add_user_to_collection, name="add_user_to_collection"),
-    path("collections/remove-user/", remove_user_from_collection, name="remove_user_from_collection"),
-    path('create_collection/', create_collection, name='create_collection'),
+    path('update-collection-name/', update_collection_name_view, name='update_collection_name'),
+    path("collections/add-user/", add_user_to_collection_view, name="add_user_to_collection"),
+    path("collections/remove-user/", remove_user_from_collection_view, name="remove_user_from_collection"),
+    path('create_collection/', create_collection_view, name='create_collection'),
+    path('delete_collection/<int:collection_id>/', delete_collection_view, name='delete_collection'),
     path('carte/', carte, name='carte'),
     path('photos/', photos, name='photos'),
     path('upload-images/<int:collection_id>/', upload_images, name='upload'),
