@@ -336,6 +336,10 @@ button, input, optgroup, select, textarea {
     font-size: inherit;
 }
 
+input[type="checkbox"] {
+    accent-color: var(--secondary);
+}
+
 th {
     text-align: inherit;
 }
@@ -1078,10 +1082,10 @@ h4 {
     width: 100%;
     border: none;
     outline: none;
-    color: #fff;
+    color: black;
     border-radius: 5px;
     margin-right: auto;
-    background-color: var(--primary);
+    background-color: white;
     transition: all 0.3s linear;
     cursor: pointer;
     text-decoration: none;
@@ -1090,9 +1094,23 @@ h4 {
     min-height: 25px;
 }
 
+.select-button img {
+    transition: all 0.3s linear;
+}
+
+.select-button:hover {
+    background-color: var(--secondary);
+    color: white;
+}
+
+.select-button:hover img {
+    filter: invert(1);
+}
+
 #collection-title {
     display: flex;
     margin-bottom: 20px;
+    justify-content: space-between;
 }
 
 #collection-title h2 {
@@ -1100,7 +1118,41 @@ h4 {
 }
 
 #collection-title .select-button {
-    margin: auto 10px;
+    margin: auto 0;
+}
+
+.active_collection {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+.active_collection_button {
+    cursor: default;
+    background-color: var(--secondary);
+    color: white;
+}
+
+.username {
+    margin-left: 20px;
+    font-style: italic;
+    display: flex;
+}
+
+.username .icon {
+    height: 20px;
+    width: 20px;
+    margin: auto 10px auto 0;
+}
+
+.new-collection-container {
+    display: inline-flex;
+}
+
+.my_collections h3, .other_collections h3 {
+    display: flex;
+    gap: 10px;
 }
 
 .section .list li {
@@ -1113,8 +1165,53 @@ h4 {
     gap: 10px;
 }
 
+.theme-option, .map-option {
+    display: contents
+}
+
+.checkbox {
+    cursor: pointer;
+}
+
+.collection-actions {
+    display: flex;
+}
+
+.delete-collection {
+    margin-left: unset;
+    margin-top: 10px;
+    display: inline-flex;
+}
+
+li {
+  list-style-position: inside;
+}
+
 .collection {
-    display: block !important;
+    justify-content: space-between;
+    border: solid 1px;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+.validate-collection-btn {
+    display: flex;
+    margin-left: 10px;
+}
+
+.collection-row {
+    display: inline-flex;
+    justify-content: space-between;
+    width: calc(100% - 20px);
+}
+
+.collection-title-edit {
+    display: flex;
+    gap: 10px;
+}
+
+.edit-btn {
+    display: none;
 }
 
 .crown-icon {
@@ -1122,12 +1219,34 @@ h4 {
     left: 0;
 }
 
-.collection-row {
+.collection-icon {
+    cursor: pointer;
+}
+
+.collection-allowed-users {
+    margin-left: 20px;
+}
+
+.collection-allowed-users-title {
     display: flex;
 }
 
-.collection-icon {
+.add-user-btn {
     cursor: pointer;
+    margin-left: 10px;
+}
+
+.collection-allowed-users {
+    display: none;
+}
+
+.allowed-user-row {
+    margin-left: 20px;
+}
+
+.allowed-user {
+    display: inline-flex !important;
+    gap: 10px;
 }
 
 .myself {
@@ -1144,6 +1263,14 @@ h4 {
 
 .logout-btn:hover {
     background-color: #000;
+}
+
+.collection-button {
+    width: unset;
+    max-width: unset;
+    gap: 10px;
+    padding: 10px;
+    margin-right: unset;
 }
 
 /* TABLE */

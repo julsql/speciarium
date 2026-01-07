@@ -13,12 +13,20 @@
             <ul>
                 {% for map_tiles_id, map_tiles_title in map_tiles %}
                 {% if map_tiles_id == current_map_tiles_id %}
-                <li class="current_object">{{ map_tiles_title }}</li>
+                <li class="current_object">
+                    <label class="map-option">
+                        <input type="checkbox" checked disabled>
+                        <span>{{ map_tiles_title }}</span>
+                    </label>
+                </li>
                 {% else %}
-                <li class="unselected_object">{{ map_tiles_title }}
-                    <a href="{% url 'change_map_tiles' map_tiles_id %}" class="select-button" >
-                        Sélectionner
-                    </a>
+                <li class="unselected_object">
+                    <label class="map-option">
+                        <input type="checkbox"
+                               class="checkbox"
+                               onclick="window.location.href='{% url 'change_map_tiles' map_tiles_id %}'">
+                        <span class="checkbox">{{ map_tiles_title }}</span>
+                    </label>
                 </li>
                 {% endif %}
                 {% endfor %}
@@ -32,12 +40,20 @@
             <ul>
                 {% for theme_id, theme_title in themes %}
                 {% if theme_id == current_theme_id %}
-                <li class="current_object">{{ theme_title }}</li>
+                <li class="current_object">
+                    <label class="theme-option">
+                        <input type="checkbox" checked disabled>
+                        <span>{{ theme_title }}</span>
+                    </label>
+                </li>
                 {% else %}
-                <li class="unselected_object">{{ theme_title }}
-                    <a href="{% url 'change_theme' theme_id %}" class="select-button">
-                        Sélectionner
-                    </a>
+                <li class="unselected_object">
+                    <label class="theme-option">
+                        <input type="checkbox"
+                               class="checkbox"
+                               onclick="window.location.href='{% url 'change_theme' theme_id %}'">
+                        <span class="checkbox">{{ theme_title }}</span>
+                    </label>
                 </li>
                 {% endif %}
                 {% endfor %}
@@ -47,44 +63,119 @@
 </div>
 
 <div class="section">
-    <div id="collection-title"><h2>Mes collections</h2> <a class="select-button" href="">Ajouter</a></div>
-    <div class="list">
-        <ul id="collections-list">
-            {% for collection_id, collection_title, collection_owner_id, users_allowed in collections %}
+    <div id="collection-title">
+        <h2>Mes collections</h2>
+        <a class="select-button collection-button" href="">
+            <span class="icon">+</span>Nouvelle collection
+        </a>
+    </div>
+    <div class="active_collection">
+        {{ current_collection_title }}
+        <div class="select-button collection-button active_collection_button">
+            <img src='{% static "main/images/check-white.svg" %}' alt="save" class="collection-icon">Active
+        </div>
+    </div>
+    <div class="my_collections">
+        <h3>
+            <img src="{% static 'main/images/crown.svg' %}"
+                 alt="couronne"
+                 class="icon">
+            Mes collections
+        </h3>
+        <ul id="my_collections_list">
+            {% for collection_id, collection_title, collection_owner_id, collection_owner_username, users_allowed, users_allowed_withoutme, has_photo in collections %}
+            {% if collection_owner_id == request.user.id %}
+
             <li class="collection" data-collection-id="{{ collection_id }}">
                 <div class="collection-row">
-                    {% if collection_owner_id == request.user.id %}
-                    <img src="{% static 'main/images/crown.svg' %}"
-                         alt="couronne"
-                         class="crown-icon"
-                    >
-                    {% endif %}
-                    <span class="collection-title">{{ collection_title }}</span>
-                    {% if collection_owner_id == request.user.id %}
-                    <div class="edit-btn collection-icon">
-                        <img src="{% static 'main/images/edit.svg' %}" alt="edit">
+                    <div class="collection-title-edit">
+                        <p class="collection-title">{{ collection_title }}</p>
+                        <div class="edit-btn">
+                            <img src="{% static 'main/images/edit.svg' %}" alt="editer"/>
+                        </div>
                     </div>
-                    {% endif %}
-                    {% if collection_id != current_collection_id %}
-                    <a class="select-button" href="{% url 'change_collection' collection_id %}">Sélectionner</a>
-                    {% endif %}
+                    <div class="collection-actions">
+                        {% if collection_id != current_collection_id %}
+                        <a class="select-button collection-button" href="{% url 'change_collection' collection_id %}">
+                            Voir
+                        </a>
+                        {% endif %}
+
+                        <div class="select-button manage-button collection-button">
+                            Gérer<img src="{% static 'main/images/settings.svg' %}"
+                                      alt="rouage"
+                                      class="icon">
+                        </div>
+                    </div>
                 </div>
-                {% if collection_owner_id == request.user.id %}
-                <ul class="user-allowed-list" data-collection-id="{{ collection_id }}">
-                    {% for allowed_username in users_allowed %}
-                        <li class="user-allow{% if allowed_username == username %} myself{% endif %}">
-                            <span>@{{ allowed_username }}</span>
-                            {% if allowed_username != username %}
-                            <div class="collection-icon remove-user-btn" data-username="{{ allowed_username }}">−</div>
-                            {% endif %}
+                <div class="collection-allowed-users">
+                    <div class="collection-allowed-users-title">
+                        {% if users_allowed|length > 1 %}
+                        Utilisateurs spectateurs :
+                        {% else %}
+                        Aucun spectateur
+                        {% endif %}
+                        <span class="icon add-user-btn select-button collection-button">+</span>
+                    </div>
+                    <ul class="user-allowed-list" data-collection-id="{{ collection_id }}">
+                        {% for user in users_allowed_withoutme %}
+                        {% if user != request.user.username %}
+                        <li class="allowed-user-row">
+                            <div class="allowed-user">
+                                @{{ user }}
+                                <div class="collection-icon remove-user-btn" data-username="{{ user }}">−</div>
+                            </div>
                         </li>
-                    {% endfor %}
-                    <li class="add-user">
-                        <div class="collection-icon add-user-btn">+</div>
-                    </li>
-                </ul>
+                        {% endif %}
+                        {% endfor %}
+                    </ul>
+                    {% if has_photo %}
+                    <div class="select-button collection-button delete-collection has-photo">Supprimer</div>
+                    {% else %}
+                    <a class="select-button collection-button delete-collection"
+                       href="{% url 'delete_collection' collection_id %}"
+                       data-collection-id="{{ collection_id }}">
+                        Supprimer
+                    </a>
+                </div>
                 {% endif %}
             </li>
+            {% endif %}
+            {% endfor %}
+        </ul>
+    </div>
+
+    <div class="other_collections">
+        <h3>
+            <img src="{% static 'main/images/eye.svg' %}"
+                 alt="œil"
+                 class="icon">
+            Collections partagées avec moi
+        </h3>
+        <ul id="other_collections_list">
+            {% for collection_id, collection_title, collection_owner_id, collection_owner_username, users_allowed, users_allowed_withoutme, has_photo in collections %}
+            {% if collection_owner_id != request.user.id %}
+
+            <li class="collection" data-collection-id="{{ collection_id }}">
+                <div class="collection-row">
+                    <div class="collection-title">
+                        <p>{{ collection_title }}</p>
+                        <span class="username">
+                            <img src="{% static 'main/images/crown.svg' %}"
+                                 alt="couronne"
+                                 class="icon">{{ collection_owner_username }}
+                        </span>
+                    </div>
+                    <div class="collection-actions">
+                        {% if collection_id != current_collection_id %}
+                        <a class="select-button collection-button" href="{% url 'change_collection' collection_id %}">
+                            Voir
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </li>
+            {% endif %}
             {% endfor %}
         </ul>
     </div>

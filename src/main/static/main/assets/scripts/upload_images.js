@@ -145,6 +145,11 @@ folderInput.addEventListener("click", () => {
 });
 
 folderInput.addEventListener("change", async (event) => {
+    const files = event.target.files;
+    uploadFiles(files);
+});
+
+async function uploadFiles(files) {
     const info = document.getElementById("upload-info");
     const infoContainer = document.getElementById("upload-info-container");
     const loading = document.getElementById("loading");
@@ -159,7 +164,6 @@ folderInput.addEventListener("change", async (event) => {
     await cleanDatabase();
     const remoteKeys = await getKeys();
 
-    const files = event.target.files;
     const localKeys = [];
     const metadata = [];
     const resizedFiles = [];
@@ -312,4 +316,4 @@ folderInput.addEventListener("change", async (event) => {
     }
 
     loading.style.display = "none";
-});
+}
