@@ -110,56 +110,61 @@ document.addEventListener("DOMContentLoaded", () => {
     // Ajout
 
     document.querySelectorAll(".add-user-btn").forEach(btn => {
-        const ul = btn.closest(".user-allowed-list");
+        const container = btn.closest(".collection-allowed-users");
+        const ul = container.querySelector(".user-allowed-list");
         const collectionId = ul.dataset.collectionId;
 
         btn.addEventListener("click", () => {
-        if (document.querySelector(".add-user-form")) return;
+            if (ul.querySelector(".add-user-form")) return;
 
-        const li = document.createElement("li");
-        li.className = "add-user-form";
+            const li = document.createElement("li");
+            li.classList.add("add-user-form", "allowed-user-row");
 
-        li.innerHTML = `
-            <input type="text" placeholder="username" class="add-user-input">
-            <img src="${checkIconPath}" alt="save" class="confirm-add-user collection-icon">
-        `;
+            li.innerHTML = `
+                <div style="display: inline-flex">
+                    <input type="text" placeholder="username" class="add-user-input">
+                    <div style="display: flex">
+                        <img src="${checkIconPath}" alt="save" class="confirm-add-user collection-icon">
+                    </div>
+                </div>
+            `;
 
-        btn.parentElement.before(li);
+            ul.append(li);
 
-        const input = li.querySelector("input");
-        const confirmBtn = li.querySelector(".confirm-add-user");
-        input.focus();
+            const input = li.querySelector("input");
+            const confirmBtn = li.querySelector(".confirm-add-user");
+            input.focus();
 
-        const submit = () => {
-            const username = input.value.trim();
-            if (!username) return;
+            const submit = () => {
+                const username = input.value.trim();
+                if (!username) return;
 
-            fetch(addUserToCollectionUrl, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "X-CSRFToken": csrfToken,
-                },
-                body: JSON.stringify({
-                    collection_id: collectionId,
-                    username: username
+                fetch(addUserToCollectionUrl, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRFToken": csrfToken,
+                    },
+                    body: JSON.stringify({
+                        collection_id: collectionId,
+                        username: username
+                    })
                 })
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (data.success) {
-                    location.reload();
-                } else {
-                    alert(data.error);
-                }
-            });
-        };
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        location.reload();
+                    } else {
+                        alert(data.error);
+                    }
+                });
+            };
 
-        confirmBtn.addEventListener("click", submit);
-        input.addEventListener("keydown", e => {
-            if (e.key === "Enter") submit();
-            if (e.key === "Escape") li.remove();
-        });
+            confirmBtn.addEventListener("click", submit);
+            input.addEventListener("keydown", e => {
+                if (e.key === "Enter") submit();
+                if (e.key === "Escape") li.remove();
+            });
     });
     });
 
@@ -205,21 +210,24 @@ document.addEventListener("DOMContentLoaded", () => {
     addCollectionBtn.addEventListener("click", (e) => {
         e.preventDefault();
 
-        const ul = document.querySelector("#collections-list");
+        const ul = document.querySelector("#my_collections_list");
 
         if (ul.querySelector(".new-collection-input")) return;
 
         const li = document.createElement("li");
         li.classList.add("new-collection-input");
+        li.classList.add("collection");
         li.innerHTML = `
+            <div class="new-collection-container">
             <input type="text" placeholder="Nom de la collection" class="collection-name-input">
-            <img src="${checkIconPath}" alt="save" class="validate-collection-btn collection-icon">
+            <div class="validate-collection-btn" style="display: flex"><img src="${checkIconPath}" alt="save" id="validate-collection-btn" class="collection-icon"></div>
+            </div>
         `;
 
         ul.appendChild(li);
 
         const input = li.querySelector(".collection-name-input");
-        const validateBtn = li.querySelector(".validate-collection-btn");
+        const validateBtn = li.querySelector("#validate-collection-btn");
         input.focus();
 
         const createCollection = () => {
@@ -251,4 +259,27 @@ document.addEventListener("DOMContentLoaded", () => {
             if (e.key === "Enter") createCollection();
         });
     });
+
+    /* ==================== */
+    /* GÉRER UNE COLLECTION */
+    /* ==================== */
+
+    document.addEventListener("click", function (e) {
+    console.log("click");
+        const btn = e.target.closest(".select-button");
+        console.log(btn);
+        if (!btn) return;
+
+        const container = btn.closest(".collection"); // conteneur commun
+        const allowedUsers = container.querySelector(".collection-allowed-users");
+
+        if (!allowedUsers) return;
+
+        if (allowedUsers.style.display === "none" || !allowedUsers.style.display) {
+            allowedUsers.style.display = "block";
+        } else {
+            allowedUsers.style.display = "none";
+        }
+    });
+
 });

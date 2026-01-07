@@ -32,8 +32,10 @@ class ProfileView:
         current_collection = user.current_collection
         if current_collection:
             current_collection_id = current_collection.id
+            current_collection_title = current_collection.title
         else:
             current_collection_id = collections[0].id if collections else None
+            current_collection_title = collections[0].title if collections else None
 
         if request.user.map_tiles:
             map_server_id = request.user.map_tiles.id
@@ -77,7 +79,22 @@ class ProfileView:
                 collection.id,
                 collection.title,
                 collection.owner_id,
+                collection.owner.username,
                 collection.accounts
+                .annotate(
+                    is_me=Case(
+                        When(collectionaccounts__user=request.user, then=0),
+                        default=1,
+                        output_field=IntegerField(),
+                    )
+                )
+                .order_by(
+                    'is_me',
+                    'collectionaccounts__created_at'
+                )
+                .values_list('username', flat=True),
+                collection.accounts
+                .exclude(pk=request.user.pk)
                 .annotate(
                     is_me=Case(
                         When(collectionaccounts__user=request.user, then=0),
@@ -100,6 +117,7 @@ class ProfileView:
             'last_name': user.last_name,
             'email': user.email,
             'current_collection_id': current_collection_id,
+            'current_collection_title': current_collection_title,
             'collections': all_collections,
             'current_map_tiles_id': map_server_id,
             'map_tiles': [(map_tiles.id, map_tiles.description) for map_tiles in all_map_tiles],
