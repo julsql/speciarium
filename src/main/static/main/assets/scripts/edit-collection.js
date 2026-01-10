@@ -1,3 +1,18 @@
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== "") {
+        const cookies = document.cookie.split(";");
+        for (let cookie of cookies) {
+            cookie = cookie.trim();
+            if (cookie.startsWith(name + "=")) {
+                cookieValue = decodeURIComponent(cookie.slice(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
 document.addEventListener("DOMContentLoaded", () => {
     let activeEdit = null;
 
@@ -281,5 +296,39 @@ document.addEventListener("DOMContentLoaded", () => {
             allowedUsers.style.display = "none";
         }
     });
+});
 
+document.addEventListener("click", function (e) {
+    const btn = e.target.closest(".delete-collection");
+    if (!btn) return;
+    if (btn.classList.contains("has-photo")) {
+        alert('Veuillez supprimer les photos de cette collection avant de la supprimer')
+        return;
+    };
+
+    e.preventDefault(); // empêche la navigation
+
+    if (!confirm("Supprimer cette collection ?")) return;
+
+    fetch(btn.href, {
+        method: "DELETE",
+        headers: {
+            "X-CSRFToken": getCookie("csrftoken"),
+            "X-Requested-With": "XMLHttpRequest"
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+    if (data.success) {
+            // Suppression réussie : retirer l'élément du DOM
+            btn.closest(".collection").remove();
+            location.reload();
+        } else {
+            // Afficher le message d'erreur renvoyé par le serveur
+            alert(data.error);
+        }
+    })
+    .catch(err => {
+        alert("Erreur serveur : " + err.message);
+    });
 });

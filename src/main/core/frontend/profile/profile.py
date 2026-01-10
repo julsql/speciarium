@@ -3,16 +3,18 @@ import json
 from django.contrib import messages
 from django.contrib.auth import update_session_auth_hash, get_user_model
 from django.contrib.auth.decorators import login_required
-from django.db.models import Case, When, IntegerField
+from django.db import transaction
+from django.db.models import Case, When, IntegerField, Exists, OuterRef
 from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.shortcuts import redirect
 from django.shortcuts import render, get_object_or_404
-from django.views.decorators.http import require_POST
+from django.views.decorators.http import require_POST, require_http_methods
 
 from main.core.frontend.profile.forms import EmailUpdateForm, CustomPasswordChangeForm, UsernameUpdateForm
 from main.models.collection import Collection
 from main.models.collection_accounts import CollectionAccounts
 from main.models.map_tiles import MapTiles
+from main.models.photo import Photos
 from main.models.theme import Theme
 
 
@@ -24,6 +26,9 @@ class ProfileView:
                 When(owner=user, then=0),  # les collections "spéciales" viennent en premier
                 default=1,
                 output_field=IntegerField(),
+            ),
+            has_photos=Exists(
+                Photos.objects.filter(collection=OuterRef('pk'))
             )
         ).order_by('special_order', 'created_at')
         all_map_tiles = MapTiles.objects.all()
@@ -106,7 +111,8 @@ class ProfileView:
                     'is_me',
                     'collectionaccounts__created_at'
                 )
-                .values_list('username', flat=True)
+                .values_list('username', flat=True),
+                collection.has_photos,
             )
             for collection in collections
         ]
@@ -189,6 +195,7 @@ def update_collection_name(request):
 
 User = get_user_model()
 
+
 @require_POST
 @login_required
 def add_user_to_collection(request):
@@ -218,6 +225,7 @@ def add_user_to_collection(request):
 
     return JsonResponse({"success": True})
 
+
 @require_POST
 @login_required
 def remove_user_from_collection(request):
@@ -236,6 +244,7 @@ def remove_user_from_collection(request):
     ).delete()
 
     return JsonResponse({"success": True})
+
 
 @login_required
 @require_POST
@@ -257,3 +266,44 @@ def create_collection(request):
 
     except Exception as e:
         return JsonResponse({'success': False, 'error': str(e)})
+
+@login_required
+@require_http_methods(["DELETE"])
+def delete_collection(request, collection_id):
+    user = request.user
+
+    # Récupérer la collection et s'assurer que l'utilisateur en est le propriétaire
+    collection = get_object_or_404(Collection, pk=collection_id, owner=user)
+
+    # Vérifier si la collection contient des photos
+    if collection.rows.exists():
+        print("Impossible de supprimer : la collection contient des photos.")
+        return JsonResponse(
+            {"success": False, "error": "Impossible de supprimer : la collection contient des photos."},
+            status=400
+        )
+
+    # Vérifier s'il existe d'autres collections dont l'utilisateur est propriétaire
+    other_collections = Collection.objects.filter(owner=user).exclude(pk=collection.pk)
+    if not other_collections.exists():
+        print("Impossible de supprimer : c'est votre seule collection.")
+        return JsonResponse(
+            {"success": False, "error": "Impossible de supprimer : c'est votre seule collection."},
+            status=400
+        )
+
+    # Tout faire dans une transaction pour sécurité
+    with transaction.atomic():
+
+        # Si c'est la collection actuelle de l'utilisateur, changer la current_collection
+        if hasattr(user, "current_collection") and user.current_collection_id == collection.id:
+            user.current_collection = other_collections.first()
+            user.save(update_fields=["current_collection"])
+
+        # Supprimer tous les comptes qui peuvent voir cette collection
+        CollectionAccounts.objects.filter(collection=collection).delete()
+
+        # Supprimer la collection
+        collection.delete()
+
+    return JsonResponse({"success": True})

@@ -30,7 +30,8 @@ from main.core.frontend.errors.internal.errors_view import error_500_view, error
 from main.core.frontend.login.internal.login_view import login_view
 from main.core.frontend.photos.internal.photos_view import photos
 from main.core.frontend.profile.profile import profile_view, change_collection_view, change_map_tiles_view, \
-    change_theme_view, update_collection_name, add_user_to_collection, remove_user_from_collection, create_collection
+    change_theme_view, update_collection_name, add_user_to_collection, remove_user_from_collection, create_collection, \
+    delete_collection
 from main.core.frontend.signup.internal.signup_view import signup_view
 
 handler500 = error_500_view
@@ -66,6 +67,7 @@ urlpatterns = [
     path("collections/add-user/", add_user_to_collection, name="add_user_to_collection"),
     path("collections/remove-user/", remove_user_from_collection, name="remove_user_from_collection"),
     path('create_collection/', create_collection, name='create_collection'),
+    path('delete_collection/<int:collection_id>/', delete_collection, name='delete_collection'),
     path('carte/', carte, name='carte'),
     path('photos/', photos, name='photos'),
     path('upload-images/<int:collection_id>/', upload_images, name='upload'),

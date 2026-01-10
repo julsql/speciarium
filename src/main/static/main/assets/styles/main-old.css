@@ -1169,6 +1169,12 @@ h4 {
     display: contents
 }
 
+.delete-collection {
+    margin-left: unset;
+    margin-top: 10px;
+    display: inline-flex;
+}
+
 .collection-actions {
     display: flex;
 }

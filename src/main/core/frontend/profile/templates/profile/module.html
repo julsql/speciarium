@@ -81,7 +81,7 @@
             Mes collections
         </h3>
         <ul id="my_collections_list">
-            {% for collection_id, collection_title, collection_owner_id, collection_owner_username, users_allowed, users_allowed_withoutme in collections %}
+            {% for collection_id, collection_title, collection_owner_id, collection_owner_username, users_allowed, users_allowed_withoutme, has_photo in collections %}
             {% if collection_owner_id == request.user.id %}
 
             <li class="collection" data-collection-id="{{ collection_id }}">
@@ -94,11 +94,11 @@
                         </a>
                         {% endif %}
 
-                        <a class="select-button collection-button">
+                        <div class="select-button collection-button">
                             Gérer<img src="{% static 'main/images/settings.svg' %}"
                                       alt="rouage"
                                       class="icon">
-                        </a>
+                        </div>
                     </div>
                 </div>
                 <div class="collection-allowed-users">
@@ -122,7 +122,16 @@
                         {% endif %}
                         {% endfor %}
                     </ul>
+                    {% if has_photo %}
+                    <div class="select-button collection-button delete-collection has-photo">Supprimer</div>
+                    {% else %}
+                    <a class="select-button collection-button delete-collection"
+                       href="{% url 'delete_collection' collection_id %}"
+                       data-collection-id="{{ collection_id }}">
+                        Supprimer
+                    </a>
                 </div>
+                {% endif %}
             </li>
             {% endif %}
             {% endfor %}
@@ -137,7 +146,7 @@
             Collections partagées avec moi
         </h3>
         <ul id="other_collections_list">
-            {% for collection_id, collection_title, collection_owner_id, collection_owner_username, users_allowed, users_allowed_withoutme in collections %}
+            {% for collection_id, collection_title, collection_owner_id, collection_owner_username, users_allowed, users_allowed_withoutme, has_photo in collections %}
             {% if collection_owner_id != request.user.id %}
 
             <li class="collection" data-collection-id="{{ collection_id }}">
