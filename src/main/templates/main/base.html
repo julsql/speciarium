@@ -62,6 +62,7 @@
             {% if user.current_collection.owner_id == user.id %}
             {% include 'upload_images/module.html' %}
             {% endif %}
+            {% include 'notification/module.html' %}
             <div class="action-button user-container">
                 <a href="{% url 'profile' %}">
                     <div class="user-menu">

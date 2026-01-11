@@ -243,6 +243,15 @@ header a {
     display: block;
 }
 
+.notification-container:hover .notification-dropdown-content {
+    display: block;
+}
+
+.notification-list a {
+    text-decoration: none;
+    color: var(--text);
+}
+
 .dropdown-content {
     display: none;
     position: absolute;
@@ -256,6 +265,56 @@ header a {
     z-index: 1;
     right: 0;
     top: 45px;
+}
+
+.notification-container {
+    display: flex;
+    position: relative;
+}
+
+.notification-dropdown-content {
+    display: none;
+    position: absolute;
+    margin-top: 2px;
+    background-image: url('../../images/asfalt-dark.png');
+    background-color: var(--background);
+    background-repeat: repeat;
+    background-size: 100px 100px;
+    border: 1px solid var(--primary);
+    min-width: 360px;
+    z-index: 1;
+    right: 0;
+    top: 45px;
+    max-height: 400px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    box-sizing: border-box;
+}
+
+.notification-row {
+    display: block;
+    position: relative;
+    border-bottom: 1px solid var(--primary);
+    padding: 10px;
+}
+
+.notification-row:last-child {
+    border-bottom: none;
+}
+
+.notification-unreed, .global-notification-unreed {
+    color: red;
+    position: absolute;
+    right: 10px;
+    top: 3px;
+}
+
+.global-notification-unreed {
+    display: none;
+}
+
+.notification-row.seen .notification-unreed {
+    display: none;
 }
 
 .onglet_header {
