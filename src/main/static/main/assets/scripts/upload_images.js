@@ -279,6 +279,8 @@ async function uploadFiles(files) {
     info.style.display = "none";
     progressBarContainer.style.display = "none";
 
+    const uploadId = crypto.randomUUID();
+
     try {
         for (i; i < resizedFiles.length; i += CHUNK_SIZE) {
             const chunkFiles = resizedFiles.slice(i, i + CHUNK_SIZE);
@@ -292,6 +294,7 @@ async function uploadFiles(files) {
                 formData.append("images", file);
             }
 
+            formData.append("upload_id", uploadId);
             formData.append("metadata", JSON.stringify(chunkMetadata));
 
             if (i === 0) {

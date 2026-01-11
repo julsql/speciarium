@@ -2,6 +2,7 @@ from django.db import models
 
 from main.models.collection import Collection
 from main.models.species import Species
+from main.models.upload_action import UploadAction
 
 
 class Photos(models.Model):
@@ -18,6 +19,7 @@ class Photos(models.Model):
     hash = models.CharField(max_length=255, verbose_name="Hash")
     details = models.TextField(verbose_name="Détails", blank=True)
     collection = models.ForeignKey(Collection, on_delete=models.CASCADE, related_name='rows')
+    upload_action = models.ForeignKey(UploadAction, on_delete=models.CASCADE, related_name='upload_action', null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
