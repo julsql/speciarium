@@ -1,0 +1,39 @@
+{% load static %}
+
+<div class="notification-container">
+    <div class="notification action-button">
+        <span class="global-notification-unreed">•</span>
+        <img id="notification" class="notification-icon user-menu" src="{% static 'main/images/notifications.svg' %}"
+             alt="notification"/>
+    </div>
+    {% if notifications %}
+    <div class="notification-dropdown-content">
+        <div>
+            <ul class="notification-list">
+                {% for notification in notifications %}
+                <a href="{% url 'change_collection_notification' notification.collection.id %}">
+                    <li class="notification-row {% if notification.seen %}seen{% endif %}"
+                        data-notification-id="{{ notification.upload_id }}"
+                        data-seen-url="{% url 'notification_seen' notification.upload_id %}">
+                        <span class="notification-unreed">•</span>
+                        <div class="notification-date">
+                            {{ notification.created_at }}
+                        </div>
+                        <div class="notification-content">
+                            @{{ notification.user.username }} a ajouté {{ notification.images_uploaded }} nouvelles photos à ©{{ notification.collection.title }}.
+                        </div>
+                    </li>
+                </a>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+{% block javascript %}
+<script>
+    const csrfToken = "{{ csrf_token }}";
+</script>
+<script src="{% static 'main/assets/scripts/notification.js' %}"></script>
+{% endblock %}

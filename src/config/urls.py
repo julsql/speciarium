@@ -28,6 +28,8 @@ from main.core.frontend.carte.internal.carte_view import carte
 from main.core.frontend.home.internal.home_view import home
 from main.core.frontend.errors.internal.errors_view import error_500_view, error_404_view
 from main.core.frontend.login.internal.login_view import login_view
+from main.core.frontend.notification.internal.notification_view import notification_seen, \
+    notification_change_collection_view
 from main.core.frontend.photos.internal.photos_view import photos
 from main.core.frontend.profile.profile import profile_view, change_collection_view, change_map_tiles_view, \
     change_theme_view, update_collection_name_view, add_user_to_collection_view, remove_user_from_collection_view, create_collection_view, \
@@ -60,6 +62,8 @@ urlpatterns = [
 
     path('', home, name='home'),
     path('profile', profile_view, name='profile'),
+    path('notifications/<uuid:notification_id>/seen/', notification_seen, name="notification_seen"),
+    path('notification/change-collection/<int:collection_id>/', notification_change_collection_view, name="change_collection_notification"),
     path('change-collection/<int:collection_id>/', change_collection_view, name='change_collection'),
     path('change-map-tiles/<int:map_tiles_id>/', change_map_tiles_view, name='change_map_tiles'),
     path('change-themes/<int:theme_id>/', change_theme_view, name='change_theme'),
