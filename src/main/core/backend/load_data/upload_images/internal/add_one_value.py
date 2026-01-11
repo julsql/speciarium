@@ -5,6 +5,7 @@ from main.core.backend.logger.logger import logger
 from main.models.collection import Collection
 from main.models.photo import Photos
 from main.models.species import Species
+from main.models.upload_action import UploadAction
 
 
 @transaction.atomic
@@ -29,10 +30,11 @@ def add_specie(info_specie: dict[str, str]) -> None:
 
 
 @transaction.atomic
-def add_photo(info_photo: dict[str, str], collection_id) -> None:
+def add_photo(info_photo: dict[str, str], collection_id, upload_action_id) -> None:
     try:
         specie = Species.objects.filter(latin_name=info_photo['latin_name']).first()
         collection = Collection.objects.filter(id=collection_id).first()
+        upload_action = UploadAction.objects.filter(upload_id=upload_action_id).first()
         photo = Photos(
             year=info_photo["year"],
             date=info_photo["date"],
@@ -47,6 +49,7 @@ def add_photo(info_photo: dict[str, str], collection_id) -> None:
             specie=specie,
             hash=info_photo["hash"],
             collection=collection,
+            upload_action=upload_action,
         )
 
         photo.full_clean()
