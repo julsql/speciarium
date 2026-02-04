@@ -310,6 +310,14 @@ header a {
     top: 3px;
 }
 
+.notification-collection-title {
+    font-weight: 500;
+}
+
+.notification-username {
+    font-style: italic;
+}
+
 .global-notification-unreed {
     display: none;
 }
