@@ -39,7 +39,7 @@ def annotate_queryset(queryset):
         'specie__latin_name', 'specie__genus', 'specie__species', 'specie__french_name',
         'specie__kingdom', 'specie__class_field', 'specie__order_field', 'specie__family',
         'year', "date", 'continent', 'country', 'region', 'latitude', 'longitude',
-        'thumbnail', 'photo')
+        'upload_action_id', 'thumbnail', 'photo')
 
 
 def advanced_search_result_map(request, form):
@@ -76,6 +76,8 @@ def advanced_search_result_map(request, form):
         latitude = data.get("latitude")
         longitude = data.get("longitude")
 
+        upload_action_id = request.GET.get("upload_action_id")
+
         decimal_coordinates = 3
 
         if start_date and end_date:
@@ -92,6 +94,8 @@ def advanced_search_result_map(request, form):
             queryset = queryset.annotate(
                 rounded_longitude=Round('longitude', decimal_coordinates)
             ).filter(rounded_longitude=round(longitude, decimal_coordinates))
+        if upload_action_id:
+            queryset = queryset.filter(upload_action_id=upload_action_id)
 
     queryset = queryset.order_by('-id')
     queryset = annotate_queryset(queryset)

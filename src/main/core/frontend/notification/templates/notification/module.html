@@ -11,7 +11,7 @@
         <div>
             <ul class="notification-list">
                 {% for notification in notifications %}
-                <a href="{% url 'change_collection_notification' notification.collection.id %}">
+                <a href="{% url 'change_collection_notification' notification.collection.id notification.upload_id %}">
                     <li class="notification-row {% if notification.seen %}seen{% endif %}"
                         data-notification-id="{{ notification.upload_id }}"
                         data-seen-url="{% url 'notification_seen' notification.upload_id %}">
