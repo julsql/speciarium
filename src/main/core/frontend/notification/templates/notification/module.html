@@ -20,7 +20,13 @@
                             {{ notification.created_at }}
                         </div>
                         <div class="notification-content">
-                            @{{ notification.user.username }} a ajouté {{ notification.images_uploaded }} nouvelles photos à ©{{ notification.collection.title }}.
+                            @{{ notification.user.username }} a ajouté {{ notification.images_uploaded }}
+                            {% if notification.images_uploaded == 1 %}
+                                nouvelle photo
+                            {% else %}
+                                nouvelles photos
+                            {% endif %}
+                            à ©{{ notification.collection.title }}.
                         </div>
                     </li>
                 </a>
