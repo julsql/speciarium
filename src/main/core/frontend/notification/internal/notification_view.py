@@ -1,6 +1,7 @@
 from django.contrib.auth.decorators import login_required
 from django.http import HttpRequest, JsonResponse
 from django.shortcuts import redirect
+from django.urls import reverse
 from django.views.decorators.http import require_POST
 from django.db.models import Exists, OuterRef
 
@@ -60,7 +61,9 @@ def notification_seen(request, notification_id):
 
 
 @login_required
-def notification_change_collection_view(request, collection_id):
+def notification_change_collection_view(request, collection_id, notification_id):
     view = ProfileView()
     view.change_collection(request, collection_id)
-    return redirect('home')
+    url = reverse('photos')
+    url += f'?upload_action_id={notification_id}'
+    return redirect(url)
