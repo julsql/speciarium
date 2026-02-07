@@ -43,6 +43,10 @@ def carte(request: HttpRequest) -> HttpResponse:
     return render(request, 'carte/module.html', value)
 
 
+def safe_json(value):
+    return value.replace('"', "").replace("'", "")
+
+
 def to_json(results):
     images_data = []
     for image in results:
@@ -52,7 +56,7 @@ def to_json(results):
             title = f"<i>{image['specie__latin_name']}</i>"
 
         images_data.append({
-            "title": html.escape(title),
+            "title": safe_json(title),
             "latitude": float(image['latitude']) if image.get('latitude') and image['latitude'] != 'null' else None,
             "longitude": float(image['longitude']) if image.get('longitude') and image['longitude'] != 'null' else None,
         })
@@ -64,7 +68,7 @@ def annotate_queryset(queryset):
     return queryset.values(
         'specie__latin_name', 'specie__genus', 'specie__species', 'specie__french_name',
         'specie__class_field', 'specie__order_field', 'specie__family', 'year', "date",
-        'continent', 'country', 'region', 'latitude', 'longitude', 'thumbnail', 'photo')
+        'continent', 'country', 'region', 'latitude', 'longitude', 'upload_action_id', 'thumbnail', 'photo')
 
 
 def advanced_search_result_map(form, request):
@@ -101,6 +105,8 @@ def advanced_search_result_map(form, request):
         latitude = data.get("latitude")
         longitude = data.get("longitude")
 
+        upload_action_id = request.GET.get("upload_action_id")
+
         decimal_coordinates = 3
 
         if start_date and end_date:
@@ -117,6 +123,8 @@ def advanced_search_result_map(form, request):
             queryset = queryset.annotate(
                 rounded_longitude=Round('longitude', decimal_coordinates)
             ).filter(rounded_longitude=round(longitude, decimal_coordinates))
+        if upload_action_id:
+            queryset = queryset.filter(upload_action_id=upload_action_id)
 
     queryset = annotate_queryset(queryset)
     total_results = queryset.count()
