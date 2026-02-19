@@ -175,7 +175,7 @@ async function uploadFiles(files) {
         progressBarContainer.style.display = "block";
         info.style.display = "block";
         info.style.width = "130px";
-        info.innerHTML = `prétraitement<br>${i + 1}/${files.length}`;
+        info.innerHTML = `prétraitement<br/>${i + 1}/${files.length}`;
         const progress = ((i+1) / files.length) * 100;
         progressBar.style.width = progress + '%';
 
@@ -256,7 +256,7 @@ async function uploadFiles(files) {
             info.style.display = "block";
             info.style.width = "130px";
             currentIndex = parseInt(data.progress) + i
-            info.innerHTML = `Ajout des images<br>${currentIndex}/${species.size}`;
+            info.innerHTML = `Ajout des images<br/>${currentIndex}/${species.size}`;
             const progress = ((currentIndex) / species.size) * 100;
             progressBar.style.width = progress + '%';
         }

@@ -79,7 +79,6 @@ h3 {
 .title {
     margin-top: auto;
     margin-bottom: auto;
-    white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
@@ -282,7 +281,8 @@ header a {
     background-repeat: repeat;
     background-size: 100px 100px;
     border: 1px solid var(--primary);
-    min-width: 360px;
+    max-width: 360px;
+    width: 90vw;
     z-index: 1;
     right: 0;
     top: 45px;
@@ -1531,6 +1531,7 @@ select:disabled {
 
     .left-header {
         height: 120px;
+        width: 255px;
     }
 
     .tab {
@@ -1556,6 +1557,9 @@ select:disabled {
 @media (max-width: 700px) {
     header .logo {
         display: none;
+    }
+    header .title h2 {
+        margin-left: 0;
     }
 }
 

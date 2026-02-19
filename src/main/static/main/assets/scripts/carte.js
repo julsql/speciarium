@@ -54,7 +54,7 @@ function showMap(data) {
         bounds.extend(marker.getLatLng());
 
         // Créer une liste des labels pour le tooltip
-        const tooltipContent = labels.map(label => `• ${label}`).join("<br>");
+        const tooltipContent = labels.map(label => `• ${label}`).join("<br/>");
 
         marker.bindTooltip(tooltipContent, {
             permanent: false,

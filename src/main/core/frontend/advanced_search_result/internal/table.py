@@ -36,7 +36,7 @@ class SpeciesTable(tables.Table):
     continent_list = tables.TemplateColumn(
         template_code="""
         {% for continent in record.continent_list %}
-            {{ continent }}<br>
+            {{ continent }}<br/>
         {% endfor %}
         """,
         verbose_name="Continents",
@@ -46,7 +46,7 @@ class SpeciesTable(tables.Table):
     country_list = tables.TemplateColumn(
         template_code="""
         {% for country in record.country_list %}
-            {{ country }}<br>
+            {{ country }}<br/>
         {% endfor %}
         """,
         verbose_name="Pays",
@@ -56,7 +56,7 @@ class SpeciesTable(tables.Table):
     region_list = tables.TemplateColumn(
         template_code="""
         {% for region in record.region_list %}
-            {{ region }}<br>
+            {{ region }}<br/>
         {% endfor %}
         """,
         verbose_name="Régions",
