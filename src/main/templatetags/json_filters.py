@@ -49,6 +49,17 @@ def get_all_images_json(record):
 
     return mark_safe(json.dumps(images))
 
+@register.filter
+def month_name(month_number):
+    months = [
+        "janvier", "février", "mars", "avril", "mai", "juin",
+        "juillet", "août", "septembre", "octobre", "novembre", "décembre"
+    ]
+    try:
+        return months[int(month_number) - 1]
+    except (ValueError, IndexError):
+        return ""
+
 def get_info(image):
     return f"Photo prise le {image['date']} en {image['country']}" + (f" ({image['region']})" if image.get('region') else "") + (f". {image['details']}" if image.get('details') else "")
 

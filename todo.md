@@ -1,5 +1,5 @@
+- Ajouter un bandeau avec la rétrospective sur la page d'accueil (fin 2026)
 - Ajouter une page d'accueil avec l'explication de l'ajout de photo
-- Ajouter une rétrospective
 
 - modification des espèces dans l'appli
 - formulaire avec multiples valeurs
