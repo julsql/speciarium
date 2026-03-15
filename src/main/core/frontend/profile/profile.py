@@ -1,21 +1,179 @@
 import json
+import base64
 
 from django.contrib import messages
 from django.contrib.auth import update_session_auth_hash, get_user_model
+from django.contrib.auth.base_user import AbstractBaseUser
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import AnonymousUser
 from django.db import transaction
-from django.db.models import Case, When, IntegerField, Exists, OuterRef
+from django.db.models import Case, When, IntegerField, Exists, OuterRef, Count, F, Value
+from django.db.models.functions import Coalesce, NullIf
 from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.shortcuts import redirect
 from django.shortcuts import render, get_object_or_404
 from django.views.decorators.http import require_POST, require_http_methods
 
-from main.core.frontend.profile.forms import EmailUpdateForm, CustomPasswordChangeForm, UsernameUpdateForm
+from main.core.frontend.profile.forms import EmailUpdateForm, CustomPasswordChangeForm, UsernameUpdateForm, User
+from main.models import AppUser
 from main.models.collection import Collection
 from main.models.collection_accounts import CollectionAccounts
 from main.models.map_tiles import MapTiles
 from main.models.photo import Photos
 from main.models.theme import Theme
+
+from datetime import datetime, timedelta
+
+
+@login_required
+def get_year_retrospective(request: HttpRequest, ) -> HttpResponse:
+    user = request.user
+    return get_year_retrospective_user(request, user, "PROFILE")
+
+def get_year_retrospective_username(request: HttpRequest, username_64: str) -> HttpResponse:
+    base64_bytes = username_64.encode("ascii")
+    sample_string_bytes = base64.b64decode(base64_bytes)
+    username = sample_string_bytes.decode("ascii")
+
+    user = get_object_or_404(AppUser, username=username)
+    return get_year_retrospective_user(request, user, "LINK")
+
+def get_year_retrospective_user(request: HttpRequest, user: AppUser | AbstractBaseUser | AnonymousUser, origin: str) -> HttpResponse:
+    """Récupère les stats de l'année pour la rétrospective"""
+    year_start = datetime(datetime.now().year, 1, 1)
+
+    # Photos ajoutées cette année dans les collections de l'utilisateur
+    photos_this_year = Photos.objects.filter(
+        collection__owner=user,
+        created_at__gte=year_start
+    )
+
+    total_photos = photos_this_year.count()
+
+    # Lieux les plus visités
+    top_locations = photos_this_year.values('country', 'region').annotate(
+        count=Count('id'),
+        location_name=Coalesce(
+            NullIf(F('region'), Value('')),
+            NullIf(F('country'), Value('')),
+            Value('Non spécifié')
+        )
+    ).order_by('-count')[:5]
+
+    # Espèces les plus photographiées
+    top_species = photos_this_year.values('specie__french_name').annotate(
+        count=Count('id')
+    ).order_by('-count')[:5]
+
+    # Utilisateurs suivis avec le plus d'espèces en commun
+    # (supposant qu'il y a une relation "following" sur le modèle User)
+    followed_users = user.following.all() if hasattr(user, 'following') else []
+
+    common_species_stats = []
+    for followed_user in followed_users:
+        # Espèces du user suivi cette année
+        followed_species_ids = set(
+            Photos.objects.filter(
+                collection__owner=followed_user,
+                created_at__gte=year_start
+            ).values_list('specie_id', flat=True).distinct()
+        )
+
+        # Espèces de l'utilisateur cette année
+        user_species_ids = set(
+            photos_this_year.values_list('specie_id', flat=True).distinct()
+        )
+
+        common_count = len(followed_species_ids & user_species_ids)
+
+        if common_count > 0:
+            common_species_stats.append({
+                'username': followed_user.username,
+                'common_species_count': common_count,
+                'user_id': followed_user.id
+            })
+
+    common_species_stats.sort(key=lambda x: x['common_species_count'], reverse=True)
+    top_common_user = common_species_stats[0] if common_species_stats else None
+
+    # Stats supplémentaires
+    photos_per_month = photos_this_year.extra(
+        select={'month': 'EXTRACT(MONTH FROM main_photos.created_at)'}
+    ).values('month').annotate(
+        count=Count('id')
+    ).order_by('month')
+
+    # Photo la mieux accueillie (adapter selon votre modèle)
+    best_photo = photos_this_year.annotate(
+        interaction_count=Count('id')
+    ).order_by('-created_at').first()
+
+    # Streaks
+    photo_dates = set(
+        photos_this_year.values_list('created_at__date', flat=True).distinct()
+    )
+    current_streak = _calculate_streak(photo_dates)
+    longest_streak = _calculate_longest_streak(photo_dates)
+
+    # Calcul du max mensuel pour le graphique
+    max_monthly = max([m['count'] for m in photos_per_month]) if photos_per_month else 1
+
+    print(photos_per_month)
+
+    return render(request, 'profile/retrospective.html', {
+        'username': user.username,
+        'year': datetime.now().year,
+        'total_photos': total_photos,
+        'top_locations': top_locations,
+        'top_species': top_species,
+        'top_common_user': top_common_user,
+        'photos_per_month': photos_per_month,
+        'best_photo': best_photo,
+        'current_streak': current_streak,
+        'longest_streak': longest_streak,
+        'all_common_users': common_species_stats[:10],
+        'max_monthly_count': max_monthly,
+        'origin': origin,
+    })
+
+
+def _calculate_streak(dates_set):
+    """Calcule le streak actuel"""
+    if not dates_set:
+        return 0
+
+    sorted_dates = sorted(dates_set, reverse=True)
+    today = datetime.now().date()
+    streak = 0
+    current_date = today
+
+    for date in sorted_dates:
+        if (current_date - date).days == 0 or (current_date - date).days == 1:
+            streak += 1
+            current_date -= timedelta(days=1)
+        else:
+            break
+
+    return streak
+
+
+def _calculate_longest_streak(dates_set):
+    """Calcule le plus long streak de l'année"""
+    if not dates_set:
+        return 0
+
+    sorted_dates = sorted(dates_set)
+    max_streak = 1
+    current_streak = 1
+
+    for i in range(1, len(sorted_dates)):
+        if (sorted_dates[i] - sorted_dates[i - 1]).days == 1:
+            current_streak += 1
+            max_streak = max(max_streak, current_streak)
+        else:
+            current_streak = 1
+
+    return max_streak
 
 
 class ProfileView:

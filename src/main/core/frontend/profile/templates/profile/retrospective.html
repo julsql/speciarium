@@ -1,0 +1,105 @@
+{% extends 'main/base.html' %}
+{% load static %}
+{% load json_filters %}
+{% block body %}
+
+<div class="section recap-section">
+  <div class="recap-header">
+    {% if origin == 'PROFILE' %}
+    <p>VOTRE RÉCAP {{ year }}</p>
+    {% else %}
+    <p>LE RÉCAP {{ year }}</p>
+    {% endif %}
+    <h1>🐦 L'année de {{ username }} en photos</h1>
+    <p>Découvrez {% if origine == 'PROFILE' %}vos{% else %}mes{% endif %} statistiques ornithologiques de l'année</p>
+  </div>
+
+  <!-- Stats principales -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <h3>📸 Photos Ajoutées</h3>
+      <div class="number">{{ total_photos }}</div>
+      <div class="subtext">photos cette année</div>
+    </div>
+
+    <div class="stat-card">
+      <h3>🔥 Meilleur Streak</h3>
+      <div class="number">{{ longest_streak }}</div>
+      <div class="subtext">jours consécutifs</div>
+    </div>
+
+    <div class="stat-card">
+      <h3>🌱 Streak Actuel</h3>
+      <div class="number">{{ current_streak }}</div>
+      <div class="subtext">jours d'affilée</div>
+    </div>
+  </div>
+
+  <!-- Lieux les plus visités -->
+  {% if top_locations %}
+  <div class="list-section stat-card">
+    <h2>📍 Lieux les Plus Visités</h2>
+    {% for location in top_locations %}
+    <div class="list-item">
+      <div class="list-item-rank">#{{ forloop.counter }}</div>
+      <div class="list-item-name">{{ location.location_name|default:"Non spécifié" }}</div>
+      <div class="list-item-count">{{ location.count }} photos</div>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <!-- Espèces les plus photographiées -->
+  {% if top_species %}
+  <div class="list-section stat-card">
+    <h2>🦅 Espèces Préférées</h2>
+    {% for species in top_species %}
+    <div class="list-item">
+      <div class="list-item-rank">#{{ forloop.counter }}</div>
+      <div class="list-item-name">{{ species.specie__french_name }}</div>
+      <div class="list-item-count">{{ species.count }} photos</div>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <!-- Utilisateur suivi avec le plus d'espèces en commun -->
+  {% if top_common_user %}
+  <div class="top-user-card">
+    <h3>🤝 Votre compagnon birder de l'année</h3>
+    <div class="username">@{{ top_common_user.username }}</div>
+    <div class="species-count">{{ top_common_user.common_species_count }} espèces en commun</div>
+  </div>
+  {% endif %}
+
+  <!-- Graphique mensuel -->
+  {% if photos_per_month %}
+  <div class="chart-container stat-card">
+    <h2>📈 Activité Mensuelle</h2>
+    <div class="month-bar">
+      {% for month in photos_per_month %}
+      <div class="month-column">
+        <div class="month-bar-item" style="height: {% widthratio month.count max_monthly_count 150 %}px;"></div>
+        <div class="month-label">{{ month.month|month_name }}</div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  <div style="text-align: center;">
+    <button class="share-btn" onclick="shareRecap()">📤 Partager mon Recap</button>
+  </div>
+</div>
+
+<script>
+  function shareRecap() {
+    const text = `Découvre mon bilan {{ year }} sur Speciarium ! 🐦\n{{ total_photos }} photos, {{ longest_streak }} jours de streak... Êtes-tu meilleur que moi ?`;
+    navigator.share({
+      title: 'Mon Recap {{ year }}',
+      text: text,
+      url: window.location.href.replace(/\/$/, '') + "/" + btoa("{{ username }}")
+    }).catch(err => console.log('Erreur:', err));
+  }
+</script>
+{% endblock %}

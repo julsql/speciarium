@@ -33,8 +33,9 @@ from main.core.frontend.notification.internal.notification_view import notificat
     notification_change_collection_view
 from main.core.frontend.photos.internal.photos_view import photos
 from main.core.frontend.profile.profile import profile_view, change_collection_view, change_map_tiles_view, \
-    change_theme_view, update_collection_name_view, add_user_to_collection_view, remove_user_from_collection_view, create_collection_view, \
-    delete_collection_view
+    change_theme_view, update_collection_name_view, add_user_to_collection_view, remove_user_from_collection_view, \
+    create_collection_view, \
+    delete_collection_view, get_year_retrospective, get_year_retrospective_username
 from main.core.frontend.signup.internal.signup_view import signup_view
 
 handler500 = error_500_view
@@ -79,6 +80,8 @@ urlpatterns = [
     path('hash/<int:collection_id>/', get_hash, name='hash'),
     path('clean/<int:collection_id>/', clean_database, name='hash'),
     path('api/filtered-options/', get_filtered_options, name='get_filtered_options'),
+    path('profile/retrospective/', get_year_retrospective, name='retrospective'),
+    path('profile/retrospective/<str:username_64>', get_year_retrospective_username, name='retrospective'),
 ]
 
 if settings.DEBUG:
