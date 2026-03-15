@@ -1,3 +1,4 @@
+from django.db.models import Count, Q
 from django import forms
 
 from main.models.photo import Photos
@@ -21,6 +22,7 @@ class SpeciesSearchForm(forms.Form):
     details = forms.CharField(widget=forms.Textarea, required=False, label="Détails")
     latitude = forms.FloatField(min_value=-90, max_value=90, required=False, label="Latitude")
     longitude = forms.FloatField(min_value=-180, max_value=180, required=False, label="Longitude")
+    group_by = forms.CharField(max_length=255, required=False, label="Grouper par")
 
     continents = []
     years = []
@@ -29,6 +31,7 @@ class SpeciesSearchForm(forms.Form):
     kingdoms = []
     classes = []
     orders = []
+    group_bys = []
 
     def __init__(self, form, collection_id, *args, **kwargs):
         super().__init__(form, *args, **kwargs)
@@ -41,6 +44,7 @@ class SpeciesSearchForm(forms.Form):
         self.fields['kingdom'].widget.attrs['list'] = 'kingdom-list'
         self.fields['class_field'].widget.attrs['list'] = 'class-list'
         self.fields['order_field'].widget.attrs['list'] = 'order-list'
+        self.fields['group_by'].widget.attrs['list'] = 'group_by-list'
 
         self.continents = Photos.objects.filter(collection_id=collection_id).values_list('continent', flat=True).distinct().order_by('continent')
         self.years = Photos.objects.filter(collection_id=collection_id).values_list('year', flat=True).distinct().order_by('year')
@@ -52,6 +56,16 @@ class SpeciesSearchForm(forms.Form):
         self.kingdoms = Species.objects.filter(id__in=specie_ids_of_collection).values_list('kingdom', flat=True).distinct().order_by('kingdom')
         self.classes = Species.objects.filter(id__in=specie_ids_of_collection).values_list('class_field', flat=True).distinct().order_by('class_field')
         self.orders = Species.objects.filter(id__in=specie_ids_of_collection).values_list('order_field', flat=True).distinct().order_by('order_field')
+        self.group_bys = [
+            "Pays",
+            "Continent",
+            "Région",
+            "Année",
+            "Règne",
+            "Classe",
+            "Ordre",
+            "Famille"
+        ]
 
 
     def clean_continent(self):
@@ -80,4 +94,8 @@ class SpeciesSearchForm(forms.Form):
 
     def clean_class(self):
         data = self.cleaned_data.get('class_field')
+        return data
+
+    def clean_group_by(self):
+        data = self.cleaned_data.get('group_by')
         return data

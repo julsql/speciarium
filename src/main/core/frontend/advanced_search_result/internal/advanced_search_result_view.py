@@ -1,10 +1,11 @@
 from datetime import datetime
 
 from django.contrib.postgres.aggregates import StringAgg
-from django.db.models import Value, F, Min, TextField, Func, Q
+from django.db.models import Value, F, Min, TextField, Func, Q, Count
 from django.db.models.functions import Coalesce, Round, Cast, Lower
 from django_tables2 import RequestConfig
 
+from main.core.frontend.advanced_search_result.internal.grouped_table import GroupedResultsTable
 from main.core.frontend.advanced_search_result.internal.table import SpeciesTable
 from main.models.photo import Photos
 
@@ -125,7 +126,7 @@ def process_queryset(queryset):
     return queryset
 
 
-def configure_table(request, queryset):
+def configure_table(request, table):
     per_page = request.GET.get("per_page", 25)
     try:
         # Vérifier si per_page est un entier valide
@@ -134,9 +135,43 @@ def configure_table(request, queryset):
             per_page = 25
     except ValueError:
         per_page = 25
-    table = SpeciesTable(queryset)
     RequestConfig(request, paginate={"per_page": per_page}).configure(table)
     return table
+
+
+def get_grouped_results(queryset, group_by_field):
+    """
+    Groupe les résultats par un champ spécifique et retourne le comptage
+    """
+    field_mappings = {
+        "Pays": "country",
+        "Continent": "continent",
+        "Région": "region",
+        "Année": "year",
+        "Règne": "specie__kingdom",
+        "Classe": "specie__class_field",
+        "Ordre": "specie__order_field",
+        "Famille": "specie__family"
+    }
+
+    if group_by_field not in field_mappings:
+        return None
+
+    field = field_mappings[group_by_field]
+
+    # Grouper et compter
+    grouped = queryset.values(field).annotate(
+        count=Count('specie_id', distinct=True)
+    ).order_by('-count')
+
+    result = []
+    for item in grouped:
+        result.append({
+            'name': item[field] or 'Non spécifié',
+            'count': item['count']
+        })
+
+    return result
 
 
 def advanced_search_result(request, form):
@@ -146,7 +181,6 @@ def advanced_search_result(request, form):
         collection = request.user.collections.all().first()
 
     queryset = Photos.objects.select_related('specie').filter(collection=collection)
-
 
     filter_mappings = {
         'latin_name': 'specie__latin_name',
@@ -163,6 +197,8 @@ def advanced_search_result(request, form):
         'region': 'region',
         'details': 'details__icontains',
     }
+    grouped_table = None
+
     if form.is_valid():
         data = form.cleaned_data
         queryset = filter_queryset(queryset, form, filter_mappings)
@@ -172,6 +208,8 @@ def advanced_search_result(request, form):
 
         latitude = data.get("latitude")
         longitude = data.get("longitude")
+
+        group_by = data.get("group_by")
 
         decimal_coordinates = 3
 
@@ -189,11 +227,15 @@ def advanced_search_result(request, form):
             queryset = queryset.annotate(
                 rounded_longitude=Round('longitude', decimal_coordinates)
             ).filter(rounded_longitude=round(longitude, decimal_coordinates))
+        if group_by:
+            grouped_results = get_grouped_results(queryset, group_by)
+            grouped_table = configure_table(request, GroupedResultsTable(grouped_results))
+            return {'group_by': group_by}, grouped_table, 0
 
     queryset = queryset.order_by('-specie__id')
     queryset = annotate_queryset(queryset)
     total_results = queryset.count()
     queryset = process_queryset(queryset)
-    table = configure_table(request, queryset)
+    table = configure_table(request, SpeciesTable(queryset))
 
-    return table, total_results
+    return table, grouped_table, total_results

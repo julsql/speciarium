@@ -1,4 +1,5 @@
 from django.contrib.auth.decorators import login_required
+from django.db.models import Count
 from django.db.models.functions import Round
 from django.http import HttpResponse, HttpRequest
 from django.shortcuts import render
@@ -6,6 +7,7 @@ from django_tables2 import RequestConfig
 
 from main.core.frontend.advanced_search.internal.advanced_search_view import advanced_search
 from main.core.frontend.advanced_search_result.internal.advanced_search_result_view import filter_queryset, get_number
+from main.core.frontend.photos.internal.grouped_table import GroupedResultsTable
 from main.core.frontend.photos.internal.table import PhotosTable
 from main.models.map_tiles import MapTiles
 from main.models.photo import Photos
@@ -18,7 +20,7 @@ def photos(request: HttpRequest) -> HttpResponse:
     else:
         map_server = MapTiles.objects.all().first().server
 
-    form, continents, years, countries, regions, kingdoms, classes, orders = advanced_search(request)
+    form, continents, years, countries, regions, kingdoms, classes, orders, group_bys = advanced_search(request)
     value = {'form': form,
              'continents': continents,
              'years': years,
@@ -26,10 +28,12 @@ def photos(request: HttpRequest) -> HttpResponse:
              'regions': regions,
              'kingdoms': kingdoms,
              'classes': classes,
-             'orders': orders}
+             'orders': orders,
+             'group_bys': group_bys,
+             'show_group_by': True}
 
-    table, total_results = advanced_search_result_map(request, form)
-    value.update({'table': table, 'total_results': total_results, 'page': "photos", 'map_server' : map_server})
+    table, grouped_results, total_results = advanced_search_result_map(request, form)
+    value.update({'table': table, 'grouped_results': grouped_results, 'total_results': total_results, 'page': "photos", 'map_server' : map_server})
 
     return render(request, 'photos/module.html', value)
 
@@ -40,6 +44,41 @@ def annotate_queryset(queryset):
         'specie__kingdom', 'specie__class_field', 'specie__order_field', 'specie__family',
         'year', "date", 'continent', 'country', 'region', 'latitude', 'longitude',
         'upload_action_id', 'thumbnail', 'photo')
+
+
+def get_grouped_results(queryset, group_by_field):
+    """
+    Groupe les résultats par un champ spécifique et retourne le comptage
+    """
+    field_mappings = {
+        "Pays": "country",
+        "Continent": "continent",
+        "Région": "region",
+        "Année": "year",
+        "Règne": "specie__kingdom",
+        "Classe": "specie__class_field",
+        "Ordre": "specie__order_field",
+        "Famille": "specie__family"
+    }
+
+    if group_by_field not in field_mappings:
+        return None
+
+    field = field_mappings[group_by_field]
+
+    # Grouper et compter
+    grouped = queryset.values(field).annotate(
+        count=Count('id')
+    ).order_by('-count')
+
+    result = []
+    for item in grouped:
+        result.append({
+            'name': item[field] or 'Non spécifié',
+            'count': item['count']
+        })
+
+    return result
 
 
 def advanced_search_result_map(request, form):
@@ -65,6 +104,7 @@ def advanced_search_result_map(request, form):
         'region': 'region',
         'details': 'details__icontains',
     }
+    grouped_table = None
 
     if form.is_valid():
         data = form.cleaned_data
@@ -75,6 +115,8 @@ def advanced_search_result_map(request, form):
 
         latitude = data.get("latitude")
         longitude = data.get("longitude")
+
+        group_by = data.get("group_by")
 
         upload_action_id = request.GET.get("upload_action_id")
 
@@ -96,14 +138,18 @@ def advanced_search_result_map(request, form):
             ).filter(rounded_longitude=round(longitude, decimal_coordinates))
         if upload_action_id:
             queryset = queryset.filter(upload_action_id=upload_action_id)
+        if group_by:
+            grouped_results = get_grouped_results(queryset, group_by)
+            grouped_table = configure_table(request, GroupedResultsTable(grouped_results))
+            return {'group_by': group_by}, grouped_table, 0
 
     queryset = queryset.order_by('-id')
     queryset = annotate_queryset(queryset)
     total_results = queryset.count()
     queryset = process_queryset(queryset)
-    table = configure_table(request, queryset)
+    table = configure_table(request, PhotosTable(queryset))
 
-    return table, total_results
+    return table, grouped_table, total_results
 
 
 def convert_coordinates(longitude, latitude):
@@ -113,7 +159,7 @@ def convert_coordinates(longitude, latitude):
         return ''
 
 
-def configure_table(request, queryset):
+def configure_table(request, table):
     per_page = request.GET.get("per_page", 25)
     try:
         # Vérifier si per_page est un entier valide
@@ -122,7 +168,6 @@ def configure_table(request, queryset):
             per_page = 25
     except ValueError:
         per_page = 25
-    table = PhotosTable(queryset)
     RequestConfig(request, paginate={"per_page": per_page}).configure(table)
     return table
 

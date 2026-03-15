@@ -120,6 +120,20 @@
                         </div>
                     </div>
                 </div>
+                {% if show_group_by %}
+                <div class="col-md-4">
+                    <p>{{ form.group_by.label }}</p>
+                    <div class="input-container">
+                        {{ form.group_by }}
+                        <span class="clear-btn" id="clear-group_by">&#x2715;</span>
+                    </div>
+                    {% if form.group_by.errors %}
+                    <div class="text-danger">
+                        {{ form.group_by.errors }}
+                    </div>
+                    {% endif %}
+                </div>
+                {% endif %}
             </div>
             <div class="row" style="display: none">
                 <div class="col-md-4">
@@ -205,6 +219,12 @@
 <datalist id="order-list">
     {% for order in orders %}
     <option value="{{ order }}">
+        {% endfor %}
+</datalist>
+
+<datalist id="group_by-list">
+    {% for group_by in group_bys %}
+    <option value="{{ group_by }}">
         {% endfor %}
 </datalist>
 
