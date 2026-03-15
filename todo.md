@@ -1,10 +1,9 @@
 - Ajouter une page d'accueil avec l'explication de l'ajout de photo
-- Ajouter des stats, une rétrospective
+- Ajouter une rétrospective
 
 - modification des espèces dans l'appli
 - formulaire avec multiples valeurs
 - mettre les images sur un s3 et pas directement sur le server
-- statistiques
 
 
 Guide d’utilisation du site web des espèces.
