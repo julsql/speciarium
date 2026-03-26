@@ -59,14 +59,21 @@ const toggleForm = document.getElementById('toggle-form');
 const toggleImg = document.querySelectorAll('#toggle-form > svg')[0];
 const formContent = document.getElementById('form-content');
 
-let expanded = true;
+let expanded = window.innerWidth < 580;
 
-toggleForm.addEventListener("click", () => {
-    formContent.classList.toggle("hidden");
+function toggleFormAction() {
     if (expanded) {
-        toggleImg.style.transform = "rotate(180deg)"
+        toggleImg.style.transform = "rotate(180deg)";
+        formContent.classList.add("hidden");
     } else {
-        toggleImg.style.transform = "rotate(360deg)"
+        toggleImg.style.transform = "rotate(360deg)";
+        formContent.classList.remove("hidden");
     }
     expanded = !expanded;
+}
+
+toggleFormAction()
+
+toggleForm.addEventListener("click", () => {
+    toggleFormAction()
 })

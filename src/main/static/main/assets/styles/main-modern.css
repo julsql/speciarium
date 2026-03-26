@@ -627,7 +627,7 @@ th {
     }
 }
 
-@media (max-width: 578px) {
+@media (max-width: 580px) {
     .col-md-4 {
         width: calc(100%);
     }
@@ -1455,7 +1455,7 @@ select:disabled {
     }
 }
 
-@media (max-width: 578px) {
+@media (max-width: 580px) {
     #pagination-header {
         margin-bottom: 0;
     }
