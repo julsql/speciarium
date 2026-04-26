@@ -8,7 +8,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import AnonymousUser
 from django.db import transaction
 from django.db.models import Case, When, IntegerField, Exists, OuterRef, Count, F, Value
-from django.db.models.functions import Coalesce, NullIf
+from django.db.models.functions import Coalesce, NullIf, ExtractMonth
 from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.shortcuts import redirect
 from django.shortcuts import render, get_object_or_404
@@ -41,12 +41,22 @@ def get_year_retrospective_username(request: HttpRequest, username_64: str) -> H
 
 def get_year_retrospective_user(request: HttpRequest, user: AppUser | AbstractBaseUser | AnonymousUser, origin: str) -> HttpResponse:
     """Récupère les stats de l'année pour la rétrospective"""
-    year_start = datetime(datetime.now().year, 1, 1)
+    # ----- Période de la rétrospective -----
+    # Ajuster ces deux valeurs pour cibler une fenêtre différente.
+    # Par défaut : du 1er janvier au 31 décembre de l'année courante.
+    today = datetime.now()
+    start_date = datetime(today.year, 4, 28)
+    end_date = datetime(today.year, 12, 31, 23, 59, 59)
+    # ----------------------------------------
 
-    # Photos ajoutées cette année dans les collections de l'utilisateur
+    # Photos créées dans la période (basé sur l'upload_action d'origine, donc
+    # on ignore les renames de photos plus anciennes — Photos.upload_action_id
+    # pointe toujours vers l'upload qui a introduit le contenu pour la
+    # première fois).
     photos_this_year = Photos.objects.filter(
         collection__owner=user,
-        created_at__gte=year_start
+        upload_action__created_at__gte=start_date,
+        upload_action__created_at__lte=end_date,
     )
 
     total_photos = photos_this_year.count()
@@ -61,10 +71,14 @@ def get_year_retrospective_user(request: HttpRequest, user: AppUser | AbstractBa
         )
     ).order_by('-count')[:5]
 
-    # Espèces les plus photographiées
-    top_species = photos_this_year.values('specie__french_name').annotate(
-        count=Count('id')
-    ).order_by('-count')[:5]
+    # Classes les plus photographiées
+    top_classes = (
+        photos_this_year
+        .exclude(specie__class_field='')
+        .values('specie__class_field')
+        .annotate(count=Count('id'))
+        .order_by('-count')[:5]
+    )
 
     # Utilisateurs suivis avec le plus d'espèces en commun
     # (supposant qu'il y a une relation "following" sur le modèle User)
@@ -76,7 +90,8 @@ def get_year_retrospective_user(request: HttpRequest, user: AppUser | AbstractBa
         followed_species_ids = set(
             Photos.objects.filter(
                 collection__owner=followed_user,
-                created_at__gte=year_start
+                upload_action__created_at__gte=start_date,
+                upload_action__created_at__lte=end_date,
             ).values_list('specie_id', flat=True).distinct()
         )
 
@@ -98,20 +113,22 @@ def get_year_retrospective_user(request: HttpRequest, user: AppUser | AbstractBa
     top_common_user = common_species_stats[0] if common_species_stats else None
 
     # Stats supplémentaires
-    photos_per_month = photos_this_year.extra(
-        select={'month': 'EXTRACT(MONTH FROM main_photos.created_at)'}
-    ).values('month').annotate(
-        count=Count('id')
-    ).order_by('month')
+    photos_per_month = (
+        photos_this_year
+        .annotate(month=ExtractMonth('upload_action__created_at'))
+        .values('month')
+        .annotate(count=Count('id'))
+        .order_by('month')
+    )
 
     # Photo la mieux accueillie (adapter selon votre modèle)
     best_photo = photos_this_year.annotate(
         interaction_count=Count('id')
-    ).order_by('-created_at').first()
+    ).order_by('-upload_action__created_at').first()
 
     # Streaks
     photo_dates = set(
-        photos_this_year.values_list('created_at__date', flat=True).distinct()
+        photos_this_year.values_list('upload_action__created_at__date', flat=True).distinct()
     )
     current_streak = _calculate_streak(photo_dates)
     longest_streak = _calculate_longest_streak(photo_dates)
@@ -119,14 +136,14 @@ def get_year_retrospective_user(request: HttpRequest, user: AppUser | AbstractBa
     # Calcul du max mensuel pour le graphique
     max_monthly = max([m['count'] for m in photos_per_month]) if photos_per_month else 1
 
-    print(photos_per_month)
-
     return render(request, 'profile/retrospective.html', {
         'username': user.username,
-        'year': datetime.now().year,
+        'year': start_date.year,
+        'start_date': start_date,
+        'end_date': end_date,
         'total_photos': total_photos,
         'top_locations': top_locations,
-        'top_species': top_species,
+        'top_classes': top_classes,
         'top_common_user': top_common_user,
         'photos_per_month': photos_per_month,
         'best_photo': best_photo,

@@ -49,15 +49,15 @@
   </div>
   {% endif %}
 
-  <!-- Espèces les plus photographiées -->
-  {% if top_species %}
+  <!-- Classes les plus photographiées -->
+  {% if top_classes %}
   <div class="list-section stat-card">
-    <h2>🦅 Espèces Préférées</h2>
-    {% for species in top_species %}
+    <h2>🦅 Classes Préférées</h2>
+    {% for class_entry in top_classes %}
     <div class="list-item">
       <div class="list-item-rank">#{{ forloop.counter }}</div>
-      <div class="list-item-name">{{ species.specie__french_name }}</div>
-      <div class="list-item-count">{{ species.count }} photos</div>
+      <div class="list-item-name">{{ class_entry.specie__class_field }}</div>
+      <div class="list-item-count">{{ class_entry.count }} photos</div>
     </div>
     {% endfor %}
   </div>
