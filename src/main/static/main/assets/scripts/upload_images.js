@@ -149,6 +149,30 @@ folderInput.addEventListener("change", async (event) => {
     uploadFiles(files);
 });
 
+function setUploading(active) {
+    document.body.classList.toggle("uploading", active);
+}
+
+function hideUploadBar() {
+    const infoContainer = document.getElementById("upload-info-container");
+    const info = document.getElementById("upload-info");
+    const loading = document.getElementById("loading");
+    const progressBar = document.getElementById("progress-bar");
+    const progressBarContainer = document.getElementById("progress-bar-container");
+    infoContainer.style.display = "none";
+    info.style.display = "none";
+    info.textContent = "";
+    loading.style.display = "none";
+    progressBarContainer.style.display = "none";
+    progressBar.style.width = "0";
+    setUploading(false);
+}
+
+function showUploadError(message) {
+    hideUploadBar();
+    window.alert(message);
+}
+
 async function uploadFiles(files) {
     const info = document.getElementById("upload-info");
     const infoContainer = document.getElementById("upload-info-container");
@@ -156,6 +180,7 @@ async function uploadFiles(files) {
     const progressBar = document.getElementById('progress-bar');
     const progressBarContainer = document.getElementById('progress-bar-container');
 
+    setUploading(true);
     loading.style.display = "block";
     infoContainer.style.display = "flex";
     info.style.display = "none";
@@ -232,14 +257,13 @@ async function uploadFiles(files) {
     const newCount = metadata.length - changedCount;
 
     if (imageToDelete.length === 0 && metadata.length === 0) {
+        hideUploadBar();
         if (rootFilesCount > 0) {
-            info.textContent = `${rootFilesCount} image${rootFilesCount > 1 ? 's' : ''} à la racine ignorée${rootFilesCount > 1 ? 's' : ''} (sous-dossier requis)`;
+            const plural = rootFilesCount > 1 ? 's' : '';
+            window.alert(`${rootFilesCount} image${plural} à la racine ignorée${plural} (sous-dossier requis).`);
         } else {
-            info.textContent = "Aucune image n'a changé";
+            window.alert("Aucune image n'a changé.");
         }
-        loading.style.display = "none";
-        info.style.display = "block";
-        info.style.width = "200px";
         return;
     }
 
@@ -270,9 +294,7 @@ async function uploadFiles(files) {
     const upload = window.confirm(confirmText);
 
     if (!upload) {
-        loading.style.display = "none";
-        progressBarContainer.style.display = "none";
-        info.style.display = "none";
+        hideUploadBar();
         return;
     }
 
@@ -301,9 +323,7 @@ async function uploadFiles(files) {
     };
 
     socket.onerror = function () {
-        info.textContent = "Erreur lors du traitement des images";
-        progressBar.style.width = '0';
-        progressBarContainer.style.display = "none";
+        showUploadError("Erreur lors du traitement des images");
     };
 
     socket.onclose = function () {
@@ -353,9 +373,8 @@ async function uploadFiles(files) {
         } while (i < resizedFiles.length);
     } catch (error) {
         console.error(error);
-        info.textContent = "Erreur lors de l'envoi des images";
-        info.style.display = "block";
-        info.style.width = "200px";
+        showUploadError("Erreur lors de l'envoi des images");
+        return;
     }
 
     loading.style.display = "none";
