@@ -9,12 +9,16 @@ from main.models.species import Species
 from main.core.backend.logger.logger import logger
 
 def delete_images(images_to_delete, collection_id):
+    deleted_origins = []
     for image_key in images_to_delete:
         try:
             image_path, image_hash = image_key.split(":")
             latin_name = get_latin_name(image_path)
             thumbnail_path = str(Path(MEDIA_URL) / VIGNETTE_PATH(collection_id) / image_path.lstrip("/"))
-            Photos.objects.filter(hash=image_hash, thumbnail=thumbnail_path).delete()
+            matching = Photos.objects.filter(hash=image_hash, thumbnail=thumbnail_path)
+            for origin in matching.values_list('upload_action_id', flat=True):
+                deleted_origins.append((image_hash, origin))
+            matching.delete()
             specie_id = Species.objects.filter(latin_name=latin_name).values_list('id', flat=True).first()
             if specie_id and not Photos.objects.filter(specie_id=specie_id).exists():
                 Species.objects.filter(id=specie_id).delete()
@@ -26,3 +30,4 @@ def delete_images(images_to_delete, collection_id):
         except Exception as e:
             logger.error(f"Failed to delete image {image_key}")
             logger.error(e)
+    return deleted_origins
