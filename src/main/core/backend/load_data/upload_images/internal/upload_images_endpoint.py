@@ -11,9 +11,11 @@ from main.core.backend.load_data.upload_images.internal.create_image import crea
 from main.core.backend.load_data.upload_images.internal.delete_images import delete_images
 from main.core.backend.load_data.upload_images.internal.get_one_value import get_specie_data, get_photo_value
 from main.core.backend.logger.logger import logger
+from main.core.permissions import deny_demo_user
 from main.models.upload_action import UploadAction
 
 
+@deny_demo_user
 def upload_images(request, collection_id):
     if request.method == "POST":
         async_to_sync(process_images)(request, collection_id)

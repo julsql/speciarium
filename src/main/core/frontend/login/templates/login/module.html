@@ -40,6 +40,11 @@
                 Pas de compte ? <a href="{% url 'signup' %}">En créer un</a>
             </p>
         </form>
+
+        <form method="post" action="{% url 'demo_login' %}" class="login-form demo-form">
+            {% csrf_token %}
+            <button type="submit" class="demo-button">Visiter en mode témoin</button>
+        </form>
     </div>
 </div>
 {% endif %}

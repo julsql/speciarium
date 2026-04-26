@@ -28,7 +28,7 @@ from main.core.frontend.advanced_search.internal.api import get_filtered_options
 from main.core.frontend.carte.internal.carte_view import carte
 from main.core.frontend.home.internal.home_view import home
 from main.core.frontend.errors.internal.errors_view import error_500_view, error_404_view
-from main.core.frontend.login.internal.login_view import login_view
+from main.core.frontend.login.internal.login_view import login_view, demo_login_view
 from main.core.frontend.notification.internal.notification_view import notification_seen, \
     notification_change_collection_view
 from main.core.frontend.photos.internal.photos_view import photos
@@ -44,6 +44,7 @@ handler404 = error_404_view
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/login/', login_view, name='login'),
+    path('accounts/demo-login/', demo_login_view, name='demo_login'),
     path('accounts/signup/', signup_view, name='signup'),
     path('accounts/logout/', auth_views.LogoutView.as_view(), name='logout'),
     path('accounts/', include('django.contrib.auth.urls')),

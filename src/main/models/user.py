@@ -68,6 +68,7 @@ class AppUser(AbstractUser):
         null=True,
         blank=True,
     )
+    is_demo = models.BooleanField(default=False)
 
     objects = AppUserManager()
     REQUIRED_FIELDS = ['email']
