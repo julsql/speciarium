@@ -12,3 +12,4 @@ class UploadAction(models.Model):
 
     images_uploaded = models.PositiveIntegerField(default=0)
     images_deleted = models.PositiveIntegerField(default=0)
+    images_changed = models.PositiveIntegerField(default=0)

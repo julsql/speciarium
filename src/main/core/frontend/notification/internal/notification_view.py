@@ -20,6 +20,7 @@ class NotificationView:
         notifications = (
             UploadAction.objects
             .filter(collection__collectionaccounts__user=request.user)
+            .filter(images_uploaded__gt=0)
             .exclude(user=request.user)
             .annotate(
                 seen=Exists(

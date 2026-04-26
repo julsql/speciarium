@@ -214,6 +214,16 @@ async function uploadFiles(files) {
 
     const imageToDelete = getImageToDelete(remoteKeys, localKeys);
 
+    const addHashes = new Set(metadata.map(m => m.hash));
+    const imagesDeletedCount = imageToDelete.filter(key => {
+        const hash = key.split(':').pop();
+        return !addHashes.has(hash);
+    }).length;
+
+    const remoteHashes = new Set(remoteKeys.map(k => k.split(':').pop()));
+    const changedCount = metadata.filter(m => remoteHashes.has(m.hash)).length;
+    const newCount = metadata.length - changedCount;
+
     if (imageToDelete.length === 0 && metadata.length === 0) {
         info.textContent = "Aucune image n'a changé";
         loading.style.display = "none";
@@ -222,11 +232,23 @@ async function uploadFiles(files) {
         return;
     }
 
+    const parts = [];
+    if (newCount > 0) {
+        parts.push(`ajouter ${newCount} nouvelle${newCount > 1 ? 's' : ''} photo${newCount > 1 ? 's' : ''}`);
+    }
+    if (changedCount > 0) {
+        parts.push(`modifier ${changedCount} photo${changedCount > 1 ? 's' : ''}`);
+    }
+    if (imagesDeletedCount > 0) {
+        parts.push(`supprimer ${imagesDeletedCount} photo${imagesDeletedCount > 1 ? 's' : ''}`);
+    }
+
     let confirmText;
-    if (metadata.length > 1) {
-        confirmText = `Envoyer ${metadata.length} photos et en supprimer ${imageToDelete.length} ?`;
+    if (parts.length === 1) {
+        confirmText = `Voulez-vous ${parts[0]} ?`;
     } else {
-        confirmText = `Envoyer ${metadata.length} photo et en supprimer ${imageToDelete.length} ?`;
+        const last = parts.pop();
+        confirmText = `Voulez-vous ${parts.join(', ')} et ${last} ?`;
     }
 
     const upload = window.confirm(confirmText);
