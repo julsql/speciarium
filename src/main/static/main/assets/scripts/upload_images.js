@@ -168,6 +168,7 @@ async function uploadFiles(files) {
     const metadata = [];
     const resizedFiles = [];
     const species = new Set();
+    let rootFilesCount = 0;
 
     let i = 0;
     for (const file of files) {
@@ -185,6 +186,12 @@ async function uploadFiles(files) {
             const ext = file.name.split('.').pop().toLowerCase();
             if (file.name[0] !== "." && ["jpg", "jpeg", "png", "gif", "bmp", "webp"].includes(ext)) {
                 const filePath = normaliserUnicode(file.webkitRelativePath).split('/');
+
+                if (filePath.length < 3) {
+                    rootFilesCount += 1;
+                    continue;
+                }
+
                 const cleanedPath = filePath.slice(1).join('/');
                 const hash = await calculateHash(file);
                 const key = `${cleanedPath}:${hash}`;
@@ -225,7 +232,11 @@ async function uploadFiles(files) {
     const newCount = metadata.length - changedCount;
 
     if (imageToDelete.length === 0 && metadata.length === 0) {
-        info.textContent = "Aucune image n'a changé";
+        if (rootFilesCount > 0) {
+            info.textContent = `${rootFilesCount} image${rootFilesCount > 1 ? 's' : ''} à la racine ignorée${rootFilesCount > 1 ? 's' : ''} (sous-dossier requis)`;
+        } else {
+            info.textContent = "Aucune image n'a changé";
+        }
         loading.style.display = "none";
         info.style.display = "block";
         info.style.width = "200px";
@@ -249,6 +260,11 @@ async function uploadFiles(files) {
     } else {
         const last = parts.pop();
         confirmText = `Voulez-vous ${parts.join(', ')} et ${last} ?`;
+    }
+
+    if (rootFilesCount > 0) {
+        const plural = rootFilesCount > 1 ? 's' : '';
+        confirmText = `Attention : ${rootFilesCount} image${plural} à la racine ignorée${plural} (le modèle exige des sous-dossiers).\n\n${confirmText}`;
     }
 
     const upload = window.confirm(confirmText);
