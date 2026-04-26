@@ -320,7 +320,7 @@ async function uploadFiles(files) {
     const uploadId = crypto.randomUUID();
 
     try {
-        for (i; i < resizedFiles.length; i += CHUNK_SIZE) {
+        do {
             const chunkFiles = resizedFiles.slice(i, i + CHUNK_SIZE);
             const chunkMetadata = metadata.slice(i, i + CHUNK_SIZE);
             if (chunkMetadata.length >= MAX_DATA_SIZE_UPLOAD) {
@@ -348,7 +348,9 @@ async function uploadFiles(files) {
             if (!response.ok) {
                 throw new Error("Erreur durant l'envoi d'un lot d'images");
             }
-        }
+
+            i += CHUNK_SIZE;
+        } while (i < resizedFiles.length);
     } catch (error) {
         console.error(error);
         info.textContent = "Erreur lors de l'envoi des images";
