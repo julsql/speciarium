@@ -2,7 +2,7 @@ src/media/
 src/database/old
 **/.env
 src/originales/
-etetoolkit/
+private/
 
 src/main/core/frontend/create_user.py
 
