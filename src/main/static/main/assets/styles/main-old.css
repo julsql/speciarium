@@ -1709,6 +1709,138 @@ select:disabled {
     border-radius: 5px;
 }
 
+/* AIDE / HELP */
+
+.help-button {
+    cursor: pointer;
+    padding: 0;
+    width: 45px;
+}
+
+.help-button .help-icon {
+    width: 28px;
+    height: 28px;
+    fill: #fff;
+}
+
+.help-popup {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+}
+
+.help-popup.open {
+    display: flex;
+}
+
+.help-popup-container {
+    position: relative;
+    background-image: url('../../images/asfalt-dark.png');
+    background-color: var(--background);
+    background-repeat: repeat;
+    background-size: 100px 100px;
+    max-width: 800px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+    padding: 30px 40px;
+    border: 1px solid var(--primary);
+    outline: 2px solid var(--primary);
+    outline-offset: 8px;
+}
+
+.help-close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    z-index: 1;
+}
+
+.help-close svg {
+    fill: var(--primary);
+}
+
+.help-popup-container h2 {
+    margin: 10px 0 15px 0;
+    text-align: center;
+}
+
+.help-popup-container h3 {
+    margin: 18px 0 8px 0;
+    font-weight: bold;
+    font-size: 22px;
+}
+
+.help-popup-container p {
+    margin-bottom: 10px;
+    line-height: 1.45;
+}
+
+.help-warning {
+    font-style: italic;
+}
+
+.help-citation {
+    margin-top: 20px;
+    text-align: center;
+}
+
+/* COLLECTION VIDE */
+
+.empty-collection {
+    text-align: center;
+    padding: 40px 30px;
+    border: 1px solid var(--primary);
+    outline: 2px solid var(--primary);
+    outline-offset: 10px;
+    margin: 60px auto 40px auto;
+    max-width: 600px;
+}
+
+.empty-collection h2 {
+    margin-bottom: 15px;
+}
+
+.empty-collection p {
+    margin-bottom: 25px;
+    line-height: 1.5;
+}
+
+.empty-collection-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    background-color: var(--primary);
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s linear;
+}
+
+.empty-collection-button:hover {
+    background-color: var(--secondary);
+}
+
+.empty-collection-button svg {
+    width: 20px;
+    height: 20px;
+    fill: #fff;
+}
+
 /* MEDIA QUERIES */
 @media (max-width: 1200px) {
     .icon_tab {

@@ -72,6 +72,7 @@ TEMPLATES = [
             BASE_DIR / 'main/core/frontend/photos/templates',
             BASE_DIR / 'main/core/frontend/profile/templates',
             BASE_DIR / 'main/core/frontend/auth/templates',
+            BASE_DIR / 'main/core/frontend/help/templates',
         ],
         'APP_DIRS': True,
         'OPTIONS': {
