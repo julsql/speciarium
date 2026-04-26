@@ -1,0 +1,87 @@
+{% load static %}
+
+<button type="button" class="action-button help-trigger help-button" aria-label="Aide">
+    <svg xmlns="http://www.w3.org/2000/svg" class="help-icon" height="24px" viewBox="0 -960 960 960" width="24px" fill="#fff">
+        <path d="M440-280h80v-240h-80v240Zm40-320q17 0 28.5-11.5T520-640q0-17-11.5-28.5T480-680q-17 0-28.5 11.5T440-640q0 17 11.5 28.5T480-600Zm0 520q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z"/>
+    </svg>
+</button>
+
+<div class="help-popup" id="help-popup">
+    <div class="help-popup-container">
+        <button type="button" class="help-close" id="help-close" aria-label="Fermer">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                <path d="M18 6L12 12L6 6L4.59 7.41L10.59 13.41L4.59 19.41L6 21L12 15L18 21L19.41 19.41L13.41 13.41L19.41 7.41L18 6Z"/>
+            </svg>
+        </button>
+
+        <h2>🐣 Guide d'utilisation du Speciarium</h2>
+
+        <p>Ce site est conçu comme ta propre encyclopédie des espèces que tu as pu rencontrer et photographier sur Terre.
+            Tu auras des données encyclopédiques, une carte pour visualiser les endroits de prise des photos, et un outil
+            de recherche intégré dans cette base de données.</p>
+
+        <h3>📁 Préparation des fichiers</h3>
+        <p>Pour ajouter des images, prépare un dossier sur ton ordinateur. Choisis le nom de dossier que tu veux.</p>
+
+        <h3>🌍 Les pays</h3>
+        <p>Dedans, fais des sous-dossiers du nom des pays en français (ex&nbsp;: France, Kenya, Allemagne). Attention à
+            bien respecter l'orthographe sinon il ne pourra pas retrouver le continent&nbsp;!</p>
+
+        <h3>🏝️ Les régions</h3>
+        <p>Dans ces sous-dossiers, mets directement les photos prises dans ce pays. Si tu le souhaites, tu peux aussi les
+            mettre dans des dossiers de région (ex&nbsp;: Jura, Flaine, Bretagne). Ces noms sont ceux de ton choix, ils
+            ne suivent aucune règle.</p>
+
+        <h3>🦜 Le nom des photos</h3>
+        <p>Pour le nom des photos, commence par le nom de l'espèce qui respecte les conventions&nbsp;: le nom générique
+            (genre) avec une première lettre en majuscule, et un nom spécifique (espèce) toujours en minuscule, ex&nbsp;:
+            <i>Homo sapiens</i>.</p>
+        <p>Puis tu peux écrire une description de la photo (ex&nbsp;: la sous-espèce, le sexe de l'animal…). C'est
+            optionnel.</p>
+        <p>Enfin, termine par le nom de la photo donné par l'appareil, pour retrouver la photo plus rapidement (ex&nbsp;:
+            P9291875.jpg).</p>
+        <p>Par exemple, un nom qui convient&nbsp;: «&nbsp;Giraffa camelopardalis angolensis LD311684.jpg&nbsp;».</p>
+        <p>Le site n'affiche que les trois premières photos d'une espèce. Tu peux en mettre plus mais le site est plutôt
+            conçu pour ne mettre que quelques photos témoignant que tu as un jour rencontré cette espèce, peut-être à
+            différents endroits très éloignés sur Terre.</p>
+
+        <p class="help-warning">⚠️ Pense à envoyer des images compressées (ex&nbsp;: jpg ou png), et non des formats raw
+            ou tiff, très lourds qui risquent de faire cracher le site.</p>
+
+        <h3>📥 Ajout d'images dans le site</h3>
+        <p>Une fois le dossier prêt, clique sur le bouton en haut à droite de la fenêtre pour ajouter tes images, et
+            sélectionne le dossier racine qui contient les dossiers de pays. Il n'envoie pas celles déjà téléchargées
+            avant.</p>
+        <p>Le téléchargement de 100 photos peut être un peu long (~5 minutes), mais tu as une barre de progression, et
+            si tu interromps le téléchargement en cours, les images déjà ajoutées pendant ce téléchargement
+            resteront.</p>
+        <p>Si tu fais des modifications, ajoutes des photos, renommes ou modifies les photos, tu n'as qu'à reproduire
+            l'opération&nbsp;: le programme identifie tout seul quelles photos ont été modifiées.</p>
+
+        <h3>👩‍🦳 Profil et collections</h3>
+        <p>Tu as une page profil qui te permet de voir d'autres collections, mais tu ne peux ajouter des photos que dans
+            la tienne. Tu peux aussi y changer le fond de carte ou le thème.</p>
+
+        <p class="help-citation"><i>Tu es prêt(e) à te balader dans le site&nbsp;! N'hésite pas à faire remonter le
+            moindre bug ou proposition d'amélioration.</i></p>
+    </div>
+</div>
+
+<script>
+    (function () {
+        const popup = document.getElementById('help-popup');
+        if (!popup) return;
+        const open = () => popup.classList.add('open');
+        const hide = () => popup.classList.remove('open');
+        document.addEventListener('click', (e) => {
+            if (e.target.closest('.help-trigger')) {
+                open();
+            } else if (e.target.closest('#help-close') || e.target === popup) {
+                hide();
+            }
+        });
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') hide();
+        });
+    })();
+</script>

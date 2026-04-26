@@ -5,6 +5,7 @@ from django.shortcuts import render
 from main.core.frontend.advanced_search.internal.advanced_search_view import advanced_search
 from main.core.frontend.advanced_search_result.internal.advanced_search_result_view import advanced_search_result
 from main.models.map_tiles import MapTiles
+from main.models.photo import Photos
 
 
 @login_required
@@ -27,12 +28,20 @@ def home(request: HttpRequest) -> HttpResponse:
              'show_group_by': True}
 
     table, grouped_results, total_results = advanced_search_result(request, form)
+
+    collection = request.user.current_collection or request.user.collections.all().first()
+    collection_is_empty = (
+        collection is None
+        or not Photos.objects.filter(collection=collection).exists()
+    )
+
     value.update({
         'table': table,
         'grouped_results': grouped_results,
         'total_results': total_results,
         'page': "tab",
-        'map_server': map_server
+        'map_server': map_server,
+        'collection_is_empty': collection_is_empty,
     })
 
     return render(request, 'home/module.html', value)
