@@ -1,7 +1,10 @@
 # views.py
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, get_user_model
 from django.shortcuts import render, redirect
+from django.views.decorators.http import require_POST
 from main.core.frontend.login.internal.login_form import LoginForm
+
+DEMO_USERNAME = 'temoin'
 
 def login_view(request):
     if request.method == 'POST':
@@ -22,3 +25,16 @@ def login_view(request):
         form = LoginForm()
 
     return render(request, 'login/module.html', {'form': form})
+
+
+@require_POST
+def demo_login_view(request):
+    User = get_user_model()
+    try:
+        demo_user = User.objects.get(username=DEMO_USERNAME, is_demo=True)
+    except User.DoesNotExist:
+        return redirect('login')
+
+    demo_user.backend = 'django.contrib.auth.backends.ModelBackend'
+    login(request, demo_user)
+    return redirect('home')

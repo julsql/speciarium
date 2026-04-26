@@ -15,6 +15,7 @@ from django.shortcuts import render, get_object_or_404
 from django.views.decorators.http import require_POST, require_http_methods
 
 from main.core.frontend.profile.forms import EmailUpdateForm, CustomPasswordChangeForm, UsernameUpdateForm, User
+from main.core.permissions import deny_demo_user
 from main.models import AppUser
 from main.models.collection import Collection
 from main.models.collection_accounts import CollectionAccounts
@@ -214,7 +215,7 @@ class ProfileView:
         email_form = EmailUpdateForm(initial={'email': user.email})
         password_form = CustomPasswordChangeForm(user)
 
-        if request.method == "POST":
+        if request.method == "POST" and not getattr(user, 'is_demo', False):
             if "update_username" in request.POST:
                 username_form = UsernameUpdateForm(request.POST, user=request.user)
                 if username_form.is_valid():
@@ -452,6 +453,7 @@ def change_theme_view(request, theme_id):
 
 @login_required
 @require_POST
+@deny_demo_user
 def update_collection_name_view(request):
     view = ProfileView()
     return view.update_collection_name(request)
@@ -462,6 +464,7 @@ User = get_user_model()
 
 @require_POST
 @login_required
+@deny_demo_user
 def add_user_to_collection_view(request):
     view = ProfileView()
     return view.add_user_to_collection(request)
@@ -469,6 +472,7 @@ def add_user_to_collection_view(request):
 
 @require_POST
 @login_required
+@deny_demo_user
 def remove_user_from_collection_view(request):
     view = ProfileView()
     return view.remove_user_from_collection(request)
@@ -476,6 +480,7 @@ def remove_user_from_collection_view(request):
 
 @login_required
 @require_POST
+@deny_demo_user
 def create_collection_view(request):
     view = ProfileView()
     return view.create_collection(request)
@@ -483,6 +488,7 @@ def create_collection_view(request):
 
 @login_required
 @require_http_methods(["DELETE"])
+@deny_demo_user
 def delete_collection_view(request, collection_id):
     view = ProfileView()
     return view.delete_collection(request, collection_id)
