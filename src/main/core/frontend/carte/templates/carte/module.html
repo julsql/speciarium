@@ -17,6 +17,12 @@
 {% if total_results > 0 %}
 <span id="data-carte" data-images='{{ json_results | safe }}' hidden></span>
 
+<button id="scroll-to-map" type="button" title="Aller à la carte" aria-label="Aller à la carte">
+    <svg xmlns="http://www.w3.org/2000/svg" height="28px" viewBox="0 -960 960 960" width="28px" fill="currentColor">
+        <path d="M480-200 240-440l56-56 184 184 184-184 56 56-240 240Z"/>
+    </svg>
+</button>
+
 <div id="carte"></div>
 <div id="error-carte"></div>
 {% endif %}
@@ -29,4 +35,36 @@
 
 <script>const mapTiles = "{{ map_server|escapejs }}";</script>
 <script src="{% static 'main/assets/scripts/carte.js' %}"></script>
+
+<script>
+    (function () {
+        const button = document.getElementById('scroll-to-map');
+        const carte = document.getElementById('carte');
+        if (!button || !carte) return;
+
+        let mapVisible = false;
+
+        const observer = new IntersectionObserver(([entry]) => {
+            mapVisible = entry.isIntersecting;
+            if (mapVisible) {
+                button.classList.add('scroll-up');
+                button.title = 'Remonter en haut';
+                button.setAttribute('aria-label', 'Remonter en haut');
+            } else {
+                button.classList.remove('scroll-up');
+                button.title = 'Aller à la carte';
+                button.setAttribute('aria-label', 'Aller à la carte');
+            }
+        }, {threshold: 0.5});
+        observer.observe(carte);
+
+        button.addEventListener('click', () => {
+            if (mapVisible) {
+                window.scrollTo({top: 0, behavior: 'smooth'});
+            } else {
+                carte.scrollIntoView({behavior: 'smooth', block: 'start'});
+            }
+        });
+    })();
+</script>
 {% endblock %}
