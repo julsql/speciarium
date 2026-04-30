@@ -45,7 +45,7 @@ def get_year_retrospective_user(request: HttpRequest, user: AppUser | AbstractBa
     # Ajuster ces deux valeurs pour cibler une fenêtre différente.
     # Par défaut : du 1er janvier au 31 décembre de l'année courante.
     today = datetime.now()
-    start_date = datetime(today.year, 4, 28)
+    start_date = datetime(today.year, 1, 1)
     end_date = datetime(today.year, 12, 31, 23, 59, 59)
     # ----------------------------------------
 

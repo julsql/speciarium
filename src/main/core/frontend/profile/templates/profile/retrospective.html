@@ -63,12 +63,12 @@
   </div>
   {% endif %}
 
-  <!-- Utilisateur suivi avec le plus d'espèces en commun -->
+  <!-- La paire parfaite : utilisateur le plus proche en espèces et en lieux -->
   {% if top_common_user %}
-  <div class="top-user-card">
-    <h3>🤝 Votre compagnon birder de l'année</h3>
-    <div class="username">@{{ top_common_user.username }}</div>
-    <div class="species-count">{{ top_common_user.common_species_count }} espèces en commun</div>
+  <div class="stat-card">
+    <h3>💞 La paire parfaite</h3>
+    <div class="number">@{{ top_common_user.username }}</div>
+    <div class="subtext">{{ top_common_user.common_species_count }} espèces · {{ top_common_user.common_countries_count }} pays en commun</div>
   </div>
   {% endif %}
 
