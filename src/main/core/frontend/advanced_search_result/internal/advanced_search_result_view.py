@@ -23,6 +23,7 @@ GROUP_BY_FIELDS = {
     "Classe": "specie__class_field",
     "Ordre": "specie__order_field",
     "Famille": "specie__family",
+    "Espèce": "specie__latin_name",
 }
 
 
@@ -155,6 +156,16 @@ def configure_table(request, table):
     return table
 
 
+def count_expression(group_by_field):
+    """
+    When grouping by species, count photos (distinct species would be 1 by
+    construction). Otherwise, count distinct species in the group.
+    """
+    if group_by_field == "Espèce":
+        return Count('id')
+    return Count('specie_id', distinct=True)
+
+
 def get_grouped_results(queryset, group_by_field):
     """
     Groupe les résultats par un champ spécifique et retourne le comptage
@@ -164,9 +175,8 @@ def get_grouped_results(queryset, group_by_field):
 
     field = GROUP_BY_FIELDS[group_by_field]
 
-    # Grouper et compter
     grouped = queryset.values(field).annotate(
-        count=Count('specie_id', distinct=True)
+        count=count_expression(group_by_field)
     ).order_by('-count')
 
     result = []
@@ -198,7 +208,7 @@ def get_comparison_results(base_queryset, group_by_field, collections):
     grouped = (
         base_queryset
         .values(field, 'collection_id')
-        .annotate(count=Count('specie_id', distinct=True))
+        .annotate(count=count_expression(group_by_field))
     )
 
     rows_by_name = {}

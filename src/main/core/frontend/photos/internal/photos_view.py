@@ -59,7 +59,8 @@ def get_grouped_results(queryset, group_by_field):
         "Règne": "specie__kingdom",
         "Classe": "specie__class_field",
         "Ordre": "specie__order_field",
-        "Famille": "specie__family"
+        "Famille": "specie__family",
+        "Espèce": "specie__latin_name",
     }
 
     if group_by_field not in field_mappings:
