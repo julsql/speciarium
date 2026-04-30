@@ -1,8 +1,12 @@
 from django.db.models import Count, Q
 from django import forms
 
+from main.models.collection import Collection
 from main.models.photo import Photos
 from main.models.species import Species
+
+
+MAX_COMPARE_COLLECTIONS = 5
 
 
 class SpeciesSearchForm(forms.Form):
@@ -23,6 +27,11 @@ class SpeciesSearchForm(forms.Form):
     latitude = forms.FloatField(min_value=-90, max_value=90, required=False, label="Latitude")
     longitude = forms.FloatField(min_value=-180, max_value=180, required=False, label="Longitude")
     group_by = forms.CharField(max_length=255, required=False, label="Grouper par")
+    compare_collections = forms.MultipleChoiceField(
+        required=False,
+        label="Comparer avec",
+        widget=forms.CheckboxSelectMultiple(attrs={"class": "compare-collections"}),
+    )
 
     continents = []
     years = []
@@ -32,8 +41,9 @@ class SpeciesSearchForm(forms.Form):
     classes = []
     orders = []
     group_bys = []
+    compare_collection_choices = []
 
-    def __init__(self, form, collection_id, *args, **kwargs):
+    def __init__(self, form, collection_id, user=None, *args, **kwargs):
         super().__init__(form, *args, **kwargs)
 
         # Récupération dynamique des valeurs
@@ -67,6 +77,35 @@ class SpeciesSearchForm(forms.Form):
             "Famille"
         ]
 
+        if user is not None:
+            other_collections = (
+                user.collections
+                .exclude(id=collection_id)
+                .select_related('owner')
+                .order_by('owner__username', 'title')
+            )
+        else:
+            other_collections = Collection.objects.none()
+
+        self.compare_collection_choices = [
+            (
+                str(collection.id),
+                f"{collection.title} ({collection.owner.username})"
+                if collection.owner_id != getattr(user, 'id', None)
+                else collection.title,
+            )
+            for collection in other_collections
+        ]
+        self.fields['compare_collections'].choices = self.compare_collection_choices
+
+
+    def clean_compare_collections(self):
+        data = self.cleaned_data.get('compare_collections') or []
+        if len(data) > MAX_COMPARE_COLLECTIONS:
+            raise forms.ValidationError(
+                f"Vous ne pouvez sélectionner que {MAX_COMPARE_COLLECTIONS} collections au maximum."
+            )
+        return data
 
     def clean_continent(self):
         data = self.cleaned_data.get('continent')

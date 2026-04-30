@@ -9,7 +9,7 @@ def advanced_search(request):
         current_collection_id = current_collection.id
     else:
         current_collection_id = collections[0].id
-    form = SpeciesSearchForm(request.GET or None, current_collection_id)
+    form = SpeciesSearchForm(request.GET or None, current_collection_id, user=user)
     continents = form.continents
     years = form.years
     countries = form.countries
@@ -18,4 +18,6 @@ def advanced_search(request):
     classes = form.classes
     orders = form.orders
     group_bys = form.group_bys
-    return form, continents, years, countries, regions, kingdoms, classes, orders, group_bys
+    compare_collection_choices = form.compare_collection_choices
+    return (form, continents, years, countries, regions, kingdoms, classes,
+            orders, group_bys, compare_collection_choices)

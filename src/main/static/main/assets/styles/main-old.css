@@ -1977,3 +1977,55 @@ body.uploading .tab {
         grid-template-columns: repeat(2, 40px);
     }
 }
+.compare-collections-row {
+    margin-top: 10px;
+}
+
+.compare-collections-hint {
+    font-size: 12px;
+    font-style: italic;
+    color: #707070;
+    margin-left: 6px;
+}
+
+.compare-collections-container {
+    max-width: 100%;
+    display: block;
+}
+
+.compare-collections-container > div {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 18px;
+}
+
+.compare-collections-container > div > div {
+    display: inline-flex;
+}
+
+.compare-collections-container label {
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+    font-size: 20px;
+    line-height: 1;
+    margin: 0;
+}
+
+.formulaire .compare-collections-container input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    max-width: none;
+    margin: 0;
+    padding: 0;
+    box-shadow: none;
+    flex: 0 0 auto;
+}
+
+.compare-collections-container input[type="checkbox"]:disabled,
+.compare-collections-container > div > div:has(input[type="checkbox"]:disabled) label {
+    opacity: 0.5;
+    cursor: not-allowed;
+}

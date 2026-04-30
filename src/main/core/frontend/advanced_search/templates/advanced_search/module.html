@@ -135,6 +135,23 @@
                 </div>
                 {% endif %}
             </div>
+            {% if show_compare_collections and compare_collection_choices %}
+            <div class="row compare-collections-row" id="compare-collections-row">
+                <div class="col-md-12">
+                    <p>{{ form.compare_collections.label }}
+                        <span class="compare-collections-hint">(5 maximum, uniquement avec un groupement)</span>
+                    </p>
+                    <div class="compare-collections-container">
+                        {{ form.compare_collections }}
+                    </div>
+                    {% if form.compare_collections.errors %}
+                    <div class="text-danger">
+                        {{ form.compare_collections.errors }}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
             <div class="row" style="display: none">
                 <div class="col-md-4">
                     <p>{{ form.latitude.label }}</p>
@@ -231,4 +248,5 @@
 {% block javascript %}
 <script src="{% static 'main/assets/scripts/form.js' %}"></script>
 <script src="{% static 'main/assets/scripts/dynamic_filter.js' %}"></script>
+<script src="{% static 'main/assets/scripts/compare_collections.js' %}"></script>
 {% endblock %}

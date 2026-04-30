@@ -8,6 +8,8 @@
     <p>{{total_results}} espèce trouvée.</p>
     {% elif not grouped_results %}
     <p>Aucune espèce trouvée.</p>
+    {% elif table.is_comparison %}
+    <p>Comparaison du nombre d'espèces par {{ table.group_by|lower }}</p>
     {% else %}
     <p>Nombre d'espèces par {{ table.group_by|lower }}</p>
     {% endif %}

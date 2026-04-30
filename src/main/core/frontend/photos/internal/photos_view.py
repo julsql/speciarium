@@ -20,7 +20,8 @@ def photos(request: HttpRequest) -> HttpResponse:
     else:
         map_server = MapTiles.objects.all().first().server
 
-    form, continents, years, countries, regions, kingdoms, classes, orders, group_bys = advanced_search(request)
+    (form, continents, years, countries, regions, kingdoms, classes, orders,
+     group_bys, _compare_collection_choices) = advanced_search(request)
     value = {'form': form,
              'continents': continents,
              'years': years,

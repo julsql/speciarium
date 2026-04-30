@@ -15,7 +15,8 @@ def home(request: HttpRequest) -> HttpResponse:
     else:
         map_server = MapTiles.objects.all().first().server
 
-    form, continents, years, countries, regions, kingdoms, classes, orders, group_bys = advanced_search(request)
+    (form, continents, years, countries, regions, kingdoms, classes, orders,
+     group_bys, compare_collection_choices) = advanced_search(request)
     value = {'form': form,
              'continents': continents,
              'years': years,
@@ -25,7 +26,9 @@ def home(request: HttpRequest) -> HttpResponse:
              'classes': classes,
              'orders': orders,
              'group_bys': group_bys,
-             'show_group_by': True}
+             'compare_collection_choices': compare_collection_choices,
+             'show_group_by': True,
+             'show_compare_collections': True}
 
     table, grouped_results, total_results = advanced_search_result(request, form)
 

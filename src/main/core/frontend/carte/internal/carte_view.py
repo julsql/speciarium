@@ -13,7 +13,8 @@ from main.models.photo import Photos
 
 @login_required
 def carte(request: HttpRequest) -> HttpResponse:
-    form, continents, years, countries, regions, kingdoms, classes, orders, _group_bys = advanced_search(request)
+    (form, continents, years, countries, regions, kingdoms, classes, orders,
+     _group_bys, _compare_collection_choices) = advanced_search(request)
     value = {'form': form,
              'continents': continents,
              'years': years,
