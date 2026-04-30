@@ -74,7 +74,8 @@ class SpeciesSearchForm(forms.Form):
             "Règne",
             "Classe",
             "Ordre",
-            "Famille"
+            "Famille",
+            "Espèce",
         ]
 
         if user is not None:
