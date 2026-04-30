@@ -5,9 +5,25 @@ from django.db.models import Value, F, Min, TextField, Func, Q, Count
 from django.db.models.functions import Coalesce, Round, Cast, Lower
 from django_tables2 import RequestConfig
 
-from main.core.frontend.advanced_search_result.internal.grouped_table import GroupedResultsTable
+from main.core.frontend.advanced_search_result.internal.grouped_table import (
+    GroupedResultsTable,
+    make_comparison_table,
+)
 from main.core.frontend.advanced_search_result.internal.table import SpeciesTable
+from main.models.collection import Collection
 from main.models.photo import Photos
+
+
+GROUP_BY_FIELDS = {
+    "Pays": "country",
+    "Continent": "continent",
+    "Région": "region",
+    "Année": "year",
+    "Règne": "specie__kingdom",
+    "Classe": "specie__class_field",
+    "Ordre": "specie__order_field",
+    "Famille": "specie__family",
+}
 
 
 def filter_queryset(queryset, form, filter_mappings):
@@ -143,21 +159,10 @@ def get_grouped_results(queryset, group_by_field):
     """
     Groupe les résultats par un champ spécifique et retourne le comptage
     """
-    field_mappings = {
-        "Pays": "country",
-        "Continent": "continent",
-        "Région": "region",
-        "Année": "year",
-        "Règne": "specie__kingdom",
-        "Classe": "specie__class_field",
-        "Ordre": "specie__order_field",
-        "Famille": "specie__family"
-    }
-
-    if group_by_field not in field_mappings:
+    if group_by_field not in GROUP_BY_FIELDS:
         return None
 
-    field = field_mappings[group_by_field]
+    field = GROUP_BY_FIELDS[group_by_field]
 
     # Grouper et compter
     grouped = queryset.values(field).annotate(
@@ -174,13 +179,121 @@ def get_grouped_results(queryset, group_by_field):
     return result
 
 
+def get_comparison_results(base_queryset, group_by_field, collections):
+    """
+    Group `base_queryset` by `group_by_field` and pivot per collection.
+
+    Returns (rows, columns) where:
+      - `rows` is a list of dicts: {'name': value, 'collection_<id>': count, ...}
+      - `columns` is the ordered list of (column_key, header_label) tuples,
+        with the first column corresponding to the current/main collection.
+    """
+    if group_by_field not in GROUP_BY_FIELDS:
+        return None, None
+
+    field = GROUP_BY_FIELDS[group_by_field]
+
+    column_keys = {collection.id: f"collection_{collection.id}" for collection in collections}
+
+    grouped = (
+        base_queryset
+        .values(field, 'collection_id')
+        .annotate(count=Count('specie_id', distinct=True))
+    )
+
+    rows_by_name = {}
+    totals_by_name = {}
+    for item in grouped:
+        name = item[field] or 'Non spécifié'
+        collection_id = item['collection_id']
+        column_key = column_keys.get(collection_id)
+        if column_key is None:
+            continue
+        row = rows_by_name.setdefault(name, {'name': name})
+        row[column_key] = item['count']
+        totals_by_name[name] = totals_by_name.get(name, 0) + item['count']
+
+    for row in rows_by_name.values():
+        for column_key in column_keys.values():
+            row.setdefault(column_key, 0)
+
+    rows = sorted(
+        rows_by_name.values(),
+        key=lambda r: (-totals_by_name[r['name']], str(r['name'])),
+    )
+    columns = [(column_keys[collection.id], collection_label(collection)) for collection in collections]
+    return rows, columns
+
+
+def collection_label(collection):
+    owner_username = getattr(collection.owner, 'username', '')
+    if owner_username:
+        return f"{collection.title} ({owner_username})"
+    return collection.title
+
+
+def resolve_compare_collections(user, raw_ids, current_collection):
+    """
+    Filter the requested compare collection ids to only those the user can
+    access, exclude the current collection, and cap to MAX_COMPARE_COLLECTIONS.
+    """
+    from main.core.frontend.advanced_search.internal.forms import MAX_COMPARE_COLLECTIONS
+
+    parsed_ids = []
+    seen = set()
+    for raw in raw_ids or []:
+        try:
+            value = int(raw)
+        except (TypeError, ValueError):
+            continue
+        if value == current_collection.id or value in seen:
+            continue
+        seen.add(value)
+        parsed_ids.append(value)
+        if len(parsed_ids) >= MAX_COMPARE_COLLECTIONS:
+            break
+
+    if not parsed_ids:
+        return []
+
+    accessible = (
+        user.collections
+        .filter(id__in=parsed_ids)
+        .select_related('owner')
+    )
+    by_id = {collection.id: collection for collection in accessible}
+    return [by_id[i] for i in parsed_ids if i in by_id]
+
+
+def apply_extra_filters(queryset, data):
+    start_date = data.get("start_date")
+    end_date = data.get("end_date")
+    latitude = data.get("latitude")
+    longitude = data.get("longitude")
+    decimal_coordinates = 3
+
+    if start_date and end_date:
+        queryset = queryset.filter(date__range=[start_date, end_date])
+    elif start_date:
+        queryset = queryset.filter(date__gte=start_date)
+    elif end_date:
+        queryset = queryset.filter(date__lte=end_date)
+    if latitude:
+        queryset = queryset.annotate(
+            rounded_latitude=Round('latitude', decimal_coordinates)
+        ).filter(rounded_latitude=round(latitude, decimal_coordinates))
+    if longitude:
+        queryset = queryset.annotate(
+            rounded_longitude=Round('longitude', decimal_coordinates)
+        ).filter(rounded_longitude=round(longitude, decimal_coordinates))
+    return queryset
+
+
 def advanced_search_result(request, form):
     if request.user.current_collection:
         collection = request.user.current_collection
     else:
         collection = request.user.collections.all().first()
-
-    queryset = Photos.objects.select_related('specie').filter(collection=collection)
 
     filter_mappings = {
         'latin_name': 'specie__latin_name',
@@ -201,36 +314,38 @@ def advanced_search_result(request, form):
 
     if form.is_valid():
         data = form.cleaned_data
-        queryset = filter_queryset(queryset, form, filter_mappings)
-
-        start_date = data.get("start_date")
-        end_date = data.get("end_date")
-
-        latitude = data.get("latitude")
-        longitude = data.get("longitude")
-
         group_by = data.get("group_by")
+        compare_collection_ids = data.get("compare_collections") or []
 
-        decimal_coordinates = 3
-
-        if start_date and end_date:
-            queryset = queryset.filter(date__range=[start_date, end_date])
-        elif start_date:
-            queryset = queryset.filter(date__gte=start_date)
-        elif end_date:
-            queryset = queryset.filter(date__lte=end_date)
-        if latitude:
-            queryset = queryset.annotate(
-                rounded_latitude=Round('latitude', decimal_coordinates)
-            ).filter(rounded_latitude=round(latitude, decimal_coordinates))
-        if longitude:
-            queryset = queryset.annotate(
-                rounded_longitude=Round('longitude', decimal_coordinates)
-            ).filter(rounded_longitude=round(longitude, decimal_coordinates))
         if group_by:
+            extra_collections = resolve_compare_collections(
+                request.user, compare_collection_ids, collection
+            )
+        else:
+            extra_collections = []
+
+        all_collections = [collection] + extra_collections
+        queryset = (
+            Photos.objects.select_related('specie')
+            .filter(collection__in=all_collections)
+        )
+        queryset = filter_queryset(queryset, form, filter_mappings)
+        queryset = apply_extra_filters(queryset, data)
+
+        if group_by:
+            if extra_collections:
+                rows, columns = get_comparison_results(
+                    queryset, group_by, all_collections
+                )
+                table_class = make_comparison_table(columns)
+                grouped_table = configure_table(request, table_class(rows))
+                return {'group_by': group_by, 'is_comparison': True}, grouped_table, 0
+
             grouped_results = get_grouped_results(queryset, group_by)
             grouped_table = configure_table(request, GroupedResultsTable(grouped_results))
             return {'group_by': group_by}, grouped_table, 0
+    else:
+        queryset = Photos.objects.select_related('specie').filter(collection=collection)
 
     queryset = queryset.order_by('-specie__id')
     queryset = annotate_queryset(queryset)
