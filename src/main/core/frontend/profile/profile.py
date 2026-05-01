@@ -1,8 +1,11 @@
 import json
 import base64
+import os
+import shutil
 
+from django.conf import settings
 from django.contrib import messages
-from django.contrib.auth import update_session_auth_hash, get_user_model
+from django.contrib.auth import logout, update_session_auth_hash, get_user_model
 from django.contrib.auth.base_user import AbstractBaseUser
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import AnonymousUser
@@ -80,36 +83,80 @@ def get_year_retrospective_user(request: HttpRequest, user: AppUser | AbstractBa
         .order_by('-count')[:5]
     )
 
-    # Utilisateurs suivis avec le plus d'espèces en commun
-    # (supposant qu'il y a une relation "following" sur le modèle User)
-    followed_users = user.following.all() if hasattr(user, 'following') else []
+    # La "paire parfaite" : parmi les utilisateurs qui ont accès aux
+    # collections visibles, on cherche celui dont l'activité (taxonomie
+    # + lieux) recoupe le plus la nôtre. Plus le niveau taxonomique est
+    # spécifique, plus il pèse dans le score (espèce > genre > famille >
+    # ordre > classe > règne). Idem pour les lieux (région > pays >
+    # continent). Le volume de photos n'entre pas dans le score.
+    visible_collections_ids = list(user.collections.values_list('id', flat=True))
+
+    visible_photos_qs = Photos.objects.filter(
+        collection_id__in=visible_collections_ids,
+        upload_action__created_at__gte=start_date,
+        upload_action__created_at__lte=end_date,
+    )
+
+    similarity_weights = [
+        ('specie_id', 6),
+        ('specie__genus', 5),
+        ('specie__family', 4),
+        ('specie__order_field', 3),
+        ('specie__class_field', 2),
+        ('specie__kingdom', 1),
+        ('region', 3),
+        ('country', 2),
+        ('continent', 1),
+    ]
+    profile_fields = [field for field, _ in similarity_weights]
+
+    def _profile_sets(rows):
+        sets = {f: set() for f in profile_fields}
+        for row in rows:
+            for f in profile_fields:
+                v = row[f]
+                if v not in (None, ''):
+                    sets[f].add(v)
+        return sets
+
+    user_rows = list(
+        visible_photos_qs.filter(upload_action__user=user).values(*profile_fields)
+    )
+    user_sets = _profile_sets(user_rows)
+
+    candidate_users = AppUser.objects.filter(
+        collections__id__in=visible_collections_ids
+    ).exclude(pk=user.pk).distinct()
 
     common_species_stats = []
-    for followed_user in followed_users:
-        # Espèces du user suivi cette année
-        followed_species_ids = set(
-            Photos.objects.filter(
-                collection__owner=followed_user,
-                upload_action__created_at__gte=start_date,
-                upload_action__created_at__lte=end_date,
-            ).values_list('specie_id', flat=True).distinct()
+    for candidate in candidate_users:
+        cand_rows = list(
+            visible_photos_qs.filter(upload_action__user=candidate).values(*profile_fields)
         )
+        if not cand_rows:
+            continue
+        cand_sets = _profile_sets(cand_rows)
 
-        # Espèces de l'utilisateur cette année
-        user_species_ids = set(
-            photos_this_year.values_list('specie_id', flat=True).distinct()
-        )
+        score = 0.0
+        for field, weight in similarity_weights:
+            a, b = user_sets[field], cand_sets[field]
+            union = a | b
+            if not union:
+                continue
+            score += weight * len(a & b) / len(union)
 
-        common_count = len(followed_species_ids & user_species_ids)
+        if score == 0:
+            continue
 
-        if common_count > 0:
-            common_species_stats.append({
-                'username': followed_user.username,
-                'common_species_count': common_count,
-                'user_id': followed_user.id
-            })
+        common_species_stats.append({
+            'username': candidate.username,
+            'common_species_count': len(user_sets['specie_id'] & cand_sets['specie_id']),
+            'common_countries_count': len(user_sets['country'] & cand_sets['country']),
+            'score': score,
+            'user_id': candidate.id,
+        })
 
-    common_species_stats.sort(key=lambda x: x['common_species_count'], reverse=True)
+    common_species_stats.sort(key=lambda x: x['score'], reverse=True)
     top_common_user = common_species_stats[0] if common_species_stats else None
 
     # Stats supplémentaires
@@ -509,3 +556,52 @@ def create_collection_view(request):
 def delete_collection_view(request, collection_id):
     view = ProfileView()
     return view.delete_collection(request, collection_id)
+
+
+@login_required
+@require_POST
+def delete_account_view(request: HttpRequest) -> HttpResponse:
+    user = request.user
+
+    if getattr(user, 'is_demo', False):
+        messages.error(request, "Action non autorisée pour l'utilisateur témoin.")
+        return redirect('profile')
+
+    password = request.POST.get('password', '')
+    if not password or not user.check_password(password):
+        messages.error(
+            request,
+            "Mot de passe incorrect. Le compte n'a pas été supprimé.",
+            extra_tags='delete_account',
+        )
+        return redirect('profile')
+
+    owned_collection_ids = list(user.collections_owned.values_list('id', flat=True))
+
+    with transaction.atomic():
+        # Détacher les autres utilisateurs dont la current_collection
+        # pointe vers une collection à supprimer (FK PROTECT).
+        if owned_collection_ids:
+            AppUser.objects.filter(
+                current_collection_id__in=owned_collection_ids
+            ).exclude(pk=user.pk).update(current_collection=None)
+
+        # Détacher également la current_collection de l'utilisateur lui-même.
+        AppUser.objects.filter(pk=user.pk).update(current_collection=None)
+
+        # CASCADE depuis l'utilisateur supprime :
+        # - les collections qu'il possède (et leurs Photos via CASCADE)
+        # - les CollectionAccounts qui le concernent
+        # - les UploadAction et UploadSeen qu'il a créés
+        user.delete()
+
+    # Nettoyage des médias (best-effort, hors transaction).
+    for collection_id in owned_collection_ids:
+        media_dir = os.path.join(
+            settings.MEDIA_ROOT, 'main', 'images', str(collection_id)
+        )
+        shutil.rmtree(media_dir, ignore_errors=True)
+
+    logout(request)
+    messages.success(request, "Votre compte et toutes ses données ont été supprimés.")
+    return redirect('login')

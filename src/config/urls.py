@@ -35,7 +35,7 @@ from main.core.frontend.photos.internal.photos_view import photos
 from main.core.frontend.profile.profile import profile_view, change_collection_view, change_map_tiles_view, \
     change_theme_view, update_collection_name_view, add_user_to_collection_view, remove_user_from_collection_view, \
     create_collection_view, \
-    delete_collection_view, get_year_retrospective, get_year_retrospective_username
+    delete_collection_view, delete_account_view, get_year_retrospective, get_year_retrospective_username
 from main.core.frontend.signup.internal.signup_view import signup_view
 
 handler500 = error_500_view
@@ -75,6 +75,7 @@ urlpatterns = [
     path("collections/remove-user/", remove_user_from_collection_view, name="remove_user_from_collection"),
     path('create_collection/', create_collection_view, name='create_collection'),
     path('delete_collection/<int:collection_id>/', delete_collection_view, name='delete_collection'),
+    path('delete_account/', delete_account_view, name='delete_account'),
     path('carte/', carte, name='carte'),
     path('photos/', photos, name='photos'),
     path('upload-images/<int:collection_id>/', upload_images, name='upload'),

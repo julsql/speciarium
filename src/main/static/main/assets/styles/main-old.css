@@ -2016,3 +2016,98 @@ body.uploading .tab {
     opacity: 0.5;
     cursor: not-allowed;
 }
+
+.danger-zone {
+    display: none;
+    margin-top: 30px;
+    padding: 18px;
+    border: 1px solid #c0392b;
+    border-radius: 10px;
+    background: rgba(192, 57, 43, 0.05);
+}
+
+.danger-zone h3 {
+    color: #c0392b;
+    margin-bottom: 8px;
+}
+
+.danger-zone-intro {
+    margin-bottom: 12px;
+}
+
+.danger-zone-warning {
+    margin: 12px 0;
+    color: #c0392b;
+    font-weight: 600;
+}
+
+.danger-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 18px;
+    min-height: 35px;
+    background-color: #c0392b !important;
+    color: #fff !important;
+    border-radius: 5px !important;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    transition: all 0.2s linear;
+    margin: 0;
+    margin-top: 0 !important;
+    width: auto;
+    height: 35px;
+    max-width: 350px !important;
+}
+
+.danger-button:hover {
+    background-color: #962d22 !important;
+    border-color: #6f1f18 !important;
+}
+
+.danger-actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 8px;
+    align-items: center;
+}
+
+.danger-actions #delete-account-cancel {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 18px;
+    min-height: 35px;
+    background-color: var(--primary);
+    color: #fff;
+    border-radius: 5px;
+    outline: none;
+    cursor: pointer;
+    transition: all 0.2s linear;
+    margin: 0;
+    width: auto;
+    max-width: none;
+}
+
+.danger-actions #delete-account-cancel:hover {
+    background-color: var(--secondary);
+    border-color: var(--secondary);
+}
+
+.delete-account-confirm {
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px dashed rgba(192, 57, 43, 0.4);
+}
+
+.danger-zone-error {
+    margin: 10px 0;
+    padding: 8px 12px;
+    background-color: rgba(192, 57, 43, 0.12);
+    border: 1px solid #c0392b;
+    border-radius: 5px;
+    color: #962d22;
+    font-weight: 600;
+}
