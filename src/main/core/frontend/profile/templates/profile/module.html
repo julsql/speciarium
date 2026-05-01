@@ -270,6 +270,43 @@
 
         <button type="submit" name="change_password" class="button-large">Changer le mot de passe</button>
     </form>
+
+    <div class="danger-zone">
+        <h3>Supprimer mon compte</h3>
+        <p class="danger-zone-intro">
+            Action irréversible. Toutes vos collections, photos, partages et données associées
+            seront définitivement supprimés. Les personnes avec qui vous partagiez vos
+            collections perdront leur accès.
+        </p>
+        <button type="button" class="button-large danger-button" id="delete-account-toggle">
+            Supprimer mon compte
+        </button>
+
+        <div class="delete-account-confirm" id="delete-account-confirm" hidden>
+            <p class="danger-zone-warning">
+                ⚠️ Confirmez la suppression de votre compte avec votre mot de passe.
+                Cette action ne peut pas être annulée.
+            </p>
+            {% for message in messages %}
+                {% if 'delete_account' in message.tags %}
+                <p class="danger-zone-error" data-delete-account-error>{{ message }}</p>
+                {% endif %}
+            {% endfor %}
+            <form method="post" action="{% url 'delete_account' %}" class="login-form">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="id_delete_account_password">Mot de passe&nbsp;:</label>
+                    <input type="password" id="id_delete_account_password" name="password" required autocomplete="current-password">
+                </div>
+                <div class="danger-actions">
+                    <button type="button" class="button-large" id="delete-account-cancel">Annuler</button>
+                    <button type="submit" class="button-large danger-button">
+                        Supprimer définitivement mon compte
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
 {% endif %}
 
@@ -291,5 +328,36 @@
     const checkIconPath = "{% static "main/images/check.svg" %}";
 </script>
 <script src="{% static 'main/assets/scripts/edit-collection.js' %}"></script>
+
+<script>
+    (function () {
+        const toggle = document.getElementById('delete-account-toggle');
+        const cancel = document.getElementById('delete-account-cancel');
+        const confirmBox = document.getElementById('delete-account-confirm');
+        if (!toggle || !confirmBox) return;
+
+        function open() {
+            confirmBox.hidden = false;
+            toggle.hidden = true;
+            const passwordField = document.getElementById('id_delete_account_password');
+            if (passwordField) passwordField.focus();
+        }
+
+        toggle.addEventListener('click', open);
+        if (cancel) {
+            cancel.addEventListener('click', function () {
+                confirmBox.hidden = true;
+                toggle.hidden = false;
+            });
+        }
+
+        // Re-open the panel automatically if a previous attempt failed,
+        // so the user immediately sees the error and the password input.
+        if (confirmBox.querySelector('[data-delete-account-error]')) {
+            open();
+            confirmBox.scrollIntoView({behavior: 'smooth', block: 'center'});
+        }
+    })();
+</script>
 
 {% endblock %}
