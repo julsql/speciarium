@@ -1390,6 +1390,11 @@ table {
     background-color: #F0F0F0FF;
 }
 
+.table .total-row {
+    font-weight: bold;
+    background-color: #DCDCDC;
+}
+
 .table thead a {
     color: #fff;
     text-decoration: none;
