@@ -1710,6 +1710,14 @@ body.uploading .tab {
     display: none;
 }
 
+body.uploading .title_logo,
+body.uploading .user-container,
+body.uploading .upload-button {
+    pointer-events: none;
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
 #progress-bar-container {
     width: 200px;
     height: 30px;
