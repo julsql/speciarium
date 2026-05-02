@@ -67,6 +67,7 @@ class SpeciesSearchForm(forms.Form):
         self.classes = Species.objects.filter(id__in=specie_ids_of_collection).values_list('class_field', flat=True).distinct().order_by('class_field')
         self.orders = Species.objects.filter(id__in=specie_ids_of_collection).values_list('order_field', flat=True).distinct().order_by('order_field')
         self.group_bys = [
+            "Espèce",
             "Pays",
             "Continent",
             "Région",
@@ -75,7 +76,6 @@ class SpeciesSearchForm(forms.Form):
             "Classe",
             "Ordre",
             "Famille",
-            "Espèce",
         ]
 
         if user is not None:

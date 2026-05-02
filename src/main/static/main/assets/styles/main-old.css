@@ -1429,6 +1429,11 @@ table {
     background-color: rgba(0, 0, 0, 0.1);
 }
 
+.table .total-row {
+    font-weight: bold;
+    background-color: rgba(0, 0, 0, 0.18);
+}
+
 .table thead a {
     color: #fff;
     text-decoration: none;

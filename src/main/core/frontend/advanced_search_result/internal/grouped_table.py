@@ -27,6 +27,9 @@ def make_comparison_table(collection_columns):
         "template_name": "table/module.html",
         "attrs": {"class": "table"},
         "sequence": ("name",) + tuple(key for key, _ in collection_columns),
+        "row_attrs": {
+            "class": lambda record: "total-row" if record.get("name") == "Total en commun" else "",
+        },
     })
     attrs["Meta"] = Meta
 

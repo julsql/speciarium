@@ -3,6 +3,7 @@ from datetime import datetime
 from django.contrib.postgres.aggregates import StringAgg
 from django.db.models import Value, F, Min, TextField, Func, Q, Count
 from django.db.models.functions import Coalesce, Round, Cast, Lower
+from django.utils.html import escape, format_html
 from django_tables2 import RequestConfig
 
 from main.core.frontend.advanced_search_result.internal.grouped_table import (
@@ -231,6 +232,20 @@ def get_comparison_results(base_queryset, group_by_field, collections):
         rows_by_name.values(),
         key=lambda r: (-totals_by_name[r['name']], str(r['name'])),
     )
+
+    parent_column = column_keys[collections[0].id]
+    total_row = {'name': 'Total en commun'}
+    for collection in collections:
+        column_key = column_keys[collection.id]
+        if column_key == parent_column:
+            total_row[column_key] = sum(1 for row in rows if row[parent_column] > 0)
+        else:
+            total_row[column_key] = sum(
+                1 for row in rows
+                if row[parent_column] > 0 and row[column_key] > 0
+            )
+    rows = [total_row] + rows
+
     columns = [(column_keys[collection.id], collection_label(collection)) for collection in collections]
     return rows, columns
 
@@ -238,8 +253,12 @@ def get_comparison_results(base_queryset, group_by_field, collections):
 def collection_label(collection):
     owner_username = getattr(collection.owner, 'username', '')
     if owner_username:
-        return f"{collection.title} ({owner_username})"
-    return collection.title
+        return format_html(
+            '{} (<i>@{}</i>)',
+            collection.title,
+            owner_username,
+        )
+    return escape(collection.title)
 
 
 def resolve_compare_collections(user, raw_ids, current_collection):
