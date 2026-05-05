@@ -1835,6 +1835,16 @@ body.uploading .upload-button {
     text-align: center;
 }
 
+.help-contact {
+    color: var(--secondary);
+    font-weight: 500;
+    text-decoration: none;
+}
+
+.help-contact:hover {
+    text-decoration: underline;
+}
+
 /* COLLECTION VIDE */
 
 .empty-collection {
