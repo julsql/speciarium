@@ -48,7 +48,7 @@ service-identity==24.2.0
 setuptools==78.1.1
 six==1.17.0
 sqlparse==0.5.4
-Twisted==25.5.0
+Twisted==26.4.0rc2
 txaio==23.1.1
 typing_extensions==4.12.2
 url-normalize==1.4.3
