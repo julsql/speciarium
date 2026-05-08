@@ -6,6 +6,7 @@
     --secondary: #2f4634;
     --text: #000;
     --background: #fbe1b4;
+    --darkbackground: #d1bb94;
 }
 
 /* Appliquer un reset global */
@@ -279,8 +280,8 @@ header a {
     display: none;
     position: absolute;
     margin-top: 2px;
-    background-image: url('../../images/asfalt-dark.png');
     background-color: var(--background);
+    background-image: url('../../images/asfalt-dark.png');
     background-repeat: repeat;
     background-size: 100px 100px;
     border: 1px solid var(--primary);
@@ -304,6 +305,10 @@ header a {
 
 .notification-row:last-child {
     border-bottom: none;
+}
+
+.notification-row:hover {
+    background-color: var(--darkbackground);
 }
 
 .notification-unreed, .global-notification-unreed {
@@ -1366,6 +1371,90 @@ li {
 
 .profile-section {
     margin-top: 10px;
+}
+
+.user-info-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.upload-history-container {
+    display: flex;
+    position: relative;
+}
+
+.upload-history-container:hover .upload-history-dropdown-content {
+    display: block;
+}
+
+.upload-history-label {
+    padding: 0 16px;
+}
+
+.upload-history-dropdown-content {
+    display: none;
+    position: absolute;
+    margin-top: 2px;
+    background-image: url('../../images/asfalt-dark.png');
+    background-color: var(--background);
+    background-repeat: repeat;
+    background-size: 100px 100px;
+    border: 1px solid var(--primary);
+    max-width: 360px;
+    width: 90vw;
+    z-index: 1;
+    right: 0;
+    top: 45px;
+    max-height: 400px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    box-sizing: border-box;
+}
+
+.upload-history-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.upload-history-list a {
+    text-decoration: none;
+    color: var(--text);
+    display: block;
+}
+
+.upload-history-row {
+    display: block;
+    border-bottom: 1px solid var(--primary);
+    padding: 10px;
+}
+
+.upload-history-row:last-child {
+    border-bottom: none;
+}
+
+.upload-history-row:hover {
+    background-color: var(--darkbackground);
+}
+
+.upload-history-date {
+    font-size: 0.9em;
+    opacity: 0.7;
+    margin-bottom: 4px;
+}
+
+.upload-history-collection-title {
+    font-weight: 500;
+}
+
+.upload-history-empty {
+    opacity: 0.7;
+    font-style: italic;
+    padding: 10px;
+    margin: 0;
 }
 
 .logout-btn:hover {

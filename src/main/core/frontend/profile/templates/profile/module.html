@@ -3,9 +3,44 @@
 
 {% block body %}
 <div class="section">
-    <h2>{{ first_name }}</h2>
-    <div>
-        @{{ username }} - {{ email }}
+    <div class="user-info-row">
+        <div>
+            <h2>{{ first_name }}</h2>
+            <div>
+                @{{ username }} - {{ email }}
+            </div>
+        </div>
+        <div class="upload-history-container">
+            <div class="upload-history action-button">
+                <span class="upload-history-label">Mes uploads</span>
+            </div>
+            {% if upload_history %}
+            <div class="upload-history-dropdown-content">
+                <ul class="upload-history-list">
+                    {% for upload in upload_history %}
+                    <a href="{% url 'change_collection_notification' upload.collection.id upload.upload_id %}">
+                        <li class="upload-history-row">
+                            <div class="upload-history-date">{{ upload.created_at }}</div>
+                            <div class="upload-history-content">
+                                {{ upload.images_uploaded }}
+                                {% if upload.images_uploaded == 1 %}
+                                photo ajoutée
+                                {% else %}
+                                photos ajoutées
+                                {% endif %}
+                                à <span class="upload-history-collection-title">©{{ upload.collection.title }}</span>.
+                            </div>
+                        </li>
+                    </a>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% else %}
+            <div class="upload-history-dropdown-content">
+                <p class="upload-history-empty">Aucun upload pour le moment.</p>
+            </div>
+            {% endif %}
+        </div>
     </div>
     <div class="profile-section">
         <h4>Changer de fond de carte</h4>

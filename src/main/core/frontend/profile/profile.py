@@ -25,6 +25,7 @@ from main.models.collection_accounts import CollectionAccounts
 from main.models.map_tiles import MapTiles
 from main.models.photo import Photos
 from main.models.theme import Theme
+from main.models.upload_action import UploadAction
 
 from datetime import datetime, timedelta
 
@@ -302,6 +303,14 @@ class ProfileView:
                     messages.success(request, "Mot de passe mis à jour avec succès.")
                     return redirect('profile')
 
+        upload_history = (
+            UploadAction.objects
+            .filter(user=user)
+            .filter(images_uploaded__gt=0)
+            .select_related("collection")
+            .order_by("-created_at")
+        )
+
         all_collections = [
             (
                 collection.id,
@@ -355,6 +364,7 @@ class ProfileView:
             'email_form': email_form,
             'username_form': username_form,
             'password_form': password_form,
+            'upload_history': upload_history,
         })
 
     def change_collection(self, request: HttpRequest, collection_id: int) -> HttpResponse:
