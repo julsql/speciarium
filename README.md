@@ -42,7 +42,7 @@
 ### Prérequis
 
 - [Docker](https://www.docker.com/) et [Docker Compose](https://docs.docker.com/compose/)
-- Un fichier `.env` à la racine (voir [Configuration](#-configuration))
+- Un fichier `.env` à la racine (voir [Configuration](#configuration))
 
 ### Lancement
 
@@ -62,32 +62,16 @@ docker-compose up -d
 
 ### Mode développement local
 
-```bash
-docker-compose -f docker-compose-local.yml up
-# → http://localhost:8000 avec DEBUG=True
-```
+`docker-compose-local.yml` ne lance que Django ; Postgres et Redis doivent
+tourner sur l'hôte (ou être ajoutés au compose) pour que l'app démarre.
 
 ---
 
-## ⚙️ Configuration
+## Configuration
 
-Variables d'environnement attendues dans `.env` :
-
-```env
-# Django
-SECRET_KEY=your-secret-key
-DEBUG=False
-DJANGO_ENV=production
-
-# Base de données
-POSTGRES_DB=speciarium
-POSTGRES_USER=speciarium
-POSTGRES_PASSWORD=change-me
-
-# Email (production uniquement)
-EMAIL_HOST_USER=your-email@gmail.com
-EMAIL_HOST_PASSWORD=your-app-password
-```
+Toutes les variables d'environnement requises sont listées dans
+[`.env.example`](./.env.example) — `cp .env.example .env` puis éditer
+suffit pour démarrer.
 
 ---
 
