@@ -252,15 +252,22 @@ def convert_to_decimal(coord, ref):
     return decimal_coord
 
 
-def images_in_folder(folder_path, all_image_path=None):
+def images_in_folder(folder_path, all_image_path=None, allowed_root=None):
     if all_image_path is None:
         all_image_path = []
-    if os.path.isdir(folder_path):
-        for item in os.listdir(folder_path):
-            item_path = os.path.join(folder_path, item)
+    if allowed_root is None:
+        allowed_root = MEDIA_ROOT
+    real_root = os.path.realpath(allowed_root)
+    real_folder = os.path.realpath(folder_path)
+    if os.path.commonpath([real_folder, real_root]) != real_root:
+        logger.warning(f"Refus de scanner un chemin hors de {real_root}: {folder_path}")
+        return all_image_path
+    if os.path.isdir(real_folder):
+        for item in os.listdir(real_folder):
+            item_path = os.path.join(real_folder, item)
 
             if os.path.isdir(item_path):
-                images_in_folder(item_path, all_image_path)
+                images_in_folder(item_path, all_image_path, allowed_root)
             else:
                 if is_image(item_path):
                     all_image_path.append(normaliser_unicode(item_path))
@@ -273,15 +280,22 @@ def is_image(image_path):
     return image_path.lower().endswith(extension_photo)
 
 
-def delete_file_with_permission_check(file_path):
+def delete_file_with_permission_check(file_path, allowed_root=None):
+    if allowed_root is None:
+        allowed_root = MEDIA_ROOT
+    real_root = os.path.realpath(allowed_root)
+    real_file = os.path.realpath(file_path)
+    if os.path.commonpath([real_file, real_root]) != real_root:
+        logger.warning(f"Refus de supprimer un chemin hors de {real_root}: {file_path}")
+        return
     try:
-        if os.path.exists(file_path):
-            if os.access(file_path, os.W_OK):
-                os.remove(file_path)
-                logger.info(f"Le fichier {file_path} a été supprimé avec succès.")
+        if os.path.exists(real_file):
+            if os.access(real_file, os.W_OK):
+                os.remove(real_file)
+                logger.info(f"Le fichier {real_file} a été supprimé avec succès.")
             else:
-                logger.warning(f"Permissions insuffisantes pour supprimer le fichier {file_path}.")
+                logger.warning(f"Permissions insuffisantes pour supprimer le fichier {real_file}.")
         else:
-            logger.warning(f"Le fichier {file_path} n'existe pas.")
+            logger.warning(f"Le fichier {real_file} n'existe pas.")
     except Exception as e:
         logger.error(f"Erreur : {e}")
