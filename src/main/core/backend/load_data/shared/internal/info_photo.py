@@ -2,7 +2,6 @@ import hashlib
 import os
 import unicodedata
 from datetime import datetime
-from pathlib import Path
 from typing import Any
 
 import yaml
@@ -10,13 +9,6 @@ from PIL import Image
 
 from config.settings import MEDIA_ROOT, BASE_DIR, MEDIA_URL
 from main.core.backend.logger.logger import logger
-
-
-def _is_safe_path(target: str, allowed_root: str) -> bool:
-    try:
-        return Path(target).resolve().is_relative_to(Path(allowed_root).resolve())
-    except (ValueError, OSError):
-        return False
 
 continents_yaml = os.path.join(BASE_DIR, "main/core/backend/load_data/shared/continents.yml")
 
@@ -265,12 +257,18 @@ def images_in_folder(folder_path, all_image_path=None, allowed_root=None):
         all_image_path = []
     if allowed_root is None:
         allowed_root = MEDIA_ROOT
-    if not _is_safe_path(folder_path, allowed_root):
-        logger.warning(f"Refus de scanner un chemin hors de {allowed_root}: {folder_path}")
+    real_root = os.path.realpath(allowed_root)
+    real_folder = os.path.realpath(folder_path)
+    try:
+        if os.path.commonpath([real_folder, real_root]) != real_root:
+            logger.warning(f"Refus de scanner un chemin hors de {real_root}: {folder_path}")
+            return all_image_path
+    except ValueError:
+        logger.warning(f"Refus de scanner un chemin hors de {real_root}: {folder_path}")
         return all_image_path
-    if os.path.isdir(folder_path):
-        for item in os.listdir(folder_path):
-            item_path = os.path.join(folder_path, item)
+    if os.path.isdir(real_folder):
+        for item in os.listdir(real_folder):
+            item_path = os.path.join(real_folder, item)
 
             if os.path.isdir(item_path):
                 images_in_folder(item_path, all_image_path, allowed_root)
@@ -289,18 +287,23 @@ def is_image(image_path):
 def delete_file_with_permission_check(file_path, allowed_root=None):
     if allowed_root is None:
         allowed_root = MEDIA_ROOT
-    if not _is_safe_path(file_path, allowed_root):
-        logger.warning(f"Refus de supprimer un chemin hors de {allowed_root}: {file_path}")
-        return
-    safe_path = str(Path(file_path).resolve())
+    real_root = os.path.realpath(allowed_root)
+    real_file = os.path.realpath(file_path)
     try:
-        if os.path.exists(safe_path):
-            if os.access(safe_path, os.W_OK):
-                os.remove(safe_path)
-                logger.info(f"Le fichier {safe_path} a été supprimé avec succès.")
+        if os.path.commonpath([real_file, real_root]) != real_root:
+            logger.warning(f"Refus de supprimer un chemin hors de {real_root}: {file_path}")
+            return
+    except ValueError:
+        logger.warning(f"Refus de supprimer un chemin hors de {real_root}: {file_path}")
+        return
+    try:
+        if os.path.exists(real_file):
+            if os.access(real_file, os.W_OK):
+                os.remove(real_file)
+                logger.info(f"Le fichier {real_file} a été supprimé avec succès.")
             else:
-                logger.warning(f"Permissions insuffisantes pour supprimer le fichier {safe_path}.")
+                logger.warning(f"Permissions insuffisantes pour supprimer le fichier {real_file}.")
         else:
-            logger.warning(f"Le fichier {safe_path} n'existe pas.")
+            logger.warning(f"Le fichier {real_file} n'existe pas.")
     except Exception as e:
         logger.error(f"Erreur : {e}")
