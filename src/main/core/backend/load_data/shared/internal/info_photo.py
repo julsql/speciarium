@@ -259,11 +259,7 @@ def images_in_folder(folder_path, all_image_path=None, allowed_root=None):
         allowed_root = MEDIA_ROOT
     real_root = os.path.realpath(allowed_root)
     real_folder = os.path.realpath(folder_path)
-    try:
-        if os.path.commonpath([real_folder, real_root]) != real_root:
-            logger.warning(f"Refus de scanner un chemin hors de {real_root}: {folder_path}")
-            return all_image_path
-    except ValueError:
+    if os.path.commonpath([real_folder, real_root]) != real_root:
         logger.warning(f"Refus de scanner un chemin hors de {real_root}: {folder_path}")
         return all_image_path
     if os.path.isdir(real_folder):
@@ -289,11 +285,7 @@ def delete_file_with_permission_check(file_path, allowed_root=None):
         allowed_root = MEDIA_ROOT
     real_root = os.path.realpath(allowed_root)
     real_file = os.path.realpath(file_path)
-    try:
-        if os.path.commonpath([real_file, real_root]) != real_root:
-            logger.warning(f"Refus de supprimer un chemin hors de {real_root}: {file_path}")
-            return
-    except ValueError:
+    if os.path.commonpath([real_file, real_root]) != real_root:
         logger.warning(f"Refus de supprimer un chemin hors de {real_root}: {file_path}")
         return
     try:
