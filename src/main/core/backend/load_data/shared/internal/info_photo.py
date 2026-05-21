@@ -259,7 +259,7 @@ def images_in_folder(folder_path, all_image_path=None, allowed_root=None):
         allowed_root = MEDIA_ROOT
     safe_root = os.path.realpath(allowed_root) + os.sep
     safe_folder = os.path.realpath(folder_path)
-    if not safe_folder.startswith(safe_root) and safe_folder + os.sep != safe_root:
+    if not safe_folder.startswith(safe_root):
         logger.warning(f"Refus de scanner un chemin hors de {allowed_root}: {folder_path}")
         return all_image_path
     if os.path.isdir(safe_folder):
