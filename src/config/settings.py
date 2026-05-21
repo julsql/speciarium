@@ -59,6 +59,7 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
+            BASE_DIR / 'main/templates',
             BASE_DIR / 'main/core/frontend/advanced_search/templates',
             BASE_DIR / 'main/core/frontend/advanced_search_result/templates',
             BASE_DIR / 'main/core/frontend/table/templates',
