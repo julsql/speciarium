@@ -17,6 +17,7 @@ from django.shortcuts import redirect
 from django.shortcuts import render, get_object_or_404
 from django.views.decorators.http import require_POST, require_http_methods
 
+from main.core.backend.logger.logger import logger
 from main.core.frontend.profile.forms import EmailUpdateForm, CustomPasswordChangeForm, UsernameUpdateForm, User
 from main.core.permissions import deny_demo_user
 from main.models import AppUser
@@ -458,8 +459,9 @@ class ProfileView:
 
             return JsonResponse({'success': True, 'collection_id': collection.id, 'title': collection.title})
 
-        except Exception as e:
-            return JsonResponse({'success': False, 'error': str(e)})
+        except Exception:
+            logger.exception("Erreur lors de la création d'une collection")
+            return JsonResponse({'success': False, 'error': 'Erreur interne, veuillez réessayer.'})
 
     def delete_collection(self, request, collection_id):
         user = request.user
