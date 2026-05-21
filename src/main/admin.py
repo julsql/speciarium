@@ -9,6 +9,10 @@ from main.models.map_tiles import MapTiles
 from main.models.photo import Photos
 from main.models.species import Species
 
+admin.site.site_header = "Speciarium · Administration"
+admin.site.site_title = "Speciarium Admin"
+admin.site.index_title = "Tableau de bord"
+
 
 @admin.register(Photos)
 class PhotosAdmin(admin.ModelAdmin):
