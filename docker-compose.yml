@@ -1,0 +1,58 @@
+services:
+  backend:
+    build:
+      context: ./backend
+    container_name: speciarium-backend
+    environment:
+      - POSTGRES_HOST=postgres
+      - POSTGRES_PORT=5432
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - MEDIA_ROOT=/app/media
+    volumes:
+      - ./src/media:/app/media
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - local_network
+
+  frontend:
+    build:
+      context: ./frontend
+    container_name: speciarium-frontend
+    ports:
+      - "8003:80"
+    depends_on:
+      - backend
+    networks:
+      - local_network
+
+  redis:
+    image: redis:7-alpine
+    container_name: speciarium-redis
+    networks:
+      - local_network
+
+  postgres:
+    image: postgres:15
+    container_name: speciarium-postgres
+    restart: always
+    env_file:
+      - .env
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./src/database/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - local_network
+
+volumes:
+  postgres_data:
+
+networks:
+  local_network:
