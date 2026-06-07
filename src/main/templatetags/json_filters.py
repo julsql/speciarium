@@ -60,8 +60,16 @@ def month_name(month_number):
     except (ValueError, IndexError):
         return ""
 
+def format_date_fr(value):
+    if not value:
+        return ""
+    if hasattr(value, "strftime"):
+        return value.strftime("%d/%m/%Y")
+    return str(value)
+
+
 def get_info(image):
-    return f"Photo prise le {image['date']} en {image['country']}" + (f" ({image['region']})" if image.get('region') else "") + (f". {image['details']}" if image.get('details') else "")
+    return f"Photo prise le {format_date_fr(image['date'])} en {image['country']}" + (f" ({image['region']})" if image.get('region') else "") + (f". {image['details']}" if image.get('details') else "")
 
 def get_title(record):
     if record.get('specie__french_name'):

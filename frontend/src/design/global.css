@@ -1,0 +1,56 @@
+html, body, #root {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  font-family: "EB Garamond", serif;
+  color: #2a1d10;
+  background: #f0eee9;
+  -webkit-font-smoothing: antialiased;
+}
+
+* { box-sizing: border-box; }
+
+button {
+  font: inherit;
+  color: inherit;
+}
+
+input, textarea, select {
+  font: inherit;
+  color: inherit;
+}
+
+/* Évite que iOS Safari zoome sur les inputs < 16px */
+@media (max-width: 767px) {
+  input, select, textarea {
+    font-size: 16px !important;
+  }
+}
+
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: rgba(74, 56, 37, 0.25);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(74, 56, 37, 0.4);
+}
+
+.leaflet-tooltip.cluster-count {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  color: #f7eed8 !important;
+  font-family: "JetBrains Mono", monospace !important;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0;
+  padding: 0;
+  text-shadow: 0 0 3px rgba(0, 0, 0, 0.6);
+}
+.leaflet-tooltip.cluster-count::before { display: none !important; }

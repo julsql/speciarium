@@ -127,7 +127,7 @@ DATABASES = {
         'USER': POSTGRES_USER,
         'PASSWORD': POSTGRES_PASSWORD,
         'HOST': db_host,
-        'PORT': '5432',
+        'PORT': config('POSTGRES_PORT', default='5432'),
     }
 }
 

@@ -1,39 +1,45 @@
 services:
-  django:
+  backend:
     build:
-      context: .
-    container_name: speciarium
-    ports:
-      - "8003:8000"
-    volumes:
-      - ./src/media:/app/src/media
-      - ./src/database:/app/src/database
-      - ./etetoolkit:/root/.etetoolkit/
+      context: ./backend
+    container_name: speciarium-backend
     environment:
-      - DEBUG=False
-      - DJANGO_ENV=production
-    working_dir: /app/src
-    command: >
-      sh -c "
-      python manage.py migrate --noinput &&
-      daphne -b 0.0.0.0 -p 8000 config.asgi:application
-      "
+      - POSTGRES_HOST=postgres
+      - POSTGRES_PORT=5432
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - MEDIA_ROOT=/app/media
+    volumes:
+      - ./src/media:/app/media
     depends_on:
       - postgres
+      - redis
+    networks:
+      - local_network
+
+  frontend:
+    build:
+      context: ./frontend
+    container_name: speciarium-frontend
+    ports:
+      - "8003:80"
+    depends_on:
+      - backend
     networks:
       - local_network
 
   redis:
-    image: redis:latest
-    container_name: redis
-    ports:
-      - "6379:6379"
+    image: redis:7-alpine
+    container_name: speciarium-redis
     networks:
       - local_network
 
   postgres:
     image: postgres:15
-    container_name: postgres_speciarium
+    container_name: speciarium-postgres
     restart: always
     env_file:
       - .env
