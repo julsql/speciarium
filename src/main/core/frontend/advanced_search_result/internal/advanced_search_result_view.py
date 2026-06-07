@@ -52,6 +52,8 @@ def filter_queryset(queryset, form, filter_mappings):
 
 
 def annotate_queryset(queryset):
+    photo_ordering = (F('date').desc(), F('id').asc())
+
     return queryset.values(
         'specie__latin_name', 'specie__genus', 'specie__species', 'specie__french_name',
         'specie__kingdom', 'specie__class_field', 'specie__order_field', 'specie__family'
@@ -62,24 +64,34 @@ def annotate_queryset(queryset):
         year_list=StringAgg(
             Coalesce(Cast(F('year'), TextField()), Value('')),
             delimiter=',',
-            ordering=F('date').desc()),
+            ordering=photo_ordering),
         date_list=StringAgg(
             Coalesce(Cast(F('date'), TextField()), Value('')),
             delimiter=',',
-            ordering=F('date').desc()),
-        continent_list=StringAgg(Coalesce(F('continent'), Value('')), delimiter=','),
+            ordering=photo_ordering),
+        continent_list=StringAgg(
+            Coalesce(F('continent'), Value('')), delimiter=',', ordering=photo_ordering),
         first_continent=Min('continent'),
-        country_list=StringAgg(Coalesce(F('country'), Value('')), delimiter=','),
+        country_list=StringAgg(
+            Coalesce(F('country'), Value('')), delimiter=',', ordering=photo_ordering),
         first_country=Min('country'),
-        region_list=StringAgg(Coalesce(F('region'), Value('')), delimiter=','),
+        region_list=StringAgg(
+            Coalesce(F('region'), Value('')), delimiter=',', ordering=photo_ordering),
         first_region=Min('region'),
-        details_list=StringAgg(Coalesce(F('details'), Value('')), delimiter=','),
-        photo_list=StringAgg(Coalesce(F('photo'), Value('')), delimiter=','),
-        thumbnail_list=StringAgg(Coalesce(F('thumbnail'), Value('')), delimiter=','),
+        details_list=StringAgg(
+            Coalesce(F('details'), Value('')), delimiter=',', ordering=photo_ordering),
+        photo_list=StringAgg(
+            Coalesce(F('photo'), Value('')), delimiter=',', ordering=photo_ordering),
+        thumbnail_list=StringAgg(
+            Coalesce(F('thumbnail'), Value('')), delimiter=',', ordering=photo_ordering),
 
         # Convertir les nombres en texte avant la concaténation
-        latitude_list=StringAgg(Coalesce(Cast(F('latitude'), TextField()), Value('')), delimiter=','),
-        longitude_list=StringAgg(Coalesce(Cast(F('longitude'), TextField()), Value('')), delimiter=','),
+        latitude_list=StringAgg(
+            Coalesce(Cast(F('latitude'), TextField()), Value('')),
+            delimiter=',', ordering=photo_ordering),
+        longitude_list=StringAgg(
+            Coalesce(Cast(F('longitude'), TextField()), Value('')),
+            delimiter=',', ordering=photo_ordering),
     )
 
 
