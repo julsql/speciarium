@@ -27,6 +27,8 @@ SECRET_KEY = config('SECRET_KEY')
 DEBUG = config('DEBUG', cast=bool)
 
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0', config('SERVER_HOST', default='127.0.0.1'), 'speciarium.julsql.fr', 'speciarium']
+# Hotes supplementaires configurables par env (ex. sous-domaine de test k3s), separes par des virgules.
+ALLOWED_HOSTS += [h.strip() for h in config('EXTRA_ALLOWED_HOSTS', default='').split(',') if h.strip()]
 
 # Application definition
 
@@ -153,6 +155,8 @@ AUTH_PASSWORD_VALIDATORS = [
 CSRF_TRUSTED_ORIGINS = [
     'https://speciarium.julsql.fr',  # Remplacez par votre domaine de production
 ]
+# Origines CSRF supplementaires configurables par env (ex. sous-domaine de test k3s), separees par des virgules.
+CSRF_TRUSTED_ORIGINS += [o.strip() for o in config('EXTRA_CSRF_TRUSTED_ORIGINS', default='').split(',') if o.strip()]
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
