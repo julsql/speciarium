@@ -43,8 +43,9 @@
 
 - [Docker](https://www.docker.com/) et [Docker Compose](https://docs.docker.com/compose/)
 - Un fichier `.env` à la racine (voir [Configuration](#configuration))
+- Postgres et Redis accessibles sur l'hôte
 
-### Lancement
+### Lancement (développement local)
 
 ```bash
 # 1. Cloner le repo
@@ -54,13 +55,11 @@ cd speciarium
 # 2. Configurer les variables d'environnement
 cp .env.example .env  # puis éditer
 
-# 3. Démarrer la stack complète (Django + PostgreSQL + Redis)
-docker-compose up -d
+# 3. Démarrer Django (docker-compose-local.yml)
+docker-compose -f docker-compose-local.yml up -d
 
-# 4. L'app est disponible sur http://localhost:8003
+# 4. L'app est disponible sur http://localhost:8000
 ```
-
-### Mode développement local
 
 `docker-compose-local.yml` ne lance que Django ; Postgres et Redis doivent
 tourner sur l'hôte (ou être ajoutés au compose) pour que l'app démarre.
@@ -105,7 +104,6 @@ speciarium/
 │   │   ├── management/      # Commandes Django custom
 │   │   └── migrations/
 │   └── manage.py
-├── docker-compose.yml       # Stack production
 ├── docker-compose-local.yml # Stack dev
 ├── Dockerfile
 └── requirements.txt
@@ -116,6 +114,14 @@ speciarium/
 ## 🌍 Production
 
 L'application est déployée sur [speciarium.julsql.fr](https://speciarium.julsql.fr).
+
+Le déploiement est entièrement automatisé :
+
+1. Un push sur `main` déclenche le workflow CI [`docker.yml`](./.github/workflows/docker.yml),
+   qui build l'image et la pousse sur **GHCR** (`ghcr.io/julsql/speciarium`).
+2. Sur le cluster **k3s**, **[Keel](https://keel.sh/)** poll GHCR et déclenche un
+   rollout dès qu'un nouveau digest est détecté.
+3. Les manifests Kubernetes vivent dans le repo `k3s-manifests`.
 
 ---
 
