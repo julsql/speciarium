@@ -119,8 +119,8 @@ Le déploiement est entièrement automatisé :
 
 1. Un push sur `main` déclenche le workflow CI [`docker.yml`](./.github/workflows/docker.yml),
    qui build l'image et la pousse sur **GHCR** (`ghcr.io/julsql/speciarium`).
-2. Sur le cluster **k3s**, **[Keel](https://keel.sh/)** poll GHCR et déclenche un
-   rollout dès qu'un nouveau digest est détecté.
+2. Le déploiement est automatique : après le push, la CI notifie le serveur
+   (webhook Keel), qui met à jour ses pods. Pas de SSH ni de `kubectl` manuel.
 3. Les manifests Kubernetes vivent dans le repo `k3s-manifests`.
 
 ---
