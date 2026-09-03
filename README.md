@@ -88,6 +88,25 @@ Puis mettre à jour la taxonomie :
 docker exec -it speciarium python3 manage.py update_species_taxonomy
 ```
 
+La commande ne touche que la table `Species`, et uniquement les champs issus des APIs
+(règne, classe, ordre, famille, nom vernaculaire, genre, espèce) — les photos, observations
+et collections ne sont jamais modifiées. Une valeur déjà renseignée n'est jamais effacée
+par une API muette.
+
+| Option | Effet |
+| --- | --- |
+| `--dry-run` | affiche le détail des changements sans rien écrire |
+| `--only "Chloris chloris" …` | ne traite que ces espèces |
+| `--missing-only` | ne traite que les espèces dont un champ taxonomique est vide |
+| `--limit N` | s'arrête après N espèces |
+| `--delay S` | pause entre deux espèces (défaut 1 s, pour rester sous la limite iNaturalist) |
+| `--allow-blank` | autorise l'effacement d'un champ que les APIs ne renseignent plus |
+
+```bash
+# vérifier l'effet avant de l'appliquer
+docker exec -it speciarium python3 manage.py update_species_taxonomy --dry-run
+```
+
 ---
 
 ## 📁 Structure du projet
