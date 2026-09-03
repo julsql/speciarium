@@ -1,10 +1,13 @@
 import html
 import json
+from datetime import date, datetime
 
 from django import template
 from django.utils.safestring import mark_safe
 
 register = template.Library()
+
+FRENCH_DATE_FORMAT = '%d/%m/%Y'
 
 
 @register.filter
@@ -60,8 +63,23 @@ def month_name(month_number):
     except (ValueError, IndexError):
         return ""
 
+def format_french_date(value):
+    """Formate une date au format français jj/mm/aaaa."""
+    if not value:
+        return ""
+    if isinstance(value, date):
+        return value.strftime(FRENCH_DATE_FORMAT)
+    value = str(value).strip()
+    for source_format in ('%Y-%m-%d', FRENCH_DATE_FORMAT):
+        try:
+            return datetime.strptime(value, source_format).strftime(FRENCH_DATE_FORMAT)
+        except ValueError:
+            continue
+    return value
+
+
 def get_info(image):
-    return f"Photo prise le {image['date']} en {image['country']}" + (f" ({image['region']})" if image.get('region') else "") + (f". {image['details']}" if image.get('details') else "")
+    return f"Photo prise le {format_french_date(image['date'])} en {image['country']}" + (f" ({image['region']})" if image.get('region') else "") + (f". {image['details']}" if image.get('details') else "")
 
 def get_title(record):
     if record.get('specie__french_name'):
