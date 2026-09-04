@@ -19,9 +19,9 @@ REMOTE_FIELDS = (
     "family",
 )
 
-# iNaturalist demande de rester sous 60 requêtes/minute, et une espèce peut
-# déclencher jusqu'à deux appels.
-DEFAULT_DELAY = 1.0
+# iNaturalist demande de rester sous 60 requêtes/minute et une espèce coûte deux
+# appels : en dessous de 2 s on prend des 429, qui font perdre la source.
+DEFAULT_DELAY = 2.0
 
 
 class Command(BaseCommand):
@@ -114,10 +114,10 @@ class Command(BaseCommand):
                 blank |= Q(**{field: ""})
             species_list = species_list.filter(blank)
 
-        species_list = list(species_list)
-        if options["limit"]:
+        if options["limit"] is not None:
+            # le slice est appliqué au queryset : inutile de charger toute la table
             species_list = species_list[: options["limit"]]
-        return species_list
+        return list(species_list)
 
     def collect_changes(self, specie, data, allow_blank):
         """Champs réellement modifiés, sous la forme {champ: (avant, après)}."""

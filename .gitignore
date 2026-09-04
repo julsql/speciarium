@@ -1,5 +1,7 @@
 src/media/
 src/database/old
+# base NCBI d'ete3, dependance retiree : ignore le temps que les copies locales disparaissent
+etetoolkit/
 **/.env
 src/originales/
 private/

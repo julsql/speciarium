@@ -120,32 +120,6 @@ INAT_DETAILS = {
     },
 }
 
-# Lignées NCBI réelles (eutils efetch db=taxonomy) : NCBI place
-# `superclass = Sarcopterygii` au-dessus de tous les tétrapodes, lézards compris.
-NCBI_LINEAGES = {
-    "Natrix natrix": {
-        "kingdom": "Animalia", "superclass": "Sarcopterygii", "class": "Lepidosauria",
-        "order": "Squamata", "family": "Natricidae",
-    },
-    "Testudo hermanni": {
-        "kingdom": "Animalia", "superclass": "Sarcopterygii",
-        "order": "Testudines", "family": "Testudinidae",
-    },
-    "Chloris chloris": {
-        "kingdom": "Animalia", "superclass": "Sarcopterygii", "class": "Aves",
-        "order": "Passeriformes", "family": "Fringillidae",
-    },
-    "Salmo trutta": {
-        "kingdom": "Animalia", "superclass": "Actinopterygii", "class": "Actinopteri",
-        "order": "Salmoniformes", "family": "Salmonidae",
-    },
-    "Latimeria chalumnae": {
-        "kingdom": "Animalia", "superclass": "Sarcopterygii",
-        "order": "Coelacanthiformes", "family": "Coelacanthidae",
-    },
-}
-
-
 class FakeResponse:
     def __init__(self, payload):
         self.payload = payload
@@ -169,31 +143,17 @@ def fake_inaturalist(search_results):
     return get
 
 
-def ncbi_details(latin_name):
-    lineage = NCBI_LINEAGES[latin_name]
-    return (
-        lineage.get("kingdom", ''),
-        info_species.pick_ncbi_class(lineage),
-        lineage.get("order", ''),
-        lineage.get("family", ''),
-    )
-
-
 class NormalizeTests(SimpleTestCase):
-    def test_hybrid_name_is_reduced_to_genus(self):
-        self.assertEqual(info_species.normalize_query_name("Salix x rubens"), "Salix")
-
     def test_regular_name_is_untouched(self):
         self.assertEqual(info_species.normalize_query_name("Chloris chloris"), "Chloris chloris")
 
     def test_genus_only_name_is_untouched(self):
         self.assertEqual(info_species.normalize_query_name("Chloris"), "Chloris")
 
-    def test_ncbi_kingdoms_are_mapped_to_gbif_ones(self):
-        self.assertEqual(info_species.normalize_kingdom("Metazoa"), "Animalia")
-        self.assertEqual(info_species.normalize_kingdom("Viridiplantae"), "Plantae")
-        self.assertEqual(info_species.normalize_kingdom("Fungi"), "Fungi")
-        self.assertEqual(info_species.normalize_kingdom(""), "")
+    def test_undetermined_species_falls_back_to_the_genus(self):
+        # « Genre x » = espèce indéterminée (230 entrées du catalogue)
+        self.assertEqual(info_species.normalize_query_name("Gehyra x"), "Gehyra")
+        self.assertEqual(info_species.normalize_query_name("Gehyra X"), "Gehyra")
 
 
 class InaturalistTaxonTests(SimpleTestCase):
@@ -287,35 +247,6 @@ class SelectGbifUsageTests(SimpleTestCase):
         self.assertIsNone(info_species.select_gbif_usage({}, None))
 
 
-class PickNcbiClassTests(SimpleTestCase):
-    def test_tetrapods_are_not_bony_fishes(self):
-        for latin_name in ("Natrix natrix", "Chloris chloris"):
-            with self.subTest(latin_name):
-                self.assertNotEqual(
-                    info_species.pick_ncbi_class(NCBI_LINEAGES[latin_name]), "Sarcopterygii"
-                )
-
-    def test_class_is_preferred_over_the_tetrapod_superclass(self):
-        self.assertEqual(
-            info_species.pick_ncbi_class(NCBI_LINEAGES["Natrix natrix"]), "Lepidosauria"
-        )
-
-    def test_superclass_is_preferred_when_ncbi_goes_one_rank_deeper(self):
-        # NCBI classe la truite en `Actinopteri`, sous-rang de `Actinopterygii`
-        self.assertEqual(
-            info_species.pick_ncbi_class(NCBI_LINEAGES["Salmo trutta"]), "Actinopterygii"
-        )
-
-    def test_sarcopterygii_kept_for_actual_lobe_finned_fishes(self):
-        # le coelacanthe n'a aucun rang `class` : la superclasse est la bonne réponse
-        self.assertEqual(
-            info_species.pick_ncbi_class(NCBI_LINEAGES["Latimeria chalumnae"]), "Sarcopterygii"
-        )
-
-    def test_empty_lineage(self):
-        self.assertEqual(info_species.pick_ncbi_class({}), "")
-
-
 class CompleteTupleTests(SimpleTestCase):
     def test_the_primary_source_is_never_overwritten(self):
         gbif = ("Animalia", "Squamata", "", "Colubridae")
@@ -335,7 +266,7 @@ class CompleteTupleTests(SimpleTestCase):
 
 
 class GetSpeciesDetailsTests(SimpleTestCase):
-    """Cascade iNaturalist → GBIF → NCBI."""
+    """Cascade iNaturalist → GBIF."""
 
     TAXON = {"id": 1631566, "iconic_taxon_name": "Reptilia"}
 
@@ -343,89 +274,52 @@ class GetSpeciesDetailsTests(SimpleTestCase):
         with (
             patch.object(info_species, "get_species_details_inaturalist", return_value=inat),
             patch.object(info_species, "get_species_details_gbif", return_value=gbif) as gbif_call,
-            patch.object(
-                info_species, "get_species_details_ncbi", return_value=ncbi_details(latin_name)
-            ) as ncbi_call,
         ):
-            return info_species.get_species_details(latin_name, taxon), gbif_call, ncbi_call
+            return info_species.get_species_details(latin_name, taxon), gbif_call
 
     def test_snake_class_is_reptilia(self):
-        details, gbif_call, ncbi_call = self.resolve(
+        details, gbif_call = self.resolve(
             "Natrix natrix",
             ("Animalia", "Reptilia", "Squamata", "Colubridae"),
-            GBIF_BIRD_MATCH,
+            ("Animalia", "Squamata", "", "Natricidae"),
         )
         self.assertEqual(details, ("Animalia", "Reptilia", "Squamata", "Colubridae"))
-        # une lignée iNaturalist complète rend les deux autres sources inutiles
+        # lignée iNaturalist complète : GBIF n'est même pas interrogé
         gbif_call.assert_not_called()
-        ncbi_call.assert_not_called()
 
-    def test_gbif_completes_a_partial_inaturalist_lineage(self):
-        details, _, ncbi_call = self.resolve(
-            "Chloris chloris",
-            ("Animalia", "Aves", "", ""),
-            ("Animalia", "Aves", "Passeriformes", "Fringillidae"),
+    def test_gbif_completes_a_partial_lineage(self):
+        details, _ = self.resolve(
+            "Salmo trutta",
+            ("Animalia", "Actinopterygii", "", ""),
+            ("Animalia", "", "Salmoniformes", "Salmonidae"),
         )
-        self.assertEqual(details, ("Animalia", "Aves", "Passeriformes", "Fringillidae"))
-        ncbi_call.assert_not_called()
+        self.assertEqual(details, ("Animalia", "Actinopterygii", "Salmoniformes", "Salmonidae"))
+
+    def test_gbif_never_overwrites_inaturalist(self):
+        # le backbone GBIF hisse Squamata au rang de classe : iNaturalist prime
+        details, _ = self.resolve(
+            "Natrix natrix",
+            ("Animalia", "Reptilia", "", "Colubridae"),
+            ("Animalia", "Squamata", "Squamata", "Natricidae"),
+        )
+        self.assertEqual(details, ("Animalia", "Reptilia", "Squamata", "Colubridae"))
 
     def test_gbif_is_queried_with_the_kingdom_hint(self):
-        _, gbif_call, _ = self.resolve("Natrix natrix", ('', '', '', ''), GBIF_BIRD_MATCH)
+        _, gbif_call = self.resolve("Natrix natrix", ('', '', '', ''), ('', '', '', ''))
         gbif_call.assert_called_once_with("Natrix natrix", "Animalia")
 
-    def test_reptile_without_inaturalist_is_not_a_coelacanth(self):
-        # GBIF hisse Squamata au rang de classe et ne donne aucun ordre : NCBI est
-        # sollicité sans pour autant réintroduire sa superclasse Sarcopterygii
-        details, _, _ = self.resolve(
-            "Natrix natrix", ('', '', '', ''), ("Animalia", "Squamata", "", "Colubridae")
-        )
-        self.assertEqual(details, ("Animalia", "Lepidosauria", "Squamata", "Colubridae"))
+    def test_undetermined_species_is_queried_by_genus(self):
+        _, gbif_call = self.resolve("Gehyra x", ('', '', '', ''), ('', '', '', ''))
+        gbif_call.assert_called_once_with("Gehyra", "Animalia")
 
-    def test_turtle_without_inaturalist_keeps_its_gbif_class(self):
-        details, _, _ = self.resolve(
-            "Testudo hermanni", ('', '', '', ''), ("Animalia", "Testudines", "", "Testudinidae")
-        )
-        self.assertEqual(details[1], "Testudines")
-
-    def test_missing_class_is_completed_by_ncbi(self):
-        details, _, _ = self.resolve(
-            "Salmo trutta", ('', '', '', ''), ("Animalia", "", "Salmoniformes", "Salmonidae")
-        )
-        self.assertEqual(details[1], "Actinopterygii")
-
-    def test_coelacanth_stays_a_lobe_finned_fish(self):
-        details, _, _ = self.resolve(
-            "Latimeria chalumnae",
-            ('', '', '', ''),
-            ("Animalia", "", "Coelacanthiformes", "Coelacanthidae"),
-        )
-        self.assertEqual(details[1], "Sarcopterygii")
-
-    def test_ncbi_kingdom_is_normalized(self):
-        with (
-            patch.object(
-                info_species, "get_species_details_inaturalist", return_value=('', '', '', '')
-            ),
-            patch.object(info_species, "get_species_details_gbif", return_value=('', '', '', '')),
-            patch.object(
-                info_species,
-                "get_species_details_ncbi",
-                return_value=("Metazoa", "Aves", "Passeriformes", "Fringillidae"),
-            ),
-        ):
-            self.assertEqual(info_species.get_species_details("Chloris chloris")[0], "Animalia")
-
-    def test_every_source_failing_yields_empty_values(self):
+    def test_both_sources_failing_yields_empty_values(self):
         with (
             patch.object(
                 info_species, "get_species_details_inaturalist", side_effect=OSError("boom")
             ),
             patch.object(info_species, "get_species_details_gbif", side_effect=OSError("boom")),
-            patch.object(info_species, "get_species_details_ncbi", side_effect=OSError("boom")),
         ):
-            self.assertEqual(
-                info_species.get_species_details("Chloris chloris"), ('', '', '', '')
-            )
+            self.assertEqual(info_species.get_species_details("Chloris chloris"), ('', '', '', ''))
 
 
 class GetSpeciesDataTests(SimpleTestCase):
@@ -441,13 +335,18 @@ class GetSpeciesDataTests(SimpleTestCase):
         self.assertEqual(data["genus"], "Chloris")
         self.assertEqual(data["species"], "chloris")
 
+    def test_snake_is_a_reptile(self):
+        taxon = {"id": 1631566, "name": "Natrix natrix", "iconic_taxon_name": "Reptilia"}
+        with patch.object(info_species.requests, "get", side_effect=fake_inaturalist([taxon])):
+            data = info_species.get_species_data("Natrix natrix")
+
+        self.assertEqual(data["class_field"], "Reptilia")
+        self.assertEqual(data["order_field"], "Squamata")
+
     def test_genus_only_name_does_not_crash(self):
         with (
             patch.object(info_species.requests, "get", side_effect=fake_inaturalist(INAT_RESULTS)),
-            patch.object(
-                info_species.py_species, "name_backbone", return_value=GBIF_BIRD_MATCH
-            ),
-            patch.object(info_species, "get_species_details_ncbi", return_value=('', '', '', '')),
+            patch.object(info_species.py_species, "name_backbone", return_value=GBIF_BIRD_MATCH),
         ):
             data = info_species.get_species_data("Chloris")
 
@@ -455,13 +354,20 @@ class GetSpeciesDataTests(SimpleTestCase):
         self.assertEqual(data["species"], "")
         self.assertEqual(data["french_name"], "Verdiers")
 
+    def test_undetermined_species_keeps_its_marker(self):
+        # « Genre x » : l'épithète reste « x », c'est la convention du catalogue
+        with patch.object(info_species.requests, "get", side_effect=OSError("boom")):
+            data = info_species.get_species_data("Gehyra x")
+
+        self.assertEqual(data["genus"], "Gehyra")
+        self.assertEqual(data["species"], "x")
+
     def test_inaturalist_failure_falls_back_on_gbif(self):
         with (
             patch.object(info_species.requests, "get", side_effect=OSError("boom")),
             patch.object(
                 info_species.py_species, "name_backbone", return_value=GBIF_AMBIGUOUS_MATCH
             ) as name_backbone,
-            patch.object(info_species, "get_species_details_ncbi", return_value=('', '', '', '')),
         ):
             data = info_species.get_species_data("Chloris chloris")
 
@@ -471,19 +377,3 @@ class GetSpeciesDataTests(SimpleTestCase):
         name_backbone.assert_called_once_with(
             name="Chloris chloris", kingdom=None, verbose=True
         )
-
-    def test_gbif_failure_falls_back_on_ncbi(self):
-        with (
-            patch.object(info_species.requests, "get", side_effect=fake_inaturalist(INAT_RESULTS[2:])),
-            patch.object(info_species.py_species, "name_backbone", side_effect=OSError("boom")),
-            patch.object(
-                info_species,
-                "get_species_details_ncbi",
-                return_value=("Metazoa", "Aves", "Passeriformes", "Fringillidae"),
-            ) as ncbi_call,
-        ):
-            data = info_species.get_species_data("Chloris chloris")
-
-        ncbi_call.assert_called_once_with("Chloris chloris", None)
-        self.assertEqual(data["kingdom"], "Animalia")
-        self.assertEqual(data["family"], "Fringillidae")

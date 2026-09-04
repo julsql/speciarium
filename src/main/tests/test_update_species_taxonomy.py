@@ -4,6 +4,7 @@ from unittest.mock import patch
 from django.core.management import call_command
 from django.test import TestCase
 
+from main.management.commands.update_species_taxonomy import DEFAULT_DELAY
 from main.models.species import Species
 
 COMMAND = "update_species_taxonomy"
@@ -129,6 +130,13 @@ class UpdateSpeciesTaxonomyTests(TestCase):
 
         self.assertIn("1 espèce(s) à traiter", output)
 
+    def test_limit_zero_processes_nothing(self):
+        create_species("Chloris chloris")
+
+        output = self.call("--limit", "0", api=GREENFINCH)
+
+        self.assertIn("0 espèce(s) à traiter", output)
+
     def test_a_failing_species_does_not_stop_the_others(self):
         create_species("Aaa aaa")
         second = create_species("Zzz zzz")
@@ -143,3 +151,8 @@ class UpdateSpeciesTaxonomyTests(TestCase):
         second.refresh_from_db()
         self.assertEqual(second.family, "Fringillidae")
         self.assertIn("1 en échec", output)
+
+    def test_default_delay_respects_the_inaturalist_rate_limit(self):
+        # 2 appels iNaturalist par espèce, plafond 60 req/min -> 2 s minimum
+        calls_per_minute = 2 * 60 / DEFAULT_DELAY
+        self.assertLessEqual(calls_per_minute, 60)
