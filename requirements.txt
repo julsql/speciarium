@@ -48,7 +48,7 @@ setuptools==83.0.0
 six==1.17.0
 sqlparse==0.6.0
 Twisted==26.4.0rc2
-txaio==23.1.1
+txaio==26.6.1
 typing_extensions==4.12.2
 url-normalize==1.4.3
 urllib3==2.7.0
