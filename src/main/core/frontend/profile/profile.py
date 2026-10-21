@@ -1,5 +1,4 @@
 import json
-import base64
 import os
 import shutil
 
@@ -15,6 +14,7 @@ from django.db.models.functions import Coalesce, NullIf, ExtractMonth
 from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.shortcuts import redirect
 from django.shortcuts import render, get_object_or_404
+from django.urls import reverse
 from django.views.decorators.http import require_POST, require_http_methods
 
 from main.core.backend.logger.logger import logger
@@ -36,13 +36,20 @@ def get_year_retrospective(request: HttpRequest, ) -> HttpResponse:
     user = request.user
     return get_year_retrospective_user(request, user, "PROFILE")
 
-def get_year_retrospective_username(request: HttpRequest, username_64: str) -> HttpResponse:
-    base64_bytes = username_64.encode("ascii")
-    sample_string_bytes = base64.b64decode(base64_bytes)
-    username = sample_string_bytes.decode("ascii")
-
-    user = get_object_or_404(AppUser, username=username)
+def get_year_retrospective_shared(request: HttpRequest, token: str) -> HttpResponse:
+    """Lien public de rétrospective : accessible uniquement via un token aléatoire."""
+    user = get_object_or_404(AppUser, retrospective_share_token=token)
     return get_year_retrospective_user(request, user, "LINK")
+
+
+@login_required
+@require_POST
+@deny_demo_user
+def regenerate_retrospective_share_token(request: HttpRequest) -> HttpResponse:
+    """Régénère le token de partage : l'ancien lien public cesse de fonctionner."""
+    request.user.regenerate_retrospective_share_token()
+    return redirect('retrospective')
+
 
 def get_year_retrospective_user(request: HttpRequest, user: AppUser | AbstractBaseUser | AnonymousUser, origin: str) -> HttpResponse:
     """Récupère les stats de l'année pour la rétrospective"""
@@ -185,7 +192,14 @@ def get_year_retrospective_user(request: HttpRequest, user: AppUser | AbstractBa
     # Calcul du max mensuel pour le graphique
     max_monthly = max([m['count'] for m in photos_per_month]) if photos_per_month else 1
 
-    return render(request, 'profile/retrospective.html', {
+    share_url = None
+    if origin == "PROFILE":
+        share_url = request.build_absolute_uri(
+            reverse('retrospective_shared', args=[user.retrospective_share_token])
+        )
+
+    response = render(request, 'profile/retrospective.html', {
+        'share_url': share_url,
         'username': user.username,
         'year': start_date.year,
         'start_date': start_date,
@@ -202,6 +216,9 @@ def get_year_retrospective_user(request: HttpRequest, user: AppUser | AbstractBa
         'max_monthly_count': max_monthly,
         'origin': origin,
     })
+    response['X-Robots-Tag'] = 'noindex, nofollow'
+    response['Referrer-Policy'] = 'no-referrer'
+    return response
 
 
 def _calculate_streak(dates_set):

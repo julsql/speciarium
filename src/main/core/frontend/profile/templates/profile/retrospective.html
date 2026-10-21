@@ -1,6 +1,7 @@
 {% extends 'main/base.html' %}
 {% load static %}
 {% load json_filters %}
+{% block meta_robots %}<meta name="robots" content="noindex, nofollow">{% endblock %}
 {% block body %}
 
 <div class="section recap-section">
@@ -89,6 +90,13 @@
 
   <div style="text-align: center;">
     <button class="share-btn" onclick="shareRecap()">📤 Partager mon Recap</button>
+    {% if origin == 'PROFILE' %}
+    <form method="post" action="{% url 'retrospective_regenerate' %}" style="margin-top: 1rem;"
+          onsubmit="return confirm('Générer un nouveau lien ? L\'ancien lien partagé ne fonctionnera plus.');">
+      {% csrf_token %}
+      <button type="submit" class="share-btn">🔄 Régénérer le lien de partage</button>
+    </form>
+    {% endif %}
   </div>
 </div>
 
@@ -98,7 +106,7 @@
     navigator.share({
       title: 'Mon Recap {{ year }}',
       text: text,
-      url: window.location.href.replace(/\/$/, '') + "/" + btoa("{{ username }}")
+      url: {% if share_url %}"{{ share_url|escapejs }}"{% else %}window.location.href{% endif %}
     }).catch(err => console.log('Erreur:', err));
   }
 </script>

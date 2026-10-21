@@ -15,7 +15,7 @@ Including another URLconf
     2. Add a URL to urlpatterns: path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, include, re_path
 from django.contrib.auth import views as auth_views
 
 from django.conf import settings
@@ -35,7 +35,8 @@ from main.core.frontend.photos.internal.photos_view import photos
 from main.core.frontend.profile.profile import profile_view, change_collection_view, change_map_tiles_view, \
     change_theme_view, update_collection_name_view, add_user_to_collection_view, remove_user_from_collection_view, \
     create_collection_view, \
-    delete_collection_view, delete_account_view, get_year_retrospective, get_year_retrospective_username
+    delete_collection_view, delete_account_view, get_year_retrospective, get_year_retrospective_shared, \
+    regenerate_retrospective_share_token
 from main.core.frontend.seo.internal.seo_view import robots_txt, sitemap_xml
 from main.core.frontend.signup.internal.signup_view import signup_view
 
@@ -86,7 +87,12 @@ urlpatterns = [
     path('clean/<int:collection_id>/', clean_database, name='hash'),
     path('api/filtered-options/', get_filtered_options, name='get_filtered_options'),
     path('profile/retrospective/', get_year_retrospective, name='retrospective'),
-    path('profile/retrospective/<str:username_64>', get_year_retrospective_username, name='retrospective'),
+    path('profile/retrospective/regenerate/', regenerate_retrospective_share_token,
+         name='retrospective_regenerate'),
+    # Slash final optionnel : pas de redirection APPEND_SLASH, un token inconnu
+    # (ou l'ancien format base64 du username) renvoie directement 404.
+    re_path(r'^profile/retrospective/(?P<token>[A-Za-z0-9_-]+)/?$', get_year_retrospective_shared,
+            name='retrospective_shared'),
 ]
 
 if settings.DEBUG:

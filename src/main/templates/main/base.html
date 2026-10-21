@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% if seo_page %}{{ seo_page.title }}{% else %}{% block title %}Speciarium{% endblock %}{% endif %}</title>
     {% if seo_page %}{% include 'seo/meta.html' %}{% endif %}
+    {% block meta_robots %}{% endblock %}
     <meta name="theme-color" content="#615447">
     <link rel="icon" href="{% static 'favicon.ico' %}" sizes="any">
     <link rel="apple-touch-icon" href="{% static 'main/images/apple-touch-icon.png' %}">

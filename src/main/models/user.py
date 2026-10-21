@@ -1,3 +1,5 @@
+import secrets
+
 from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import AbstractUser
 
@@ -5,6 +7,11 @@ from main.models.map_tiles import MapTiles
 from main.models.theme import Theme
 
 from django.db import models
+
+
+def generate_share_token() -> str:
+    """Token aléatoire non devinable pour le lien public de rétrospective."""
+    return secrets.token_urlsafe(32)
 
 
 class AppUserManager(BaseUserManager):
@@ -69,6 +76,18 @@ class AppUser(AbstractUser):
         blank=True,
     )
     is_demo = models.BooleanField(default=False)
+    retrospective_share_token = models.CharField(
+        max_length=64,
+        unique=True,
+        default=generate_share_token,
+        editable=False,
+    )
 
     objects = AppUserManager()
     REQUIRED_FIELDS = ['email']
+
+    def regenerate_retrospective_share_token(self) -> str:
+        """Remplace le token de partage, ce qui révoque l'ancien lien public."""
+        self.retrospective_share_token = generate_share_token()
+        self.save(update_fields=['retrospective_share_token'])
+        return self.retrospective_share_token
