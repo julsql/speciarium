@@ -36,12 +36,15 @@ from main.core.frontend.profile.profile import profile_view, change_collection_v
     change_theme_view, update_collection_name_view, add_user_to_collection_view, remove_user_from_collection_view, \
     create_collection_view, \
     delete_collection_view, delete_account_view, get_year_retrospective, get_year_retrospective_username
+from main.core.frontend.seo.internal.seo_view import robots_txt, sitemap_xml
 from main.core.frontend.signup.internal.signup_view import signup_view
 
 handler500 = error_500_view
 handler404 = error_404_view
 
 urlpatterns = [
+    path('robots.txt', robots_txt, name='robots_txt'),
+    path('sitemap.xml', sitemap_xml, name='sitemap_xml'),
     path('admin/', admin.site.urls),
     path('accounts/login/', login_view, name='login'),
     path('accounts/demo-login/', demo_login_view, name='demo_login'),

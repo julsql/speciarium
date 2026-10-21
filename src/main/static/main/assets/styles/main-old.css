@@ -892,7 +892,8 @@ th {
     margin: auto;
 }
 
-.login h1 {
+.login h1,
+.login .page-title {
     text-align: center;
 }
 
@@ -2222,4 +2223,139 @@ body.uploading .upload-button {
     border-radius: 5px;
     color: #962d22;
     font-weight: 600;
+}
+
+/* Titre principal de page (h2 visuellement mis en avant sous le h1 du header) */
+.page-title {
+    font-size: 70px;
+    font-weight: bold;
+}
+
+/* PAGE D'ACCUEIL PUBLIQUE */
+.landing {
+    max-width: 960px;
+    margin: 0 auto;
+}
+
+.landing-hero {
+    text-align: center;
+    padding: 30px 20px;
+    border: 1px solid var(--primary);
+    outline: 2px solid var(--primary);
+    outline-offset: 10px;
+    margin: 20px 10px 40px;
+}
+
+.landing-title {
+    font-size: 48px;
+    margin-bottom: 15px;
+}
+
+.landing-lead {
+    max-width: 700px;
+    margin: 0 auto 25px;
+    line-height: 1.4;
+}
+
+.landing-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 15px;
+}
+
+.landing-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    min-width: 200px;
+    padding: 0 20px;
+    border: 2px solid var(--primary);
+    border-radius: 5px;
+    background-color: var(--primary);
+    color: #fff;
+    text-decoration: none;
+    transition: all 0.3s linear;
+}
+
+.landing-button:hover {
+    background-color: var(--secondary);
+    border-color: var(--secondary);
+}
+
+.landing-button-secondary {
+    background-color: transparent;
+    color: var(--primary);
+}
+
+.landing-button-secondary:hover {
+    color: #fff;
+}
+
+.landing-demo {
+    margin-top: 15px;
+}
+
+.landing-link-button {
+    background: none;
+    border: none;
+    color: var(--secondary);
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.landing a:focus-visible,
+.landing button:focus-visible {
+    outline: 3px solid var(--secondary);
+    outline-offset: 3px;
+}
+
+.landing-section {
+    margin: 0 10px 35px;
+}
+
+.landing-section h2 {
+    margin-bottom: 15px;
+}
+
+.landing-section a {
+    color: var(--secondary);
+}
+
+.landing-features {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 20px;
+}
+
+.landing-features li {
+    padding: 15px;
+    border: 1px solid var(--primary);
+    background-color: rgba(255, 255, 255, 0.35);
+}
+
+.landing-features h3 {
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+.landing-steps {
+    padding-left: 30px;
+    line-height: 1.4;
+}
+
+.landing-steps li {
+    margin-bottom: 8px;
+}
+
+@media (max-width: 580px) {
+    .landing-title {
+        font-size: 34px;
+    }
+
+    .landing-button {
+        width: 100%;
+    }
 }

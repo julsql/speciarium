@@ -1,4 +1,3 @@
-from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpRequest
 from django.shortcuts import render
 
@@ -8,8 +7,13 @@ from main.models.map_tiles import MapTiles
 from main.models.photo import Photos
 
 
-@login_required
 def home(request: HttpRequest) -> HttpResponse:
+    if not request.user.is_authenticated:
+        return render(request, 'home/landing.html')
+    return dashboard(request)
+
+
+def dashboard(request: HttpRequest) -> HttpResponse:
     if request.user.map_tiles:
         map_server = request.user.map_tiles.server
     else:

@@ -4,18 +4,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Speciarium</title>
-    <link rel="shortcut icon" type="image/png" href="{% static 'favicon.ico' %}"/>
+    <title>{% if seo_page %}{{ seo_page.title }}{% else %}{% block title %}Speciarium{% endblock %}{% endif %}</title>
+    {% if seo_page %}{% include 'seo/meta.html' %}{% endif %}
+    <meta name="theme-color" content="#615447">
+    <link rel="icon" href="{% static 'favicon.ico' %}" sizes="any">
+    <link rel="apple-touch-icon" href="{% static 'main/images/apple-touch-icon.png' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    {% if user.theme.sheet == 'main-modern' %}
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600&display=swap">
+    {% else %}
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400..800;1,400..800&family=Great+Vibes&display=swap">
+    {% endif %}
     <link rel="stylesheet" href="{% static 'main/assets/styles/' %}{{ user.theme.sheet|default:'main-old' }}.css">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+    {% block leaflet_css %}<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>{% endblock %}
     <script defer src="https://stats.julsql.fr/js/app.js" data-website-id="36bb1a86-b212-448e-88f8-26ef6e40ed11" data-domains="speciarium.julsql.fr"></script>
 </head>
 <body>
 <header>
     <a href="/" class="title_logo">
-        <img src="{% static 'main/images/papillon.png' %}"
+        <img src="{% static 'main/images/papillon-260.png' %}"
              class="logo"
-             alt="papillon"
+             alt=""
+             width="130"
+             height="129"
         >
         <div class="title">
             <h1>Speciarium</h1>

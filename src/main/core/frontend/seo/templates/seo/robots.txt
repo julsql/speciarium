@@ -1,0 +1,28 @@
+User-agent: *
+Allow: /
+Allow: /accounts/login/
+Allow: /accounts/signup/
+Disallow: /admin/
+Disallow: /accounts/
+Disallow: /password-reset/
+Disallow: /reset/
+Disallow: /api/
+Disallow: /media/
+Disallow: /profile
+Disallow: /carte/
+Disallow: /photos/
+Disallow: /notifications/
+Disallow: /notification/
+Disallow: /change-collection/
+Disallow: /change-map-tiles/
+Disallow: /change-themes/
+Disallow: /update-collection-name/
+Disallow: /collections/
+Disallow: /create_collection/
+Disallow: /delete_collection/
+Disallow: /delete_account/
+Disallow: /upload-images/
+Disallow: /hash/
+Disallow: /clean/
+
+Sitemap: {{ site_url }}/sitemap.xml

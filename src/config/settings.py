@@ -76,6 +76,7 @@ TEMPLATES = [
             BASE_DIR / 'main/core/frontend/profile/templates',
             BASE_DIR / 'main/core/frontend/auth/templates',
             BASE_DIR / 'main/core/frontend/help/templates',
+            BASE_DIR / 'main/core/frontend/seo/templates',
         ],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -85,6 +86,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 "main.core.frontend.notification.internal.notification_view.notifications_context",
+                "main.core.frontend.seo.internal.seo_context.seo_context",
             ],
         },
     },
@@ -181,6 +183,9 @@ AUTH_USER_MODEL = 'main.AppUser'
 AUTHENTICATION_FAILURE = _(
     'Veuillez entrer un nom d\'utilisateur et un mot de passe valides. Notez que les deux champs peuvent être sensibles à la casse.')
 LOGOUT_REDIRECT_URL = '/'
+
+# URL publique canonique (balises canonical/Open Graph, sitemap, robots.txt)
+SITE_URL = config('SITE_URL', default='https://speciarium.julsql.fr').rstrip('/')
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/

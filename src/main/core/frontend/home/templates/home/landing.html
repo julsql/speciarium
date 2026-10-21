@@ -1,0 +1,72 @@
+{% extends 'main/base.html' %}
+
+{% block leaflet_css %}{% endblock %}
+
+{% block body %}
+<main class="landing">
+    <section class="landing-hero" aria-labelledby="landing-intro-title">
+        <h2 id="landing-intro-title" class="landing-title">Votre encyclopédie personnelle des espèces</h2>
+        <p class="landing-lead">
+            Speciarium est conçu comme votre propre encyclopédie des espèces rencontrées et
+            photographiées sur Terre&nbsp;: des données encyclopédiques, une carte des lieux de prise
+            de vue et un outil de recherche dans votre base.
+        </p>
+        <div class="landing-actions">
+            <a class="landing-button" href="{% url 'login' %}">Se connecter</a>
+            <a class="landing-button landing-button-secondary" href="{% url 'signup' %}">Créer un compte</a>
+        </div>
+        <form method="post" action="{% url 'demo_login' %}" class="landing-demo">
+            {% csrf_token %}
+            <button type="submit" class="landing-link-button">Visiter en mode témoin</button>
+        </form>
+    </section>
+
+    <section class="landing-section" aria-labelledby="landing-features-title">
+        <h2 id="landing-features-title">Fonctionnalités</h2>
+        <ul class="landing-features">
+            <li>
+                <h3>Catalogue d'espèces</h3>
+                <p>Taxonomie complète (règne, classe, ordre, famille, genre, espèce) et nom vernaculaire,
+                    récupérés depuis iNaturalist et GBIF.</p>
+            </li>
+            <li>
+                <h3>Galerie photo</h3>
+                <p>Envoyez un dossier entier de photos&nbsp;: leurs métadonnées sont extraites
+                    automatiquement et les photos déjà envoyées sont ignorées.</p>
+            </li>
+            <li>
+                <h3>Carte interactive</h3>
+                <p>Visualisez les lieux de vos observations, avec plusieurs fonds de carte au choix.</p>
+            </li>
+            <li>
+                <h3>Recherche avancée</h3>
+                <p>Filtrez par nom, classe, ordre, famille, continent, pays, région, année ou période.</p>
+            </li>
+            <li>
+                <h3>Collections partagées</h3>
+                <p>Partagez une collection avec d'autres utilisateurs et consultez les leurs.</p>
+            </li>
+            <li>
+                <h3>Rétrospective annuelle</h3>
+                <p>Retrouvez les statistiques de vos observations de l'année.</p>
+            </li>
+        </ul>
+    </section>
+
+    <section class="landing-section" aria-labelledby="landing-howto-title">
+        <h2 id="landing-howto-title">Comment ça marche&nbsp;?</h2>
+        <ol class="landing-steps">
+            <li>Préparez un dossier avec un sous-dossier par pays (et, si vous le souhaitez, par région).</li>
+            <li>Nommez chaque photo par le nom scientifique de l'espèce, par exemple «&nbsp;Giraffa camelopardalis
+                angolensis LD311684.jpg&nbsp;».</li>
+            <li>Envoyez le dossier&nbsp;: Speciarium détecte les nouvelles photos et celles qui ont été modifiées.</li>
+        </ol>
+    </section>
+
+    <section class="landing-section" aria-labelledby="landing-contact-title">
+        <h2 id="landing-contact-title">Contact</h2>
+        <p>Un bug ou une idée d'amélioration&nbsp;? Écrivez à
+            <a href="mailto:contact@speciarium.julsql.fr">contact@speciarium.julsql.fr</a>.</p>
+    </section>
+</main>
+{% endblock %}
