@@ -3,12 +3,14 @@ import unicodedata
 from django.http import HttpResponseBadRequest, HttpRequest, JsonResponse
 
 from config.settings import MEDIA_URL
+from main.core.permissions import require_collection_owner
 from main.models.photo import Photos
 import os
 
 def SMALL_PATH(collection_id):
     return os.path.join(MEDIA_URL, 'main/images', str(collection_id), 'small/')
 
+@require_collection_owner
 def get_hash(request: HttpRequest, collection_id):
     if request.method == 'GET':
         values = Photos.objects.filter(collection=collection_id).values('hash', 'photo')

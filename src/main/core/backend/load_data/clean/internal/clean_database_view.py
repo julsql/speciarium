@@ -6,10 +6,12 @@ from django.http import HttpResponseBadRequest, HttpRequest, JsonResponse
 from config.settings import MEDIA_URL
 from main.core.backend.load_data.shared.internal.info_photo import images_in_folder, VIGNETTE_ROOT, SMALL_ROOT, \
     replace_root, VIGNETTE_PATH, SMALL_PATH, delete_file_with_permission_check, get_latin_name
+from main.core.permissions import require_collection_owner
 from main.models.photo import Photos
 from main.models.species import Species
 
 
+@require_collection_owner
 def clean_database(request: HttpRequest, collection_id):
     if request.method == 'GET':
         photo_row_delete, file_delete = compare_file_to_database(collection_id)
