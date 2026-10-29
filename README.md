@@ -13,7 +13,7 @@
 
 <p align="center">
   <img src="docs/screenshots/species.png" alt="Liste des espèces" width="49%">
-  <img src="docs/screenshots/map.png" alt="Carte des observations" width="49%">
+  <img src="docs/screenshots/map.png" alt="Carte des observations, survol d'un point" width="49%">
 </p>
 
 <sub>Captures réalisées en mode témoin, avec des données de démonstration.</sub>
