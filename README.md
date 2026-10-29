@@ -9,6 +9,15 @@
 
 ---
 
+## 📸 Aperçu
+
+<p align="center">
+  <img src="docs/screenshots/species.png" alt="Liste des espèces" width="49%">
+  <img src="docs/screenshots/map.png" alt="Carte des observations" width="49%">
+</p>
+
+<sub>Captures réalisées en mode témoin, avec des données de démonstration.</sub>
+
 ## ✨ Fonctionnalités
 
 - 🌿 **Catalogue d'espèces** — taxonomie complète (règne, classe, ordre, famille, genre, espèce) synchronisée avec [iNaturalist](https://www.inaturalist.org/) et [GBIF](https://www.gbif.org/).
