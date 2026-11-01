@@ -3,6 +3,7 @@ import base64
 from django.contrib.auth import get_user_model
 from django.test import TestCase, override_settings
 from django.urls import reverse
+from django.utils.html import escapejs
 
 from main.models.collection import Collection
 from main.models.map_tiles import MapTiles
@@ -91,7 +92,8 @@ class RetrospectiveShareTokenTests(TestCase):
         self.client.force_login(self.user)
         response = self.client.get(reverse("retrospective"))
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, self.shared_url(self.user.retrospective_share_token))
+        # The URL is rendered through |escapejs, which escapes '-' (possible in the token).
+        self.assertContains(response, escapejs(self.shared_url(self.user.retrospective_share_token)))
         self.assertNotContains(response, "btoa(")
 
     def test_token_absent_from_public_pages(self):
