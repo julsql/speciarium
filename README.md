@@ -4,7 +4,7 @@
 
 [![Django](https://img.shields.io/badge/Django-6.0-092E20?logo=django)](https://www.djangoproject.com/)
 [![Python](https://img.shields.io/badge/Python-3.15-3776AB?logo=python&logoColor=white)](https://www.python.org/)
-[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15-4169E1?logo=postgresql&logoColor=white)](https://www.postgresql.org/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-18-4169E1?logo=postgresql&logoColor=white)](https://www.postgresql.org/)
 [![Docker](https://img.shields.io/badge/Docker-ready-2496ED?logo=docker&logoColor=white)](https://www.docker.com/)
 
 ---
@@ -37,8 +37,8 @@
 | Couche | Technologie |
 | --- | --- |
 | Backend | Django 6.0, Django Channels, Daphne (ASGI) |
-| Base de données | PostgreSQL 15 |
-| Cache / Pub-Sub | Redis |
+| Base de données | PostgreSQL 18 |
+| Cache / Pub-Sub | Redis 8 |
 | Frontend | Templates Django, django-tables2 |
 | Données scientifiques | pygbif (GBIF), API iNaturalist |
 | Conteneurisation | Docker, Docker Compose |
